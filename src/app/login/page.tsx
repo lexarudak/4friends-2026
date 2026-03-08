@@ -1,7 +1,6 @@
-import Image from "next/image";
 import styles from "./page.module.scss";
 import { signInWithGoogle, signInWithApple } from "./actions";
-import { GoogleIcon, AppleIcon } from "@/components/icons";
+import { GoogleIcon, AppleIcon, LogoIcon } from "@/components/icons";
 
 export default function LoginPage() {
   return (
@@ -9,10 +8,10 @@ export default function LoginPage() {
       <div className={styles.card}>
 
         <div className={styles.logo}>
-          <Image src="/logo.svg" alt="4friends" width={64} height={64} priority />
+          <LogoIcon />
         </div>
 
-        <h1 className={styles.title}>Sign in</h1>
+        <h1 className={styles.title}>Welcome to 4Friends!</h1>
         <p className={styles.subtitle}>Choose how you&apos;d like to continue</p>
 
         <div className={styles.providers}>
