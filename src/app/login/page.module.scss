@@ -94,3 +94,19 @@
   }
 }
 
+.rulesLink {
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  margin: var(--space-8) 0 0;
+
+  a {
+    color: var(--color-text-primary);
+    text-underline-offset: 3px;
+    text-decoration: underline  ;
+
+    &:hover {
+      color: var(--color-text-secondary);
+    }
+  }
+}
+

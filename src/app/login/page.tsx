@@ -1,6 +1,8 @@
+import Link from "next/link";
 import styles from "./page.module.scss";
-import { signInWithGoogle, signInWithApple } from "./actions";
-import { GoogleIcon, AppleIcon, LogoIcon } from "@/components/icons";
+import { signInWithGoogle } from "./actions";
+import { GoogleIcon, LogoIcon } from "@/components/icons";
+import { PAGES } from "@/utils/constants";
 
 export default function LoginPage() {
   return (
@@ -23,14 +25,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <form action={signInWithApple}>
-            <button className={`${styles.btn} ${styles.btnApple}`} type="submit">
-              <AppleIcon />
-              Continue with Apple
-            </button>
-          </form>
-
         </div>
+
+        <p className={styles.rulesLink}>Or read our <Link href={PAGES.ABOUT}>rules</Link></p>
 
       </div>
     </main>
