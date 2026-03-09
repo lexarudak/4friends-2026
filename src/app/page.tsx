@@ -1,10 +1,21 @@
 import { auth } from "@/auth";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { getActiveRoomId } from "@/lib/active-room";
+import { TableService } from "@/services/table.service";
+import { PAGES } from "@/utils/constants";
 import styles from "./page.module.scss";
 
 export default async function Home() {
   const session = await auth();
   const user = session?.user;
+
+  const roomId = await getActiveRoomId();
+  const table = await TableService.getSmallTable(roomId);
+
+  if (!table) {
+    redirect(PAGES.ROOMS);
+  }
 
   return (
     <main className={styles.page}>
@@ -22,6 +33,7 @@ export default async function Home() {
           <h1 className={styles.title}>Hello, {user.name}!</h1>
         </div>
       )}
+      <pre>{JSON.stringify(table, null, 2)}</pre>
     </main>
   );
 }
