@@ -1,7 +1,5 @@
 import { auth } from "@/auth";
-import { RoomService } from "@/services/room.service";
 import { PAGES } from "@/utils/constants";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 const BASE_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";

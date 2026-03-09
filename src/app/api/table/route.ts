@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { getActiveRoomId } from "@/lib/active-room";
 import { TableService } from "@/services/table.service";
-import { ApiErrorCode } from "@/types/api";
 import { API_ERROR_CODES } from "@/utils/constants";
 import { NextResponse } from "next/server";
 
