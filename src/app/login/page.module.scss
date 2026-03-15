@@ -3,16 +3,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-primary);
+  background: var(--color-neutral-50);
   padding: var(--space-16);
 }
 
 .card {
   width: 100%;
   max-width: 400px;
-  background: var(--color-bg-secondary);
-  border: var(--border-1) solid var(--color-border-low);
-  border-radius: var(--radius-l);
+  background: var(--color-neutral-white);
+  border: var(--border-1) solid var(--color-neutral-200);
+  border-top: 4px solid var(--color-primary-800);
+  border-radius: var(--radius-m);
   padding: var(--space-40) var(--space-32);
   box-shadow: var(--shadow-low);
   display: flex;
@@ -32,15 +33,13 @@
 .title {
   font-size: var(--font-size-24);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-
+  color: var(--color-neutral-950);
   text-align: center;
-
 }
 
 .subtitle {
   font-size: var(--font-size-14);
-  color: var(--color-text-secondary);
+  color: var(--color-neutral-500);
   margin: 0 0 var(--space-16);
   text-align: center;
 }
@@ -64,9 +63,9 @@
   gap: var(--space-12);
   padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-m);
-  border: var(--border-1) solid var(--color-border-mid);
-  background: var(--color-bg-secondary);
-  color: var(--color-text-primary);
+  border: var(--border-1) solid var(--color-neutral-300);
+  background: var(--color-neutral-white);
+  color: var(--color-neutral-950);
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
@@ -74,12 +73,12 @@
               border-color var(--duration-base) var(--ease-standard);
 
   &:hover {
-    background: var(--color-state-hover);
-    border-color: var(--color-border-high);
+    background: var(--color-neutral-50);
+    border-color: var(--color-neutral-500);
   }
 
   &:active {
-    background: var(--color-state-pressed);
+    background: var(--color-neutral-100);
   }
 }
 
@@ -96,16 +95,16 @@
 
 .rulesLink {
   font-size: var(--font-size-14);
-  color: var(--color-text-secondary);
+  color: var(--color-neutral-500);
   margin: var(--space-8) 0 0;
 
   a {
-    color: var(--color-text-primary);
+    color: var(--color-primary-700);
     text-underline-offset: 3px;
-    text-decoration: underline  ;
+    text-decoration: underline;
 
     &:hover {
-      color: var(--color-text-secondary);
+      color: var(--color-primary-600);
     }
   }
 }

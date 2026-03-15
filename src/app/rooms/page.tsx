@@ -1,7 +1,42 @@
-export default function RoomsPage() {
-  return (
-    <main>
-      <h1>Rooms</h1>
-    </main>
-  );
+import { auth } from "@/auth";
+import { RoomService } from "@/services/room.service";
+import { signOutUser } from "./actions";
+import { JoinRoomForm } from "./JoinRoomForm";
+import { RoomItem } from "./RoomItem";
+import styles from "./page.module.scss";
+
+export default async function RoomsPage() {
+	const session = await auth();
+
+
+	const rooms = session?.user?.email
+		? await RoomService.getUserRooms(session.user.email)
+		: [];
+
+		
+
+	return (
+		<main className={styles.page}>
+			<div className={styles.card}>
+				<div className={styles.header}>
+					<p className={styles.label}>4Friends 2026</p>
+					<h1 className={styles.title}>Select a room</h1>
+				</div>
+				<ul className={styles.list}>
+					{rooms.map((roomId) => (
+						<li key={roomId}>
+							<RoomItem roomId={roomId} isActive={roomId === session?.user?.current_room} />
+						</li>
+					))}
+					<li>
+						<JoinRoomForm />
+					</li>
+				</ul>
+				<form action={signOutUser} className={styles.logoutRow}>
+					<span>or</span>
+					<button type="submit" className={styles.logoutBtn}>Logout</button>
+				</form>
+			</div>
+		</main>
+	);
 }

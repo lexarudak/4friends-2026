@@ -6,3 +6,10 @@ export type ApiErrorCode =
 export type ApiError = {
 	error: ApiErrorCode;
 };
+
+export type UserResponse = {
+	name: string | null;
+	email: string;
+	image: string | null;
+	current_room: string | null;
+};

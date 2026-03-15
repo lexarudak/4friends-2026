@@ -1,17 +1,14 @@
-// In-memory store — replace with Prisma or another DB later
+const store: Map<string, string[]> = new Map();
 
-export type RoomRecord = {
-  room_id: string;
-  is_active: boolean;
-};
-
-// userId (email) → rooms
-const store = new Map<string, RoomRecord[]>();
-
-export function getUserRooms(userId: string): RoomRecord[] {
-  return store.get(userId) ?? [];
+export function getUserRooms(userId: string): string[] {
+	return store.get(userId) ?? [];
 }
 
-export function setUserRooms(userId: string, rooms: RoomRecord[]): void {
-  store.set(userId, rooms);
+export function addUserRoom(userId: string, roomId: string): string[] {
+	const rooms = store.get(userId) ?? [];
+	const newRooms = new Set([...rooms, roomId]);
+	store.set(userId, [...newRooms]);
+
+	console.log(store, [...newRooms]);
+	return rooms;
 }
