@@ -35,11 +35,11 @@ src/components/
 └── features/  ← user-facing feature units tied to a specific domain
 ```
 
-| Layer | Examples | Rules |
-|-------|----------|-------|
-| `shared/` | `button`, `input`, `badge`, `spinner` | No domain knowledge, no data fetching, no server actions. Pure UI. |
-| `widgets/` | `room-card`, `user-avatar`, `score-table` | May contain domain types and light logic. Composed from `shared/` primitives. |
-| `features/` | `join-room-form`, `login-form`, `select-room` | Tied to a specific feature. May call server actions, use hooks, own state. |
+| Layer       | Examples                                      | Rules                                                                         |
+| ----------- | --------------------------------------------- | ----------------------------------------------------------------------------- |
+| `shared/`   | `button`, `input`, `badge`, `spinner`         | No domain knowledge, no data fetching, no server actions. Pure UI.            |
+| `widgets/`  | `room-card`, `user-avatar`, `score-table`     | May contain domain types and light logic. Composed from `shared/` primitives. |
+| `features/` | `join-room-form`, `login-form`, `select-room` | Tied to a specific feature. May call server actions, use hooks, own state.    |
 
 > When in doubt: if it could live in any project → `shared`. If it belongs to this app's domain but isn't a full feature → `widgets`. If it owns user interaction for one specific flow → `features`.
 
@@ -66,17 +66,21 @@ import { cn } from "@/utils/lib";
 import styles from "./my-component.module.scss";
 
 interface MyComponentProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: "primary" | "secondary";
+	variant?: "primary" | "secondary";
 }
 
-export function MyComponent({ variant = "primary", className, ...props }: MyComponentProps) {
-  return (
-    <div
-      {...props}
-      data-variant={variant}
-      className={cn(styles.root, className)}
-    />
-  );
+export function MyComponent({
+	variant = "primary",
+	className,
+	...props
+}: MyComponentProps) {
+	return (
+		<div
+			{...props}
+			data-variant={variant}
+			className={cn(styles.root, className)}
+		/>
+	);
 }
 ```
 
@@ -89,13 +93,21 @@ export function MyComponent({ variant = "primary", className, ...props }: MyComp
 
 ```scss
 .root {
-  // base styles using var(--*)
+	// base styles using var(--*)
 
-  &:hover:not(:disabled) { filter: brightness(1.15); }
-  &:active:not(:disabled) { filter: brightness(0.88); }
+	&:hover:not(:disabled) {
+		filter: brightness(1.15);
+	}
+	&:active:not(:disabled) {
+		filter: brightness(0.88);
+	}
 
-  &[data-variant="primary"] { background: var(--color-primary-700); }
-  &[data-variant="secondary"] { background: var(--color-neutral-200); }
+	&[data-variant="primary"] {
+		background: var(--color-primary-700);
+	}
+	&[data-variant="secondary"] {
+		background: var(--color-neutral-200);
+	}
 }
 ```
 

@@ -1,0 +1,28 @@
+.btn {
+	position: absolute;
+	top: var(--space-16);
+	right: var(--space-16);
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius-full);
+	border: none;
+	background: rgba(255, 255, 255, 0.15);
+	color: rgba(255, 255, 255, 0.8);
+	font-size: var(--font-size-14);
+	cursor: pointer;
+	transition:
+		background var(--duration-base) var(--ease-standard),
+		color var(--duration-base) var(--ease-standard);
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.25);
+		color: var(--color-neutral-white);
+	}
+
+	&:active {
+		background: rgba(255, 255, 255, 0.1);
+	}
+}
