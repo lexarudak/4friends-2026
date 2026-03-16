@@ -22,12 +22,12 @@ export default async function RoomsPage() {
 
 	return (
 		<main className={styles.page}>
-			<ShadowCard className={styles.card} color="green">
+			<ShadowCard className={styles.card} color="primary">
 				<div className={styles.header}>
 					{currentRoom && <CloseButton linkArgs={{
 						href: PAGES.HOME,
 					}} />}
-					<p className={styles.label}>4Friends 2026</p>
+			
 					<h1 className={styles.title}>Select a room</h1>
 				</div>
 				<ul className={styles.list}>

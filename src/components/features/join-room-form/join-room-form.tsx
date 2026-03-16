@@ -21,7 +21,7 @@ export function JoinRoomForm() {
 					className={cn(styles.input, { [styles.inputError]: !!state.error })}
 					autoComplete="off"
 				/>
-				<Button color="green" isLoading={isPending}>
+				<Button color="neutral" isLoading={isPending}>
 					Join
 				</Button>
 			</form>

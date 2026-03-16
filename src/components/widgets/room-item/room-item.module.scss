@@ -3,7 +3,7 @@
 	display: flex;
 	align-items: center;
 	gap: var(--space-12);
-	padding: var(--space-12) var(--space-16);
+	padding: var(--space-10) var(--space-16);
 	border-radius: 40px;
 	border: var(--border-1) solid var(--color-neutral-200);
 	background: var(--color-neutral-white);
@@ -32,7 +32,7 @@
 	&:hover {
 		background: var(--color-neutral-50);
 		border-color: var(--color-neutral-400);
-		color: var(--color-neutral-900);
+		color: var(--color-neutral-black);
 
 		&::before {
 			border-color: var(--color-neutral-500);
@@ -40,13 +40,13 @@
 	}
 
 	&.active {
-		border-color: var(--color-green-800);
-		background: color-mix(in srgb, var(--color-green-700) 8%, transparent);
-		color: var(--color-green-800);
+		border-color: var(--color-neutral-black);
+		background: color-mix(in srgb, var(--color-neutral-black) 8%, transparent);
+		color: var(--color-neutral-black);
 
 		&::before {
-			background: var(--color-green-700);
-			border-color: var(--color-green-700);
+			background: var(--color-neutral-black);
+			border-color: var(--color-neutral-black);
 		}
 	}
 }

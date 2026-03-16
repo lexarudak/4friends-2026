@@ -17,7 +17,7 @@
 	cursor: pointer;
 	letter-spacing: 0.01em;
 	color: var(--color-neutral-white);
-	transition: background var(--duration-base) var(--ease-standard);
+	transition: filter var(--duration-base);
 
 	&:disabled:not([data-loading]) {
 		opacity: 0.4;
