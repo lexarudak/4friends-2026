@@ -1,0 +1,52 @@
+.roomItem {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: var(--space-12);
+	padding: var(--space-12) var(--space-16);
+	border-radius: var(--radius-m);
+	border: var(--border-1) solid var(--color-neutral-200);
+	background: var(--color-neutral-white);
+	color: var(--color-neutral-600);
+	font-size: var(--font-size-16);
+	font-weight: var(--font-weight-medium);
+	text-align: left;
+	cursor: pointer;
+	transition:
+		background var(--duration-base) var(--ease-standard),
+		border-color var(--duration-base) var(--ease-standard),
+		color var(--duration-base) var(--ease-standard);
+
+	&::before {
+		content: "";
+		width: 8px;
+		height: 8px;
+		border-radius: var(--radius-full);
+		border: var(--border-2) solid var(--color-neutral-300);
+		flex-shrink: 0;
+		transition:
+			border-color var(--duration-base) var(--ease-standard),
+			background var(--duration-base) var(--ease-standard);
+	}
+
+	&:hover {
+		background: var(--color-neutral-50);
+		border-color: var(--color-neutral-400);
+		color: var(--color-neutral-900);
+
+		&::before {
+			border-color: var(--color-neutral-500);
+		}
+	}
+
+	&.active {
+		border-color: var(--color-green-800);
+		background: color-mix(in srgb, var(--color-green-700) 8%, transparent);
+		color: var(--color-green-800);
+
+		&::before {
+			background: var(--color-green-700);
+			border-color: var(--color-green-700);
+		}
+	}
+}

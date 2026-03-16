@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import { RoomService } from "@/services/room.service";
 import { signOutUser } from "./actions";
-import { JoinRoomForm } from "./JoinRoomForm";
-import { RoomItem } from "./RoomItem";
+import { JoinRoomForm } from "@/components/features/join-room-form";
+import { RoomItem } from "@/components/widgets/room-item";
 import styles from "./page.module.scss";
 
 export default async function RoomsPage() {
@@ -28,10 +28,8 @@ export default async function RoomsPage() {
 							<RoomItem roomId={roomId} isActive={roomId === session?.user?.current_room} />
 						</li>
 					))}
-					<li>
-						<JoinRoomForm />
-					</li>
 				</ul>
+				<JoinRoomForm />
 				<form action={signOutUser} className={styles.logoutRow}>
 					<span>or</span>
 					<button type="submit" className={styles.logoutBtn}>Logout</button>

@@ -31,7 +31,7 @@ export async function signOutUser() {
 	await signOut({ redirectTo: PAGES.LOGIN });
 }
 
-export async function selectRoom(roomId: string) {
+export const selectRoom = async (roomId: string) => {
 	const session = await auth();
 	if (session?.user?.email) {
 		await UserService.addUser(session.user.email, { current_room: roomId });
@@ -39,4 +39,4 @@ export async function selectRoom(roomId: string) {
 
 	await unstable_update({ user: { current_room: roomId } });
 	redirect(PAGES.HOME);
-}
+};

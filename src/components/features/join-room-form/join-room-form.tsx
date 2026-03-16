@@ -1,8 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { joinNewRoom, type JoinRoomState } from "./actions";
-import styles from "./page.module.scss";
+import { joinNewRoom, type JoinRoomState } from "@/app/rooms/actions";
+import { Button } from "@/components/shared/button";
+import { cn } from "@/utils/lib";
+import styles from "./join-room-form.module.scss";
 
 const initialState: JoinRoomState = { error: null };
 
@@ -17,12 +19,12 @@ export function JoinRoomForm() {
 					name="room_id"
 					type="text"
 					placeholder="Enter room ID"
-					className={`${styles.input} ${state.error ? styles.inputError : ""}`}
+					className={cn(styles.input, { [styles.inputError]: !!state.error })}
 					autoComplete="off"
 				/>
-				<button type="submit" className={styles.joinBtn} disabled={isPending}>
-					{isPending ? "Joining…" : "Join"}
-				</button>
+				<Button color="green" isLoading={isPending}>
+					Join
+				</Button>
 			</form>
 			<p className={styles.errorMsg}>{state.error}</p>
 		</div>

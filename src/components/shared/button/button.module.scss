@@ -1,0 +1,66 @@
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--space-10) var(--space-16);
+	border-radius: var(--radius-m);
+	border: none;
+	font-size: var(--font-size-14);
+	font-weight: var(--font-weight-medium);
+	cursor: pointer;
+	letter-spacing: 0.01em;
+	color: var(--color-neutral-white);
+	transition: background var(--duration-base) var(--ease-standard);
+
+	&:disabled:not([data-loading]) {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	&[data-loading] {
+		cursor: wait;
+	}
+
+	&:hover:not(:disabled) {
+		filter: brightness(1.2);
+	}
+
+	&:active:not(:disabled) {
+		filter: brightness(0.88);
+	}
+
+	// ── Color variants ─────────────────────────────────
+
+	&[data-color="neutral"] { background: var(--color-neutral-950); }
+	&[data-color="green"]   { background: var(--color-green-800); }
+	&[data-color="primary"] { background: var(--color-primary-700); }
+	&[data-color="red"]     { background: var(--color-red-600); }
+
+	&[data-color="yellow"] {
+		background: var(--color-yellow-500);
+		color: var(--color-neutral-950);
+	}
+}
+
+// Hides text without collapsing the button width
+.contentHidden {
+	visibility: hidden;
+}
+
+.spinner {
+	position: absolute;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: rgba(255, 255, 255, 0.9);
+	animation: spin 0.6s linear infinite;
+	pointer-events: none;
+}

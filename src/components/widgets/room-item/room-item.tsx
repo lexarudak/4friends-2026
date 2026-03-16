@@ -1,17 +1,18 @@
-import { selectRoom } from "./actions";
-import styles from "./page.module.scss";
+import { cn } from "@/utils/lib";
+import { selectRoom } from "@/app/rooms/actions";
+import styles from "./room-item.module.scss";
 
-type RoomItemProps = {
+interface RoomItemProps {
 	roomId: string;
 	isActive: boolean;
-};
+}
 
 export function RoomItem({ roomId, isActive }: RoomItemProps) {
 	return (
 		<form action={selectRoom.bind(null, roomId)}>
 			<button
 				type="submit"
-				className={`${styles.roomItem} ${isActive ? styles.active : ""}`}
+				className={cn(styles.roomItem, { [styles.active]: isActive })}
 			>
 				{roomId}
 			</button>
