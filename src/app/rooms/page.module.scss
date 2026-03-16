@@ -1,3 +1,5 @@
+
+
 .page {
 	min-height: 100dvh;
 	display: flex;
@@ -12,9 +14,7 @@
 	max-width: 440px;
 	display: flex;
 	flex-direction: column;
-	background: var(--color-neutral-white);
 	overflow: hidden;
-	box-shadow: var(--shadow-low);
 }
 
 // Header

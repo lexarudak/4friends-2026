@@ -13,12 +13,11 @@ export function JoinRoomForm() {
 
 	return (
 		<div className={styles.joinSection}>
-			<span className={styles.joinLabel}>Join a new room</span>
-			<form action={formAction} className={styles.inputRow}>
+			<form action={formAction} className={styles.form}>
 				<input
 					name="room_id"
 					type="text"
-					placeholder="Enter room ID"
+					placeholder="Join a new room"
 					className={cn(styles.input, { [styles.inputError]: !!state.error })}
 					autoComplete="off"
 				/>

@@ -65,15 +65,15 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/utils/lib";
 import styles from "./my-component.module.scss";
 
-interface MyComponentProps extends HTMLAttributes<HTMLDivElement> {
+type Props = HTMLAttributes<HTMLDivElement> & {
 	variant?: "primary" | "secondary";
-}
+};
 
-export function MyComponent({
+export const MyComponent: FC<Props> = ({
 	variant = "primary",
 	className,
 	...props
-}: MyComponentProps) {
+}) => {
 	return (
 		<div
 			{...props}
@@ -81,7 +81,7 @@ export function MyComponent({
 			className={cn(styles.root, className)}
 		/>
 	);
-}
+};
 ```
 
 ### 2. `my-component.module.scss`

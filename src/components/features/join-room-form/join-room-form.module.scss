@@ -1,27 +1,18 @@
 .joinSection {
+  flex-grow: 1;
 	display: flex;
-	flex-direction: column;
+  flex-direction: column;
 	gap: var(--space-8);
-	padding: var(--space-16);
-	border-radius: var(--radius-m);
-	border: var(--border-1) dashed var(--color-neutral-300);
-	background: var(--color-neutral-50);
 	margin: var(--space-24);
 	margin-top: 0;
 }
 
-.joinLabel {
-	font-size: var(--font-size-12);
-	font-weight: var(--font-weight-medium);
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--color-neutral-500);
+.form {
+  display: flex;
+  gap: var(--space-8);
+  flex-grow: 1;
 }
 
-.inputRow {
-	display: flex;
-	gap: var(--space-8);
-}
 
 .input {
 	flex: 1;

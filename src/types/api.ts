@@ -13,3 +13,11 @@ export type UserResponse = {
 	image: string | null;
 	current_room: string | null;
 };
+
+export type Color =
+	| "neutral"
+	| "primary"
+	| "green"
+	| "red"
+	| "alpha"
+	| "yellow";

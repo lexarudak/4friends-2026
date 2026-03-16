@@ -6,6 +6,7 @@ import { RoomItem } from "@/components/widgets/room-item";
 import { CloseButton } from "@/components/shared/close-button";
 import styles from "./page.module.scss";
 import { PAGES } from "@/utils/constants";
+import { ShadowCard } from "@/components/shared/shadow-card";
 
 export default async function RoomsPage() {
 	const session = await auth();
@@ -21,7 +22,7 @@ export default async function RoomsPage() {
 
 	return (
 		<main className={styles.page}>
-			<div className={styles.card}>
+			<ShadowCard className={styles.card} color="green">
 				<div className={styles.header}>
 					{currentRoom && <CloseButton linkArgs={{
 						href: PAGES.HOME,
@@ -41,7 +42,7 @@ export default async function RoomsPage() {
 					<span>or</span>
 					<button type="submit" className={styles.logoutBtn}>Logout</button>
 				</form>
-			</div>
+			</ShadowCard>
 		</main>
 	);
 }
