@@ -23,9 +23,9 @@ export function HeaderInfoBar({ roomName, userName, userImage }: HeaderInfoBarPr
 				{userImage && (
 					<Image
 						src={userImage}
-						alt={userName ?? ""}
-						width={22}
-						height={22}
+						alt={""}
+						width={16}
+						height={16}
 						className={styles.avatar}
 					/>
 				)}

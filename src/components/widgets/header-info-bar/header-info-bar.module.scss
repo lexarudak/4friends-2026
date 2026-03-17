@@ -17,7 +17,6 @@
 	
 	@include container;
 
-
 	&:hover {
 		background: var(--color-yellow-500);
 	}
@@ -66,5 +65,4 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-
 }

@@ -1,15 +1,21 @@
-.bottomBar {
+@use "@/styles/mixins" as *;
+
+.bar {
 	display: flex;
 	align-items: center;
 	gap: var(--space-32);
-	padding: 0 var(--space-24);
 	height: 64px;
 	background: var(--color-neutral-black);
+
+  @include container;
 }
 
 .logo {
-	height: 44px;
-	width: 44px;
+  padding: var(--space-12);
+  border-radius: var(--radius-m);
+  background-color: var(--color-neutral-black);
+  position: relative;
+  top: 20px;
 	flex-shrink: 0;
 }
 
