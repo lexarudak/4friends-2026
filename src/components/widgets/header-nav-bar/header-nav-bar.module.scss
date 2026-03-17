@@ -25,7 +25,8 @@
 	gap: var(--space-32);
 }
 
-.navLink {
+.navItem {
+  list-style-type: none;
 	font-size: var(--font-size-14);
 	font-weight: var(--font-weight-medium);
 	letter-spacing: 0.06em;
@@ -37,4 +38,15 @@
 	&:hover {
 		color: var(--color-yellow-400);
 	}
+}
+
+.navBtn {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: var(--font-size-14);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 }

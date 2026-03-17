@@ -1,17 +1,28 @@
+
+
 import Link from "next/link";
 import { FwcLogoIcon } from "@/components/icons";
 import styles from "./header-nav-bar.module.scss";
 import { NAV_LINKS } from "./header-nav-bar.constants";
+import { signOutUser } from "@/app/rooms/actions";
+import { PAGES } from "@/utils/constants";
 
-export function HeaderNavBar() {
+export  function HeaderNavBar() {
 	return (
 		<nav className={styles.bar}>
-			<FwcLogoIcon className={styles.logo} />
-			<div className={styles.navLinks}>
+      <Link href={PAGES.HOME}><FwcLogoIcon className={styles.logo} /></Link>
+			
+			<ul className={styles.navLinks}>
         {NAV_LINKS.map(link => (
-          <Link key={link.href} href={link.href} className={styles.navLink}>{link.label}</Link>
+          <li key={link.href} className={styles.navItem}>
+            <Link href={link.href}>{link.label}</Link>
+          </li>
         ))}
-			</div>
+
+        <li className={styles.navItem}>
+          <button onClick={signOutUser} className={styles.navBtn}>Logout</button>
+        </li>
+			</ul>
 		</nav>
 	);
 }
