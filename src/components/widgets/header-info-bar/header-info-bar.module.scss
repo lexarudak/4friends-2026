@@ -1,0 +1,61 @@
+.topBar {
+	display: flex;
+	gap: var(--space-16);
+	height: 36px;
+}
+
+.roomSection {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	gap: var(--space-8);
+	padding: 0 var(--space-16);
+	background: var(--color-yellow-400);
+	min-width: 0;
+}
+
+.userSection {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-8);
+	padding: 0 var(--space-16);
+	background: var(--color-primary-600);
+	min-width: 0;
+}
+
+.roomLabel {
+	font-size: var(--font-size-10);
+	font-weight: var(--font-weight-medium);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: rgba(0, 0, 0, 0.45);
+	flex-shrink: 0;
+}
+
+.roomName {
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-bold);
+	color: var(--color-neutral-950);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.avatar {
+	border-radius: var(--radius-full);
+	width: 22px;
+	height: 22px;
+	flex-shrink: 0;
+	object-fit: cover;
+}
+
+.userName {
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-medium);
+	color: var(--color-neutral-white);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

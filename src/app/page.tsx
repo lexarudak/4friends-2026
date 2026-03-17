@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { TableService } from "@/services/table.service";
-import { AppHeader } from "@/components/widgets/app-header";
+import { AppHeader } from "@/components/features/app-header";
 import styles from "./page.module.scss";
 
 export default async function Home() {
