@@ -1,1 +1,9 @@
-/* SCSS mixins placeholder */
+@use "vars" as *;
+
+@mixin container {
+  padding: 0  var(--space-xl);
+
+  @media (max-width: $screen-phone) {
+    padding: 0 var(--space-16);
+  }
+}

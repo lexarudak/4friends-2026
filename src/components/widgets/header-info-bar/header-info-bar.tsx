@@ -1,5 +1,7 @@
 import Image from "next/image";
 import styles from "./header-info-bar.module.scss";
+import Link from "next/link";
+import { PAGES } from "@/utils/constants";
 
 interface HeaderInfoBarProps {
 	roomName?: string | null;
@@ -9,11 +11,14 @@ interface HeaderInfoBarProps {
 
 export function HeaderInfoBar({ roomName, userName, userImage }: HeaderInfoBarProps) {
 	return (
-		<div className={styles.topBar}>
-			<div className={styles.roomSection}>
-				<span className={styles.roomLabel}>Room</span>
-				<span className={styles.roomName}>{roomName ?? "—"}</span>
-			</div>
+		<div className={styles.bar}>
+			<Link href={PAGES.ROOMS}className={styles.roomSection}>
+			{roomName ? <>
+						<span className={styles.roomLabel}>Room</span>
+				<span className={styles.roomName}>{roomName}</span></>
+				: <span className={styles.noRoom}>Select a room</span>}
+	
+			</Link>
 			<div className={styles.userSection}>
 				{userImage && (
 					<Image
