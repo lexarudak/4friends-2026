@@ -1,4 +1,4 @@
-export default function (plop) {
+export default function Fn (plop) {
 	plop.setGenerator("component", {
 		description: "Create a new component",
 		prompts: [
