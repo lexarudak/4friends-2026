@@ -1,13 +1,14 @@
 @use "@/styles/mixins" as *;
 
 .bar {
+	background: var(--color-neutral-black);
+}
+
+.container {
+  height: 64px;
 	display: flex;
 	align-items: center;
 	gap: var(--space-32);
-	height: 64px;
-	background: var(--color-neutral-black);
-
-  @include container;
 }
 
 .logo {

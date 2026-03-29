@@ -25,6 +25,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "plop": "^4.0.5",
+    "prettier": "^3.8.1",
     "sass": "^1.97.3",
     "typescript": "^5"
   }

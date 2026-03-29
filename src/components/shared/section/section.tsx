@@ -1,19 +1,19 @@
 import type { HTMLAttributes, FC } from "react";
 import { cn } from "@/utils/lib";
-import styles from "./{{kebabCase name}}.module.scss";
+import styles from "./section.module.scss";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   
 }
 
-export const {{pascalCase name}}: FC<Props> = ({
+export const Section: FC<Props> = ({
 	className,
 	...props
 }) => {
 	return (
-    <div {...props} className={cn(styles.container, className)}>
-    
-    </div>
+    <section {...props} className={cn(styles.container, className)}>
+      {props.children}
+    </section>
   );
 };
   

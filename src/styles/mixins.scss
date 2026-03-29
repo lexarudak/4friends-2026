@@ -7,3 +7,10 @@
     padding: 0 var(--space-16);
   }
 }
+
+@mixin pageContainer {
+  @include container;
+
+  margin-inline: auto;
+  max-width: 1800px;
+}

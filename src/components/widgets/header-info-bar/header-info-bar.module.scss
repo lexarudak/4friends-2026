@@ -1,6 +1,32 @@
 @use "@/styles/mixins" as *;
 
 .bar {
+	position: relative;
+
+  &::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 50%;
+		background: var(--color-yellow-400);
+		z-index: -1;
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 100%;
+		width: 50%;
+		background: var(--color-primary-700);
+		z-index: -1;
+	}
+}
+
+.container {
 	display: flex;
 	height: 24px;
 	font-size: var(--font-size-12);
@@ -14,12 +40,7 @@
 	gap: var(--space-8);
 	background: var(--color-yellow-400);
 	min-width: 200px;
-	
-	@include container;
-
-	&:hover {
-		background: var(--color-yellow-500);
-	}
+	padding-inline-end: var(--space-16);
 }
 
 .userSection {
@@ -31,8 +52,7 @@
 	max-width: 200px;
 	min-width: 0px;
 	flex-shrink: 1;
-
-	@include container;
+	padding-inline-start: var(--space-16);
 }
 
 .roomLabel {
