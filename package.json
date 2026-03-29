@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "g": "plop component"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
@@ -23,6 +24,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "plop": "^4.0.5",
     "sass": "^1.97.3",
     "typescript": "^5"
   }
