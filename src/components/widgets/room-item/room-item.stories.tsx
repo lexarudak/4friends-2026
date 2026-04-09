@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import styles from "./room-item.module.scss";
 import { cn } from "@/utils/lib";
+import { RoomItem } from "./room-item";
 
 // Storybook preview — renders the visual shell without the server action form
 const RoomItemPreview = ({

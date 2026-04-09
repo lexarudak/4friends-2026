@@ -1,18 +1,81 @@
-import type { HTMLAttributes, FC } from "react";
+"use client";
+
+import { useState, useEffect, type FC, type HTMLAttributes } from "react";
 import { cn } from "@/utils/lib";
 import styles from "./timer.module.scss";
 import { ShadowCard } from "@/components/shared/shadow-card";
 
-type Props = HTMLAttributes<HTMLDivElement> & {};
+type Props = HTMLAttributes<HTMLDivElement> & {
+	targetDate: Date;
+	message?: string;
+	homeTeam?: string;
+	awayTeam?: string;
+};
 
-export const Timer: FC<Props> = ({ className, ...props }) => {
+type Countdown = {
+	days: number;
+	hours: number;
+	mins: number;
+	secs: number;
+};
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const computeCountdown = (targetDate: Date): Countdown => {
+	const diff = Math.max(0, (targetDate?.getTime() ?? 0) - Date.now());
+	const totalSecs = Math.floor(diff / 1000);
+
+	return {
+		days: Math.floor(totalSecs / 86400),
+		hours: Math.floor((totalSecs % 86400) / 3600),
+		mins: Math.floor((totalSecs % 3600) / 60),
+		secs: totalSecs % 60,
+	};
+};
+
+const UNITS: { key: keyof Countdown; label: string }[] = [
+	{ key: "days", label: "Days" },
+	{ key: "hours", label: "Hours" },
+	{ key: "mins", label: "mins" },
+	{ key: "secs", label: "secs" },
+];
+
+export const Timer: FC<Props> = ({ targetDate, message, homeTeam, awayTeam, className, ...props }) => {
+	const [countdown, setCountdown] = useState<Countdown>(() =>
+		computeCountdown(targetDate),
+	);
+
+	useEffect(() => {
+		const tick = () => setCountdown(computeCountdown(targetDate));
+		const id = setInterval(tick, 1000);
+		return () => clearInterval(id);
+	}, [targetDate]);
+
 	return (
-		<ShadowCard
-			{...props}
-			className={cn(styles.container, className)}
-			color="primary"
-		>
-			sss
+		<ShadowCard {...props} className={cn(styles.container, className)} color="primary">
+			{message && <p className={styles.message}>{message}</p>}
+			{homeTeam && awayTeam && (
+				<div className={styles.teams}>
+					<span className={styles.team}>{homeTeam}</span>
+					<span className={styles.vs}>vs</span>
+					<span className={styles.team}>{awayTeam}</span>
+				</div>
+			)}
+			<div className={styles.units}>
+			{UNITS.map(({ key, label }, i) => (
+				<div key={key} className={styles.unit}>
+					{i > 0 && (
+						<span className={styles.divider} aria-hidden>
+							:
+						</span>
+					)}
+					<div className={styles.cell}>
+						<span className={styles.value}>{pad(countdown[key])}</span>
+						<span className={styles.label}>{label}</span>
+					</div>
+				</div>
+			))}
+			</div>
 		</ShadowCard>
 	);
 };

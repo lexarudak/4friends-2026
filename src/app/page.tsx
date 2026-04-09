@@ -16,7 +16,13 @@ export default async function Home() {
 				<Section className={styles.grid}>
 					<HeroSection />
 					<div className={styles.secondChild}>
-						<Timer className={styles.a} />
+						<Timer
+							className={styles.timer}
+							targetDate={new Date("2026-06-11T20:00:00")}
+							message="Next match — Group A · Opening"
+							homeTeam="Mexico"
+							awayTeam="USA"
+						/>
 					</div>
 					<HeroSection />
 					<HeroSection />
