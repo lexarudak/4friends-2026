@@ -18,16 +18,18 @@ export function HeaderInfoBar({
 	return (
 		<div className={styles.bar}>
 			<PageContainer className={styles.container}>
-				<Link href={PAGES.ROOMS} className={styles.roomSection}>
+				<div className={styles.roomSection}>
 					{roomName ? (
 						<>
 							<span className={styles.roomLabel}>Room</span>
-							<span className={styles.roomName}>{roomName}</span>
+							<Link href={PAGES.ROOMS} className={styles.roomName}>
+								{roomName}
+							</Link>
 						</>
 					) : (
 						<span className={styles.noRoom}>Select a room</span>
 					)}
-				</Link>
+				</div>
 				<div className={styles.userSection}>
 					{userImage && (
 						<Image
