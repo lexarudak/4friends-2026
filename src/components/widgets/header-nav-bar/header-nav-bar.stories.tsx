@@ -5,6 +5,7 @@ import { NAV_LINKS } from "./header-nav-bar.constants";
 import { PAGES } from "@/utils/constants";
 import { PageContainer } from "@/components/shared/page-container";
 import styles from "./header-nav-bar.module.scss";
+import { HeaderNavBar } from "./header-nav-bar";
 
 // Storybook preview — replaces the server-action logout with a no-op
 const HeaderNavBarPreview = () => (
