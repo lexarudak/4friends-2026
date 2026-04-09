@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, type FC, type HTMLAttributes } from "react";
+import {
+	Fragment,
+	useState,
+	useEffect,
+	type FC,
+	type HTMLAttributes,
+} from "react";
 import { cn } from "@/utils/lib";
 import styles from "./timer.module.scss";
 import { ShadowCard } from "@/components/shared/shadow-card";
@@ -40,19 +46,29 @@ const UNITS: { key: keyof Countdown; label: string }[] = [
 	{ key: "secs", label: "secs" },
 ];
 
-export const Timer: FC<Props> = ({ targetDate, message, homeTeam, awayTeam, className, ...props }) => {
-	const [countdown, setCountdown] = useState<Countdown>(() =>
-		computeCountdown(targetDate),
-	);
+export const Timer: FC<Props> = ({
+	targetDate,
+	message,
+	homeTeam,
+	awayTeam,
+	className,
+	...props
+}) => {
+	const [countdown, setCountdown] = useState<Countdown | null>(null);
 
 	useEffect(() => {
+		setCountdown(computeCountdown(targetDate));
 		const tick = () => setCountdown(computeCountdown(targetDate));
 		const id = setInterval(tick, 1000);
 		return () => clearInterval(id);
 	}, [targetDate]);
 
 	return (
-		<ShadowCard {...props} className={cn(styles.container, className)} color="primary">
+		<ShadowCard
+			{...props}
+			className={cn(styles.container, className)}
+			color="neutral"
+		>
 			{message && <p className={styles.message}>{message}</p>}
 			{homeTeam && awayTeam && (
 				<div className={styles.teams}>
@@ -61,20 +77,20 @@ export const Timer: FC<Props> = ({ targetDate, message, homeTeam, awayTeam, clas
 					<span className={styles.team}>{awayTeam}</span>
 				</div>
 			)}
-			<div className={styles.units}>
-			{UNITS.map(({ key, label }, i) => (
-				<div key={key} className={styles.unit}>
-					{i > 0 && (
-						<span className={styles.divider} aria-hidden>
-							:
-						</span>
-					)}
-					<div className={styles.cell}>
-						<span className={styles.value}>{pad(countdown[key])}</span>
-						<span className={styles.label}>{label}</span>
-					</div>
-				</div>
-			))}
+			<div className={styles.countdown}>
+				{UNITS.map(({ key, label }, i) => (
+					<Fragment key={key}>
+						{i > 0 && (
+							<span className={styles.sep} aria-hidden>
+								:
+							</span>
+						)}
+						<div className={styles.unit}>
+							<span className={styles.label}>{label}</span>
+							<span className={styles.value}>{pad(countdown?.[key] ?? 0)}</span>
+						</div>
+					</Fragment>
+				))}
 			</div>
 		</ShadowCard>
 	);
