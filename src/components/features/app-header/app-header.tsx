@@ -1,17 +1,19 @@
 import { HeaderInfoBar } from "@/components/widgets/header-info-bar";
 import { HeaderNavBar } from "@/components/widgets/header-nav-bar";
 import styles from "./app-header.module.scss";
+import { auth } from "@/auth";
 
-interface AppHeaderProps {
-	roomName?: string | null;
-	userName?: string | null;
-	userImage?: string | null;
-}
+export async function AppHeader() {
+	const session = await auth();
+	const user = session?.user;
 
-export function AppHeader({ roomName, userName, userImage }: AppHeaderProps) {
 	return (
 		<header className={styles.header}>
-			<HeaderInfoBar roomName={roomName} userName={userName} userImage={userImage} />
+			<HeaderInfoBar
+				roomName={user?.current_room}
+				userName={user?.name}
+				userImage={user?.image}
+			/>
 			<HeaderNavBar />
 		</header>
 	);

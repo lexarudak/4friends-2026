@@ -1,3 +1,12 @@
-.container {
-  
+@use "@/styles/mixins" as *;
+@use "@/styles/vars";
+
+.section {
+	@include pageContainer;
+
+	margin-block: 150px;
+
+	@media (max-width: vars.$screen-phone) {
+		margin-block: 100px;
+	}
 }
