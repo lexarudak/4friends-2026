@@ -1,8 +1,8 @@
 import type { HTMLAttributes, FC } from "react";
-import Link from "next/link";
 import { cn } from "@/utils/lib";
 import styles from "./hero-section.module.scss";
 import { ShadowCard } from "@/components/shared/shadow-card";
+import { Button } from "@/components/shared/button";
 
 type Props = HTMLAttributes<HTMLDivElement>;
 
@@ -30,12 +30,14 @@ export const HeroSection: FC<Props> = ({ className, ...props }) => {
 						</span>
 						<span>19 July 2026</span>
 					</p>
-					<Link href="/tournament" className={styles.cta}>
+					<Button
+						href="/tournament"
+						color="primary"
+						className={styles.cta}
+					>
 						Discover the tournament
-						<span className={styles.arrow} aria-hidden>
-							→
-						</span>
-					</Link>
+						<span aria-hidden>→</span>
+					</Button>
 				</div>
 			</section>
 		</ShadowCard>

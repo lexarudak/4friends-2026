@@ -1,16 +1,16 @@
 @use "vars" as *;
 
 @mixin container {
-  padding: 0  var(--space-xl);
+	padding: 0 var(--space-xl);
 
-  @media (max-width: $screen-phone) {
-    padding: 0 var(--space-16);
-  }
+	@media (max-width: $screen-phone) {
+		padding: 0 var(--space-16);
+	}
 }
 
 @mixin pageContainer {
-  @include container;
+	@include container;
 
-  margin-inline: auto;
-  max-width: 1800px;
+	margin-inline: auto;
+	max-width: 1800px;
 }

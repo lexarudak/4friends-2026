@@ -9,14 +9,15 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	gap: var(--space-8);
 	padding: var(--space-10) var(--space-16);
-	border-radius: 30px;
 	border: none;
 	font-size: var(--font-size-14);
 	font-weight: var(--font-weight-medium);
 	cursor: pointer;
 	letter-spacing: 0.01em;
 	color: var(--color-neutral-white);
+	text-decoration: none;
 	transition: filter var(--duration-base);
 
 	&:disabled:not([data-loading]) {
@@ -38,10 +39,18 @@
 
 	// ── Color variants ─────────────────────────────────
 
-	&[data-color="neutral"] { background: var(--color-neutral-950); }
-	&[data-color="green"]   { background: var(--color-green-800); }
-	&[data-color="primary"] { background: var(--color-primary-700); }
-	&[data-color="red"]     { background: var(--color-red-600); }
+	&[data-color="neutral"] {
+		background: var(--color-neutral-950);
+	}
+	&[data-color="green"] {
+		background: var(--color-green-800);
+	}
+	&[data-color="primary"] {
+		background: var(--color-primary-600);
+	}
+	&[data-color="red"] {
+		background: var(--color-red-600);
+	}
 
 	&[data-color="yellow"] {
 		background: var(--color-yellow-500);
@@ -52,6 +61,26 @@
 // Hides text without collapsing the button width
 .contentHidden {
 	visibility: hidden;
+}
+
+// ── Inline variant ──────────────────────────────────
+.btn.inline {
+	padding: 0;
+	background: none;
+	color: var(--color-primary-400);
+	font-size: inherit;
+	font-weight: var(--font-weight-medium);
+	letter-spacing: inherit;
+	text-underline-offset: 2px;
+
+	&:hover:not(:disabled) {
+		filter: none;
+		text-decoration: underline;
+	}
+	&:active:not(:disabled) {
+		filter: none;
+		opacity: 0.7;
+	}
 }
 
 .spinner {

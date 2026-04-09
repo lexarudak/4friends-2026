@@ -1,8 +1,8 @@
 import Image from "next/image";
 import styles from "./header-info-bar.module.scss";
-import Link from "next/link";
 import { PAGES } from "@/utils/constants";
 import { PageContainer } from "@/components/shared/page-container";
+import { Button } from "@/components/shared/button";
 
 interface HeaderInfoBarProps {
 	roomName?: string | null;
@@ -22,9 +22,14 @@ export function HeaderInfoBar({
 					{roomName ? (
 						<>
 							<span className={styles.roomLabel}>Room</span>
-							<Link href={PAGES.ROOMS} className={styles.roomName}>
+							<Button
+								href={PAGES.ROOMS}
+								variant="inline"
+								color="primary"
+								className={styles.roomName}
+							>
 								{roomName}
-							</Link>
+							</Button>
 						</>
 					) : (
 						<span className={styles.noRoom}>Select a room</span>

@@ -11,23 +11,23 @@ import { ShadowCard } from "@/components/shared/shadow-card";
 export default async function RoomsPage() {
 	const session = await auth();
 
-
-
 	const currentRoom = session?.user?.current_room;
 	const rooms = session?.user?.email
 		? await RoomService.getUserRooms(session.user.email)
 		: [];
 
-
-
 	return (
 		<main className={styles.page}>
-			<ShadowCard className={styles.card} color="primary">
+			<ShadowCard className={styles.card}>
 				<div className={styles.header}>
-					{currentRoom && <CloseButton linkArgs={{
-						href: PAGES.HOME,
-					}} />}
-			
+					{currentRoom && (
+						<CloseButton
+							linkArgs={{
+								href: PAGES.HOME,
+							}}
+						/>
+					)}
+
 					<h1 className={styles.title}>Select a room</h1>
 				</div>
 				<ul className={styles.list}>
@@ -40,7 +40,9 @@ export default async function RoomsPage() {
 				<JoinRoomForm />
 				<form action={signOutUser} className={styles.logoutRow}>
 					<span>or</span>
-					<button type="submit" className={styles.logoutBtn}>Logout</button>
+					<button type="submit" className={styles.logoutBtn}>
+						Logout
+					</button>
 				</form>
 			</ShadowCard>
 		</main>
