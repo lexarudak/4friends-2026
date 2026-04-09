@@ -50,7 +50,13 @@ export const Active: Story = {
 export const List: AnyStory = {
 	render: () => (
 		<div
-			style={{ maxWidth: 320, padding: 16, display: "flex", flexDirection: "column", gap: 8 }}
+			style={{
+				maxWidth: 320,
+				padding: 16,
+				display: "flex",
+				flexDirection: "column",
+				gap: 8,
+			}}
 		>
 			<RoomItemPreview roomId="room1" isActive={false} />
 			<RoomItemPreview roomId="room2" isActive={true} />

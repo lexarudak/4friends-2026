@@ -44,13 +44,13 @@ export const AllColors: Story = {
 				padding: "24px",
 			}}
 		>
-			{(
-				["neutral", "primary", "green", "yellow", "red", "alpha"] as const
-			).map((color) => (
-				<ShadowCard key={color} color={color}>
-					<div style={{ padding: "16px", fontWeight: 500 }}>{color}</div>
-				</ShadowCard>
-			))}
+			{(["neutral", "primary", "green", "yellow", "red", "alpha"] as const).map(
+				(color) => (
+					<ShadowCard key={color} color={color}>
+						<div style={{ padding: "16px", fontWeight: 500 }}>{color}</div>
+					</ShadowCard>
+				)
+			)}
 		</div>
 	),
 };

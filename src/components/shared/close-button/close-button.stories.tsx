@@ -40,4 +40,3 @@ export const AsLink: Story = {
 		linkArgs: { href: "/" },
 	},
 };
-
