@@ -10,7 +10,11 @@ const store: Map<string, ScoreEntry[]> = new Map([
 		"default",
 		[
 			{ userId: "user-1", name: "Val", score: 101 },
-			{ userId: "user-2", name: "kam", score: 94 },
+			{
+				userId: "user-2",
+				name: "Konstantinos Papadopoulos-Alexandropoulos",
+				score: 94,
+			},
 			{ userId: "user-3", name: "valera", score: 44 },
 			{ userId: "user-4", name: "pete", score: 38 },
 			{ userId: "__current_user__", name: "me", score: 27 },

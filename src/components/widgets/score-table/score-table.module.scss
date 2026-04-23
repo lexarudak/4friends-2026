@@ -78,6 +78,10 @@
 	font-weight: var(--font-weight-medium);
 	color: var(--color-neutral-300);
 	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .score {
