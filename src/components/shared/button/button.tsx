@@ -26,7 +26,12 @@ export function Button({
 	className,
 	...props
 }: ButtonProps) {
-	const cls = cn(styles.btn, styles[variant], size === "lg" && styles.lg, className);
+	const cls = cn(
+		styles.btn,
+		styles[variant],
+		size === "lg" && styles.lg,
+		className
+	);
 
 	if (href !== undefined) {
 		return (
