@@ -97,7 +97,7 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 			<p className={styles.hint}>Make your bets</p>
 
 			<div className={styles.actions}>
-				<Button type="submit" color="primary" isLoading={formik.isSubmitting}>
+				<Button type="submit" color="primary" size="lg" isLoading={formik.isSubmitting}>
 					Save
 				</Button>
 				<Button type="button" variant="outline" onClick={handleClear}>

@@ -5,10 +5,12 @@ import styles from "./button.module.scss";
 
 export type ButtonColor = "neutral" | "green" | "primary" | "yellow" | "red";
 export type ButtonVariant = "solid" | "inline" | "outline";
+export type ButtonSize = "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	color?: ButtonColor;
 	variant?: ButtonVariant;
+	size?: ButtonSize;
 	isLoading?: boolean;
 	href?: string;
 }
@@ -16,6 +18,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({
 	color = "neutral",
 	variant = "solid",
+	size = "md",
 	isLoading = false,
 	disabled,
 	href,
@@ -23,7 +26,7 @@ export function Button({
 	className,
 	...props
 }: ButtonProps) {
-	const cls = cn(styles.btn, styles[variant], className);
+	const cls = cn(styles.btn, styles[variant], size === "lg" && styles.lg, className);
 
 	if (href !== undefined) {
 		return (

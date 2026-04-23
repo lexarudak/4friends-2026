@@ -55,8 +55,8 @@ export const MatchCard: FC<Props> = ({
 				</div>
 
 				<div className={styles.team} data-side="away">
-					<span className={styles.teamName}>{match.away.name}</span>
 					<span className={styles.flag}>{match.away.flag}</span>
+					<span className={styles.teamName}>{match.away.name}</span>
 				</div>
 			</div>
 		</div>

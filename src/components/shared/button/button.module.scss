@@ -37,7 +37,7 @@
 		filter: brightness(0.88);
 	}
 
-	// ── Color variants ─────────────────────────────────
+	// ── Color variants ──────────────────────────────────
 
 	&[data-color="neutral"] {
 		background: var(--color-neutral-950);
@@ -51,7 +51,6 @@
 	&[data-color="red"] {
 		background: var(--color-red-600);
 	}
-
 	&[data-color="yellow"] {
 		background: var(--color-yellow-500);
 		color: var(--color-neutral-950);
@@ -61,6 +60,24 @@
 // Hides text without collapsing the button width
 .contentHidden {
 	visibility: hidden;
+}
+
+.spinner {
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 14px;
+	height: 14px;
+	border: 2px solid transparent;
+	border-top-color: currentColor;
+	border-radius: 50%;
+	animation: spin 0.7s linear infinite;
+}
+
+// ── Size variants ──────────────────────────────────
+.btn.lg {
+	padding: var(--space-12) var(--space-24);
+	font-size: var(--font-size-16);
 }
 
 // ── Inline variant ──────────────────────────────────
