@@ -1,5 +1,6 @@
 import { AppHeader } from "@/components/features/app-header";
 import { HeroSection } from "@/components/features/hero-section";
+import { TopTable } from "@/components/features/top-table";
 import styles from "./page.module.scss";
 import { Timer } from "@/components/widgets/timer/timer";
 import { BetsSection } from "@/components/features/bets-section";
@@ -22,6 +23,7 @@ export default async function Home() {
 							homeTeam="Mexico"
 							awayTeam="USA"
 						/>
+						<TopTable />
 					</div>
 				</div>
 			</main>

@@ -41,6 +41,18 @@ export type Bet = {
 	away: number | null;
 };
 
+export type TableRow = {
+	position: number;
+	name: string;
+	score: number;
+	isCurrentUser?: boolean;
+};
+
+export type ScoreTableData = {
+	rows: TableRow[];
+	currentUserRow?: TableRow;
+};
+
 export type BetsFormValues = {
 	bets: Record<string, { home: string; away: string }>;
 };
