@@ -36,7 +36,7 @@
 	animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
 
 	&::before {
-		content: '';
+		content: "";
 		display: block;
 		width: 24px;
 		height: 2px;
@@ -86,7 +86,7 @@
 	color: var(--color-neutral-500);
 
 	& + &::before {
-		content: '·';
+		content: "·";
 		margin-right: var(--space-16);
 		color: var(--color-neutral-700);
 	}

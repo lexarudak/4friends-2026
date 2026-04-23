@@ -63,10 +63,7 @@ export const Timer: FC<Props> = ({
 	}, [targetDate]);
 
 	return (
-		<div
-			{...props}
-			className={cn(styles.container, className)}
-		>
+		<div {...props} className={cn(styles.container, className)}>
 			{message && <p className={styles.message}>{message}</p>}
 			{homeTeam && awayTeam && (
 				<div className={styles.teams}>
