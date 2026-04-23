@@ -9,7 +9,6 @@ import {
 } from "react";
 import { cn } from "@/utils/lib";
 import styles from "./timer.module.scss";
-import { ShadowCard } from "@/components/shared/shadow-card";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
 	targetDate: Date;
@@ -64,10 +63,9 @@ export const Timer: FC<Props> = ({
 	}, [targetDate]);
 
 	return (
-		<ShadowCard
+		<div
 			{...props}
 			className={cn(styles.container, className)}
-			color="neutral"
 		>
 			{message && <p className={styles.message}>{message}</p>}
 			{homeTeam && awayTeam && (
@@ -86,12 +84,12 @@ export const Timer: FC<Props> = ({
 							</span>
 						)}
 						<div className={styles.unit}>
-							<span className={styles.label}>{label}</span>
 							<span className={styles.value}>{pad(countdown?.[key] ?? 0)}</span>
+							<span className={styles.label}>{label}</span>
 						</div>
 					</Fragment>
 				))}
 			</div>
-		</ShadowCard>
+		</div>
 	);
 };

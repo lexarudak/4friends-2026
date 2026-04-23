@@ -21,3 +21,26 @@ export type Color =
 	| "red"
 	| "alpha"
 	| "yellow";
+export type Team = {
+	name: string;
+	flag: string; // emoji
+};
+
+export type Match = {
+	id: string;
+	group: string;
+	time: string; // "HH:MM"
+	date: string; // "DD/MM/YY"
+	home: Team;
+	away: Team;
+};
+
+export type Bet = {
+	matchId: string;
+	home: number | null;
+	away: number | null;
+};
+
+export type BetsFormValues = {
+	bets: Record<string, { home: string; away: string }>;
+};

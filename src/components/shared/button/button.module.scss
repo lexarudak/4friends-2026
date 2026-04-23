@@ -83,13 +83,19 @@
 	}
 }
 
-.spinner {
-	position: absolute;
-	width: 14px;
-	height: 14px;
-	border-radius: 50%;
-	border: 2px solid rgba(255, 255, 255, 0.3);
-	border-top-color: rgba(255, 255, 255, 0.9);
-	animation: spin 0.6s linear infinite;
-	pointer-events: none;
+// ── Outline variant ──────────────────────────────────
+.btn.outline {
+        background: transparent;
+        border: 1px solid var(--color-neutral-700);
+        color: var(--color-neutral-400);
+
+        &:hover:not(:disabled) {
+                filter: none;
+                border-color: var(--color-neutral-500);
+                color: var(--color-neutral-white);
+        }
+        &:active:not(:disabled) {
+                filter: none;
+                background: var(--color-neutral-800);
+        }
 }

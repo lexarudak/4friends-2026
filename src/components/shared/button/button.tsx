@@ -4,7 +4,7 @@ import { cn } from "@/utils/lib";
 import styles from "./button.module.scss";
 
 export type ButtonColor = "neutral" | "green" | "primary" | "yellow" | "red";
-export type ButtonVariant = "solid" | "inline";
+export type ButtonVariant = "solid" | "inline" | "outline";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	color?: ButtonColor;

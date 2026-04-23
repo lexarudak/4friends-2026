@@ -1,0 +1,32 @@
+.input {
+	width: 48px;
+	height: 48px;
+	background: var(--color-primary-600);
+	color: var(--color-neutral-white);
+	border: none;
+	font-size: var(--font-size-18);
+	font-weight: var(--font-weight-bold);
+	text-align: center;
+	cursor: pointer;
+	appearance: textfield;
+	transition: filter var(--duration-base);
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		appearance: none;
+		margin: 0;
+	}
+
+	&::placeholder {
+		color: var(--color-primary-300);
+	}
+
+	&:focus {
+		outline: 2px solid var(--color-primary-300);
+		outline-offset: 2px;
+	}
+
+	&:hover {
+		filter: brightness(1.15);
+	}
+}
