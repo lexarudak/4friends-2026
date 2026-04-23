@@ -28,36 +28,36 @@ export const MatchCard: FC<Props> = ({
 	className,
 }) => {
 	return (
-		<div className={cn(styles.card, className)}>
-			<div className={styles.header} data-status={status}>
-				<span>{match.group}</span>
+		<div className={cn(styles.card, className)} data-status={status}>
+			<span className={styles.group}>{match.group}</span>
+
+			<div className={styles.team} data-side="home">
+				<span className={styles.teamName}>{match.home.name}</span>
+				<span className={styles.flag}>{match.home.flag}</span>
+			</div>
+
+			<div className={styles.scores}>
+				<ScoreInput
+					name={homeFieldName}
+					value={homeValue}
+					onChange={onChange}
+				/>
+				<span className={styles.colon}>:</span>
+				<ScoreInput
+					name={awayFieldName}
+					value={awayValue}
+					onChange={onChange}
+				/>
+			</div>
+
+			<div className={styles.team} data-side="away">
+				<span className={styles.flag}>{match.away.flag}</span>
+				<span className={styles.teamName}>{match.away.name}</span>
+			</div>
+
+			<div className={styles.meta}>
 				<span>{match.time}</span>
 				<span>{match.date}</span>
-			</div>
-			<div className={styles.body}>
-				<div className={styles.team} data-side="home">
-					<span className={styles.flag}>{match.home.flag}</span>
-					<span className={styles.teamName}>{match.home.name}</span>
-				</div>
-
-				<div className={styles.scores}>
-					<ScoreInput
-						name={homeFieldName}
-						value={homeValue}
-						onChange={onChange}
-					/>
-					<span className={styles.colon}>:</span>
-					<ScoreInput
-						name={awayFieldName}
-						value={awayValue}
-						onChange={onChange}
-					/>
-				</div>
-
-				<div className={styles.team} data-side="away">
-					<span className={styles.flag}>{match.away.flag}</span>
-					<span className={styles.teamName}>{match.away.name}</span>
-				</div>
 			</div>
 		</div>
 	);
