@@ -6,7 +6,7 @@ export const TableService = {
 		roomId: string,
 		userId: string,
 		userName: string,
-		topN = 3,
+		topN = 3
 	): Promise<ScoreTableData> {
 		const scores = getRoomScores(roomId).map((e) =>
 			e.userId === "__current_user__"

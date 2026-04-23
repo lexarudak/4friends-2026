@@ -130,12 +130,13 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 				<Button
 					type="submit"
 					color="primary"
+					size="lg"
 					isLoading={formik.isSubmitting}
 					disabled={showErrors && Object.keys(betErrors).length > 0}
 				>
 					Save
 				</Button>
-				<Button type="button" variant="outline" onClick={handleClear}>
+				<Button type="button" variant="outline" size="lg" onClick={handleClear}>
 					Clear
 				</Button>
 			</div>

@@ -43,10 +43,7 @@ export const ScoreTable: FC<Props> = ({
 						<li className={styles.ellipsis} aria-hidden>
 							<span>···</span>
 						</li>
-						<li
-							className={styles.row}
-							data-me
-						>
+						<li className={styles.row} data-me>
 							<span className={styles.position}>{currentUserRow.position}</span>
 							<span className={styles.name}>{currentUserRow.name}</span>
 							<span className={styles.score}>{currentUserRow.score}</span>
