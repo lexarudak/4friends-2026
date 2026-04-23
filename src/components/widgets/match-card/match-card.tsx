@@ -4,6 +4,8 @@ import { ScoreInput } from "@/components/shared/score-input";
 import { cn } from "@/utils/lib";
 import styles from "./match-card.module.scss";
 
+export type CardStatus = "default" | "dirty" | "saved";
+
 type Props = {
 	match: Match;
 	homeFieldName: string;
@@ -11,6 +13,7 @@ type Props = {
 	homeValue: string;
 	awayValue: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	status?: CardStatus;
 	className?: string;
 };
 
@@ -21,11 +24,12 @@ export const MatchCard: FC<Props> = ({
 	homeValue,
 	awayValue,
 	onChange,
+	status = "default",
 	className,
 }) => {
 	return (
 		<div className={cn(styles.card, className)}>
-			<div className={styles.header}>
+			<div className={styles.header} data-status={status}>
 				<span>{match.group}</span>
 				<span>{match.time}</span>
 				<span>{match.date}</span>

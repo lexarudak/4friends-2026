@@ -16,6 +16,27 @@
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	color: var(--color-neutral-600);
+	transition:
+		color 0.2s ease,
+		border-color 0.2s ease;
+
+	&[data-status="dirty"] {
+		color: var(--color-yellow-500);
+		border-bottom-color: color-mix(
+			in srgb,
+			var(--color-yellow-500) 30%,
+			transparent
+		);
+	}
+
+	&[data-status="saved"] {
+		color: var(--color-green-500);
+		border-bottom-color: color-mix(
+			in srgb,
+			var(--color-green-500) 30%,
+			transparent
+		);
+	}
 }
 
 .body {
