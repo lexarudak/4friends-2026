@@ -4,7 +4,7 @@ import { ScoreInput } from "@/components/shared/score-input";
 import { cn } from "@/utils/lib";
 import styles from "./match-card.module.scss";
 
-export type CardStatus = "default" | "dirty" | "saved";
+export type CardStatus = "default" | "dirty" | "saved" | "error";
 
 type Props = {
 	match: Match;

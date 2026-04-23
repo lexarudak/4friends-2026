@@ -21,7 +21,24 @@
 	letter-spacing: 0.06em;
 }
 
+.error {
+	font-size: var(--font-size-12);
+	color: var(--color-red-400);
+	margin: 0;
+	letter-spacing: 0.04em;
+	visibility: hidden;
+
+	&[data-visible] {
+		visibility: visible;
+	}
+}
+
 .actions {
 	display: flex;
-	gap: var(--space-12);
+	gap: var(--space-24);
+	align-items: center;
+
+	> :first-child {
+		min-width: 220px;
+	}
 }

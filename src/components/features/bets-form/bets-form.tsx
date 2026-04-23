@@ -28,6 +28,12 @@ function buildInitialValues(matches: Match[], bets: Bet[]): BetsFormValues {
 	return { bets: result };
 }
 
+function isValidScore(val: string): boolean {
+	if (val === "") return false;
+	const n = Number(val);
+	return Number.isInteger(n) && n >= 0 && n <= 99;
+}
+
 export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 	const [savedValues, setSavedValues] = useState<BetsFormValues>(() =>
 		buildInitialValues(matches, initialBets)
@@ -35,8 +41,11 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 
 	const getMatchStatus = (
 		matchId: string,
-		currentValues: BetsFormValues
+		currentValues: BetsFormValues,
+		showErrors: boolean,
+		errors: Record<string, string>
 	): CardStatus => {
+		if (showErrors && errors[matchId]) return "error";
 		const cur = currentValues.bets[matchId];
 		const sav = savedValues.bets[matchId];
 		if (!cur || (cur.home === "" && cur.away === "")) return "default";
@@ -46,6 +55,19 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 
 	const formik = useFormik<BetsFormValues>({
 		initialValues: buildInitialValues(matches, initialBets),
+		validate: (values) => {
+			const betErrors: Record<string, string> = {};
+			for (const match of matches) {
+				const bet = values.bets[match.id];
+				const home = bet?.home ?? "";
+				const away = bet?.away ?? "";
+				if (home === "" && away === "") continue;
+				if (!isValidScore(home) || !isValidScore(away)) {
+					betErrors[match.id] = "Both scores required";
+				}
+			}
+			return Object.keys(betErrors).length ? { bets: betErrors } : {};
+		},
 		onSubmit: async (values) => {
 			const bets: Bet[] = matches.map((match) => ({
 				matchId: match.id,
@@ -69,6 +91,9 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 		},
 	});
 
+	const showErrors = formik.submitCount > 0;
+	const betErrors = (formik.errors.bets ?? {}) as Record<string, string>;
+
 	const handleClear = async () => {
 		const empty = buildInitialValues(matches, []);
 		await fetch("/api/bets", { method: "DELETE" });
@@ -87,7 +112,12 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 							awayFieldName={`bets.${match.id}.away`}
 							homeValue={formik.values.bets[match.id]?.home ?? ""}
 							awayValue={formik.values.bets[match.id]?.away ?? ""}
-							status={getMatchStatus(match.id, formik.values)}
+							status={getMatchStatus(
+								match.id,
+								formik.values,
+								showErrors,
+								betErrors
+							)}
 							onChange={formik.handleChange}
 						/>
 					</li>
@@ -97,13 +127,26 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 			<p className={styles.hint}>Make your bets</p>
 
 			<div className={styles.actions}>
-				<Button type="submit" color="primary" size="lg" isLoading={formik.isSubmitting}>
+				<Button
+					type="submit"
+					color="primary"
+					isLoading={formik.isSubmitting}
+					disabled={showErrors && Object.keys(betErrors).length > 0}
+				>
 					Save
 				</Button>
 				<Button type="button" variant="outline" onClick={handleClear}>
 					Clear
 				</Button>
 			</div>
+			<p
+				className={styles.error}
+				data-visible={
+					(showErrors && Object.keys(betErrors).length > 0) || undefined
+				}
+			>
+				Fix invalid bets before saving
+			</p>
 		</form>
 	);
 };

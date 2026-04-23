@@ -37,6 +37,15 @@
 			transparent
 		);
 	}
+
+	&[data-status="error"] {
+		color: var(--color-red-400);
+		border-bottom-color: color-mix(
+			in srgb,
+			var(--color-red-400) 30%,
+			transparent
+		);
+	}
 }
 
 .body {
@@ -59,12 +68,12 @@
 }
 
 .flag {
-	font-size: var(--font-size-20);
+	font-size: var(--font-size-28);
 	line-height: 1;
 }
 
 .teamName {
-	font-size: var(--font-size-14);
+	font-size: var(--font-size-18);
 	font-weight: var(--font-weight-semibold);
 	color: var(--color-neutral-200);
 	letter-spacing: 0.01em;
