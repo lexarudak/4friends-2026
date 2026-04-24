@@ -24,12 +24,6 @@ export const HeroSection: FC<Props> = ({ className, ...props }) => {
 						<span aria-hidden>→</span>
 					</Button>
 				</div>
-				<img
-					src="/FWC-26-Logo.svg"
-					alt=""
-					aria-hidden
-					className={styles.logo}
-				/>
 			</section>
 		</div>
 	);
