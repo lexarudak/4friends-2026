@@ -17,7 +17,7 @@ export default async function RoomsPage() {
 		: [];
 
 	return (
-		<main className={styles.page}>
+		<div className={styles.page}>
 			<ShadowCard className={styles.card}>
 				<div className={styles.header}>
 					{currentRoom && (
@@ -45,6 +45,6 @@ export default async function RoomsPage() {
 					</button>
 				</form>
 			</ShadowCard>
-		</main>
+		</div>
 	);
 }

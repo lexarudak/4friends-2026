@@ -1,10 +1,8 @@
 .page {
-	min-height: 100dvh;
+	padding-block: var(--space-40);
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	background: var(--color-neutral-50);
-	padding: var(--space-16);
+	padding-inline: var(--space-16);
 }
 
 .card {
