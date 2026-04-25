@@ -20,6 +20,11 @@ const store: Map<string, ScoreEntry[]> = new Map([
 			{ userId: "__current_user__", name: "me", score: 27 },
 			{ userId: "user-6", name: "anna", score: 21 },
 			{ userId: "user-7", name: "mike", score: 15 },
+			{ userId: "user-8", name: "lucas", score: 13 },
+			{ userId: "user-9", name: "sofia", score: 11 },
+			{ userId: "user-10", name: "igor", score: 9 },
+			{ userId: "user-11", name: "nina", score: 7 },
+			{ userId: "user-12", name: "tom", score: 4 },
 		],
 	],
 ]);
