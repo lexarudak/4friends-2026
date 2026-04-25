@@ -17,7 +17,13 @@ export function HeaderNavBar() {
 				<ul className={styles.navLinks}>
 					{NAV_LINKS.map((link) => (
 						<li key={link.href} className={styles.navItem}>
-							<Link href={link.href}>{link.label}</Link>
+							<Link
+								href={link.href}
+								className={link.icon ? styles.navLinkWithIcon : undefined}
+							>
+								{link.icon && <link.icon className={styles.navIcon} />}
+								{link.label}
+							</Link>
 						</li>
 					))}
 

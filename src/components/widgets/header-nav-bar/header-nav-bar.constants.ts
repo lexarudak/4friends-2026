@@ -1,6 +1,14 @@
+import type { FC, SVGProps } from "react";
+import { CrownIcon } from "@/components/icons";
 import { PAGES } from "@/utils/constants";
 
-export const NAV_LINKS = [
+type NavLink = {
+	label: string;
+	href: string;
+	icon?: FC<SVGProps<SVGSVGElement>>;
+};
+
+export const NAV_LINKS: NavLink[] = [
 	{
 		label: "Home",
 		href: PAGES.HOME,
@@ -20,6 +28,7 @@ export const NAV_LINKS = [
 	{
 		label: "Global top",
 		href: PAGES.GLOBAL_TOP,
+		icon: CrownIcon,
 	},
 	{
 		label: "Rules",
