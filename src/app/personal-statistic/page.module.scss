@@ -1,0 +1,14 @@
+.page {
+	padding-bottom: var(--space-40);
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: var(--space-16);
+	padding-top: var(--space-40);
+}
+
+.history {
+	padding-top: var(--space-64);
+}

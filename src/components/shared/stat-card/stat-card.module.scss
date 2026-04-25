@@ -1,0 +1,110 @@
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-12);
+	padding: var(--space-24) var(--space-24);
+	background: var(--color-neutral-900);
+	border: 1px solid var(--color-neutral-800);
+	border-radius: var(--radius-16);
+	transition:
+		border-color var(--duration-base) var(--ease-standard),
+		box-shadow var(--duration-base) var(--ease-standard);
+
+	// ── Sizes ──────────────────────────────
+	&[data-size="lg"] {
+		padding: var(--space-32) var(--space-40);
+		grid-column: span 2;
+
+		.value {
+			font-size: clamp(3.5rem, 8vw, 5.5rem);
+		}
+	}
+
+	&[data-size="sm"] {
+		padding: var(--space-16) var(--space-16);
+
+		.value {
+			font-size: clamp(1.5rem, 3vw, 2rem);
+		}
+	}
+
+	// ── Variants ───────────────────────────
+	&[data-variant="highlight"] {
+		background: var(--color-primary-950);
+		border-color: var(--color-primary-800);
+
+		.value {
+			color: var(--color-primary-300);
+		}
+
+		&:hover {
+			border-color: var(--color-primary-600);
+			box-shadow: 0 0 40px -8px
+				color-mix(in srgb, var(--color-primary-600) 40%, transparent);
+		}
+	}
+
+	&[data-variant="warm"] {
+		background: color-mix(
+			in srgb,
+			var(--color-yellow-950, #481800) 60%,
+			var(--color-neutral-900)
+		);
+		border-color: color-mix(
+			in srgb,
+			var(--color-yellow-800) 50%,
+			var(--color-neutral-800)
+		);
+
+		.value {
+			color: var(--color-yellow-300);
+		}
+
+		.sub {
+			color: var(--color-yellow-400);
+			background: color-mix(in srgb, var(--color-yellow-900) 40%, transparent);
+			border-color: var(--color-yellow-800);
+		}
+
+		&:hover {
+			border-color: var(--color-yellow-600);
+			box-shadow: 0 0 40px -8px
+				color-mix(in srgb, var(--color-yellow-600) 30%, transparent);
+		}
+	}
+
+	&:hover {
+		border-color: var(--color-neutral-600);
+		box-shadow: 0 0 32px -8px
+			color-mix(in srgb, var(--color-neutral-600) 20%, transparent);
+	}
+}
+
+.label {
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-neutral-500);
+}
+
+.value {
+	font-size: clamp(2rem, 4vw, 3rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1;
+	color: var(--color-neutral-white);
+	margin-top: auto;
+}
+
+.sub {
+	display: inline-flex;
+	align-self: flex-start;
+	font-size: var(--font-size-12);
+	font-family: var(--font-geist-mono);
+	color: var(--color-primary-400);
+	background: var(--color-primary-950);
+	border: 1px solid var(--color-primary-800);
+	border-radius: var(--radius-full, 9999px);
+	padding: 2px var(--space-10);
+}
