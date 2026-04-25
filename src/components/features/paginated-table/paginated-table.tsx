@@ -20,8 +20,6 @@ export const PaginatedTable: FC<Props> = ({ title, rows, pageSize = 10 }) => {
 	const isPaginated = rows.length > pageSize;
 	const ghostCount = isPaginated ? pageSize - pageRows.length : 0;
 
-
-
 	return (
 		<div className={styles.wrapper}>
 			<ScoreTable title={title} rows={pageRows} ghostCount={ghostCount} />

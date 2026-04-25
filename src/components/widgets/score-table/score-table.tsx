@@ -42,7 +42,11 @@ export const ScoreTable: FC<Props> = ({
 				))}
 
 				{Array.from({ length: ghostCount }).map((_, i) => (
-					<li key={`ghost-${i}`} className={cn(styles.row, styles.ghost)} aria-hidden>
+					<li
+						key={`ghost-${i}`}
+						className={cn(styles.row, styles.ghost)}
+						aria-hidden
+					>
 						<span className={styles.position}>&nbsp;</span>
 						<span className={styles.name}>&nbsp;</span>
 						<span className={styles.score}>&nbsp;</span>

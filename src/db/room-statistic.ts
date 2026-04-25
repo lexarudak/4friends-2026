@@ -25,8 +25,14 @@ const CURRENT_USER_PLACEHOLDER = "me";
 function makeRows(scores: number[], currentUserName: string): TableRow[] {
 	return scores
 		.map((score, i) => {
-			const name = names[i] === CURRENT_USER_PLACEHOLDER ? currentUserName : names[i];
-			return { name, score, position: 0, isCurrentUser: names[i] === CURRENT_USER_PLACEHOLDER };
+			const name =
+				names[i] === CURRENT_USER_PLACEHOLDER ? currentUserName : names[i];
+			return {
+				name,
+				score,
+				position: 0,
+				isCurrentUser: names[i] === CURRENT_USER_PLACEHOLDER,
+			};
 		})
 		.sort((a, b) => b.score - a.score)
 		.map((row, i) => ({ ...row, position: i + 1 }));
@@ -36,7 +42,10 @@ export function getStatSections(currentUserName: string): StatSection[] {
 	return [
 		{
 			title: "Total Score",
-			rows: makeRows([101, 94, 44, 38, 27, 21, 15, 13, 11, 9, 7, 4], currentUserName),
+			rows: makeRows(
+				[101, 94, 44, 38, 27, 21, 15, 13, 11, 9, 7, 4],
+				currentUserName
+			),
 		},
 		{
 			title: "Exact Score Hits",
