@@ -63,6 +63,16 @@
 	flex-shrink: 0;
 }
 
+.tag {
+	font-family: var(--font-geist-mono);
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-medium);
+	color: var(--color-neutral-500);
+	flex-shrink: 0;
+	min-width: 36px;
+	text-align: center;
+}
+
 .name {
 	font-size: var(--font-size-14);
 	font-weight: var(--font-weight-medium);

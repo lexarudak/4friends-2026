@@ -1,0 +1,44 @@
+@keyframes pulse {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-16);
+	margin-top: var(--space-40);
+	padding: var(--space-16);
+	border: 1px solid color-mix(in srgb, var(--color-yellow-500) 40%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--color-yellow-500) 8%,
+		var(--color-neutral-950)
+	);
+}
+
+.divider {
+	height: 1px;
+	background: color-mix(in srgb, var(--color-yellow-500) 25%, transparent);
+	margin-block: var(--space-4);
+}
+
+.title {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--space-8);
+	font-size: var(--font-size-20);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--color-yellow-400);
+}
+
+.dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-yellow-400);
+	flex-shrink: 0;
+	animation: pulse 3s ease-in-out infinite;
+}

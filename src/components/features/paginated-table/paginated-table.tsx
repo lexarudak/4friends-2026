@@ -7,13 +7,15 @@ import { ScoreTable } from "@/components/widgets/score-table";
 import styles from "./paginated-table.module.scss";
 
 type Props = {
-	title: string;
+	title?: string;
 	rows: TableRow[];
 	pageSize?: number;
 	currentUserId?: string;
+	tableClassName?: string;
+	hidePosition?: boolean;
 };
 
-export const PaginatedTable: FC<Props> = ({ title, rows, pageSize = 10 }) => {
+export const PaginatedTable: FC<Props> = ({ title = "", rows, pageSize = 10, tableClassName, hidePosition }) => {
 	const [page, setPage] = useState(0);
 	const totalPages = Math.ceil(rows.length / pageSize);
 	const pageRows = rows.slice(page * pageSize, (page + 1) * pageSize);
@@ -22,7 +24,7 @@ export const PaginatedTable: FC<Props> = ({ title, rows, pageSize = 10 }) => {
 
 	return (
 		<div className={styles.wrapper}>
-			<ScoreTable title={title} rows={pageRows} ghostCount={ghostCount} />
+			<ScoreTable title={title} rows={pageRows} ghostCount={ghostCount} className={tableClassName} hidePosition={hidePosition} />
 			{totalPages > 1 && (
 				<div className={styles.pagination}>
 					<button

@@ -46,6 +46,7 @@ export type TableRow = {
 	name: string;
 	score: number;
 	isCurrentUser?: boolean;
+	tag?: string;
 };
 
 export type ScoreTableData = {

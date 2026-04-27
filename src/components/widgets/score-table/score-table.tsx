@@ -12,6 +12,7 @@ type Props = {
 	href?: string;
 	linkLabel?: string;
 	className?: string;
+	hidePosition?: boolean;
 };
 
 export const ScoreTable: FC<Props> = ({
@@ -22,10 +23,11 @@ export const ScoreTable: FC<Props> = ({
 	href,
 	linkLabel = "More statistic",
 	className,
+	hidePosition = false,
 }) => {
 	return (
 		<div className={cn(styles.container, className)}>
-			<SectionLabel label={title} />
+			{title && <SectionLabel label={title} />}
 
 			<ul className={styles.list}>
 				{rows.map((row) => (
@@ -35,7 +37,8 @@ export const ScoreTable: FC<Props> = ({
 						data-first={row.position === 1 || undefined}
 						data-me={row.isCurrentUser || undefined}
 					>
-						<span className={styles.position}>{row.position}</span>
+						{!hidePosition && <span className={styles.position}>{row.position}</span>}
+						{row.tag && <span className={styles.tag}>{row.tag}</span>}
 						<span className={styles.name}>{row.name}</span>
 						<span className={styles.score}>{row.score}</span>
 					</li>

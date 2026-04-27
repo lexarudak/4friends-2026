@@ -4,6 +4,7 @@ import "../styles/globals.scss";
 import { Analytics } from "@vercel/analytics/next";
 import { AppHeader } from "@/components/features/app-header";
 import { Timer } from "@/components/widgets/timer/timer";
+import { LiveSection } from "@/components/features/live-section";
 import { TopTable } from "@/components/features/top-table";
 import styles from "./layout.module.scss";
 
@@ -40,6 +41,7 @@ export default function RootLayout({
 								homeTeam="Mexico"
 								awayTeam="USA"
 							/>
+							<LiveSection />
 							<TopTable />
 						</div>
 					</div>
