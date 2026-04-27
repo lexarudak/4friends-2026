@@ -1,0 +1,206 @@
+.root {
+	position: relative;
+	display: inline-flex;
+	flex-direction: column;
+}
+
+// ── Trigger button ────────────────────────────
+
+.trigger {
+	display: flex;
+	align-items: center;
+	gap: var(--space-10);
+	padding: var(--space-10) var(--space-16);
+	background: var(--color-neutral-900);
+	border: 1px solid var(--color-neutral-700);
+	color: var(--color-neutral-200);
+	font-size: var(--font-size-14);
+	font-family: var(--font-geist-mono);
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	transition: border-color var(--duration-base) var(--ease-standard);
+
+	&:hover,
+	&[aria-expanded="true"] {
+		border-color: var(--color-primary-600);
+	}
+}
+
+.triggerIcon {
+	font-size: var(--font-size-14);
+	line-height: 1;
+}
+
+.range {
+	flex: 1;
+}
+
+.arrow {
+	font-size: 12px;
+	color: var(--color-neutral-500);
+	transition: transform var(--duration-base) var(--ease-standard);
+	display: inline-block;
+}
+
+.arrowOpen {
+	transform: rotate(180deg);
+}
+
+// ── Popover ───────────────────────────────────
+
+.popover {
+	position: absolute;
+	top: calc(100% + var(--space-4));
+	left: 0;
+	z-index: 100;
+	background: var(--color-neutral-900);
+	border: 1px solid var(--color-neutral-700);
+	box-shadow: var(--shadow-high);
+}
+
+// ── DayPicker overrides ───────────────────────
+
+.picker {
+	padding: var(--space-16);
+	color: var(--color-neutral-200);
+	font-size: var(--font-size-13);
+}
+
+.months {
+	display: flex;
+	gap: var(--space-16);
+}
+
+.month {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-12);
+}
+
+.caption {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-inline: var(--space-4);
+}
+
+.captionLabel {
+	font-size: var(--font-size-13);
+	font-weight: var(--font-weight-bold);
+	color: var(--color-neutral-white);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.nav {
+	display: flex;
+	align-items: center;
+	gap: var(--space-4);
+}
+
+.navBtn {
+	background: none;
+	border: 1px solid var(--color-neutral-700);
+	color: var(--color-neutral-400);
+	cursor: pointer;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--font-size-12);
+	transition: border-color var(--duration-base), color var(--duration-base);
+
+	&:hover {
+		border-color: var(--color-primary-600);
+		color: var(--color-neutral-white);
+	}
+}
+
+.table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.headRow {
+	display: grid;
+	grid-template-columns: repeat(7, 36px);
+}
+
+.headCell {
+	width: 36px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--font-size-11);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-neutral-600);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: repeat(7, 36px);
+}
+
+.cell {
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	position: relative;
+}
+
+.day {
+	width: 100%;
+	height: 100%;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: var(--font-size-13);
+	color: var(--color-neutral-300);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--duration-fast), color var(--duration-fast);
+	border-radius: 0;
+
+	&:hover {
+		background: var(--color-neutral-800);
+		color: var(--color-neutral-white);
+	}
+}
+
+.today .day {
+	color: var(--color-primary-400);
+	font-weight: var(--font-weight-bold);
+}
+
+.outside .day {
+	color: var(--color-neutral-700);
+}
+
+.disabled .day {
+	color: var(--color-neutral-800);
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.rangeStart .day,
+.rangeEnd .day {
+	background: var(--color-primary-600);
+	color: var(--color-neutral-white);
+	font-weight: var(--font-weight-bold);
+}
+
+.rangeMiddle .day {
+	background: color-mix(in srgb, var(--color-primary-600) 18%, transparent);
+	color: var(--color-primary-300);
+	border-radius: 0;
+}
+
+.selected .day {
+	background: var(--color-primary-600);
+	color: var(--color-neutral-white);
+}

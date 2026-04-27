@@ -1,0 +1,114 @@
+@keyframes breathe {
+	0%,
+	100% { opacity: 1; }
+	50%  { opacity: 0.4; }
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--color-neutral-800);
+	background: var(--color-neutral-900);
+
+	&[data-status="live"] {
+		border-color: color-mix(in srgb, var(--color-yellow-500) 50%, transparent);
+	}
+
+	&[data-status="finished"] {
+		border-color: color-mix(in srgb, var(--color-green-500) 40%, transparent);
+	}
+}
+
+// ── Header ────────────────────────────────────
+
+.header {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	align-items: center;
+	gap: var(--space-8);
+	padding: var(--space-8) var(--space-16);
+	border-bottom: 1px solid var(--color-neutral-800);
+
+	[data-status="live"] & {
+		background: color-mix(in srgb, var(--color-yellow-500) 6%, var(--color-neutral-900));
+		border-bottom-color: color-mix(in srgb, var(--color-yellow-500) 30%, transparent);
+	}
+
+	[data-status="finished"] & {
+		background: color-mix(in srgb, var(--color-green-500) 5%, var(--color-neutral-900));
+		border-bottom-color: color-mix(in srgb, var(--color-green-500) 25%, transparent);
+	}
+}
+
+.group {
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--color-neutral-500);
+}
+
+.statusLabel {
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-medium);
+	color: var(--color-neutral-500);
+	font-family: var(--font-geist-mono);
+
+	[data-status="live"] & {
+		color: var(--color-yellow-400);
+	}
+	[data-status="finished"] & {
+		color: var(--color-green-400);
+	}
+}
+
+.minute {
+	font-size: var(--font-size-12);
+	font-weight: 800;
+	font-family: var(--font-geist-mono);
+	color: var(--color-yellow-400);
+	animation: breathe 2s ease-in-out infinite;
+}
+
+.date {
+	font-size: var(--font-size-12);
+	font-family: var(--font-geist-mono);
+	color: var(--color-neutral-600);
+}
+
+// ── Score row ─────────────────────────────────
+
+.score {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	gap: var(--space-12);
+	padding: var(--space-12) var(--space-16);
+}
+
+.team {
+	min-width: 0;
+
+	&:first-of-type {
+		justify-self: end;
+	}
+}
+
+.result {
+	font-size: var(--font-size-18);
+	font-weight: 800;
+	font-family: var(--font-geist-mono);
+	color: var(--color-neutral-300);
+	white-space: nowrap;
+	text-align: center;
+	min-width: 52px;
+
+	[data-status="live"] & {
+		color: var(--color-yellow-400);
+	}
+	[data-status="finished"] & {
+		color: var(--color-green-400);
+	}
+}
+

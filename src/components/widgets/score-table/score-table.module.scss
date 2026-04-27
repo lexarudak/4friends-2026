@@ -51,6 +51,27 @@
 			font-weight: var(--font-weight-semibold);
 		}
 	}
+
+	&[data-status="exact"] {
+		background: color-mix(in srgb, var(--color-green-500) 12%, transparent);
+		border-color: color-mix(in srgb, var(--color-green-500) 25%, transparent);
+
+		.tag, .score { color: var(--color-green-400); }
+	}
+
+	&[data-status="win"] {
+		background: color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+		border-color: color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+
+		.tag, .score { color: var(--color-primary-300); }
+	}
+
+	&[data-status="miss"] {
+		background: color-mix(in srgb, var(--color-red-500) 12%, transparent);
+		border-color: color-mix(in srgb, var(--color-red-500) 25%, transparent);
+
+		.tag, .score { color: var(--color-red-400); }
+	}
 }
 
 .position {
