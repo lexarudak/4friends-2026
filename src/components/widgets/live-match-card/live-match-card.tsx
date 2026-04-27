@@ -41,15 +41,15 @@ export const LiveMatchCard: FC<Props> = ({ match }) => {
 			{/* Match score */}
 			<div className={styles.matchScore}>
 				<span className={styles.teamHome}>
-					<span className={styles.flag}>{match.homeFlag}</span>
 					<span className={styles.teamName}>{match.homeTeam}</span>
 				</span>
 				<span className={styles.score}>
+					<span className={styles.scoreFlag}>{match.homeFlag}</span>
 					{match.currentHome}&nbsp;:&nbsp;{match.currentAway}
+					<span className={styles.scoreFlag}>{match.awayFlag}</span>
 				</span>
 				<span className={styles.teamAway}>
 					<span className={styles.teamName}>{match.awayTeam}</span>
-					<span className={styles.flag}>{match.awayFlag}</span>
 				</span>
 			</div>
 
