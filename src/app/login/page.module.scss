@@ -1,14 +1,15 @@
 .page {
-	padding-block: var(--space-40);
+	min-height: 100dvh;
+	background: var(--color-neutral-950);
 	display: flex;
+	align-items: center;
 	justify-content: center;
-	padding-inline: var(--space-16);
+	padding: var(--space-40) var(--space-16);
 }
 
 .card {
 	padding: var(--space-40) var(--space-32);
-	background: var(--color-neutral-950);
-	border-top: 3px solid var(--color-primary-600);
+	background: var(--color-neutral-900);
 	width: 100%;
 	max-width: 400px;
 	display: flex;

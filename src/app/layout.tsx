@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.scss";
 import { Analytics } from "@vercel/analytics/next";
+import { ConditionalLayout } from "@/components/features/conditional-layout";
 import { AppHeader } from "@/components/features/app-header";
 import { Timer } from "@/components/widgets/timer/timer";
 import { LiveSection } from "@/components/features/live-section";
 import { TopTable } from "@/components/features/top-table";
-import styles from "./layout.module.scss";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -30,24 +30,25 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
-				<AppHeader />
-				<main className={styles.main}>
-					<div className={styles.layout}>
-						<div className={styles.left}>{children}</div>
-						<div className={styles.right}>
+				<ConditionalLayout
+					header={<AppHeader />}
+					sidebar={
+						<>
 							<Timer
 								targetDate={new Date("2026-06-11T20:00:00")}
 								message="Next match — Group A · Opening"
-								homeTeam="Bosnia-Herzegovina"
-								homeFlag="🇧🇦"
-								awayTeam="Trinidad and Tobago"
-								awayFlag="🇹🇹"
+								homeTeam="Mexico"
+								homeFlag="🇲🇽"
+								awayTeam="South Africa"
+								awayFlag="🇿🇦"
 							/>
 							<LiveSection />
 							<TopTable />
-						</div>
-					</div>
-				</main>
+						</>
+					}
+				>
+					{children}
+				</ConditionalLayout>
 				<Analytics />
 			</body>
 		</html>

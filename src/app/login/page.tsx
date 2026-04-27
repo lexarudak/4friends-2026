@@ -3,12 +3,11 @@ import styles from "./page.module.scss";
 import { signInWithGoogle } from "./actions";
 import { GoogleIcon, LogoIcon } from "@/components/icons";
 import { PAGES } from "@/utils/constants";
-import { ShadowCard } from "@/components/shared/shadow-card/shadow-card";
 
 export default function LoginPage() {
 	return (
 		<div className={styles.page}>
-			<ShadowCard className={styles.card}>
+			<div className={styles.card}>
 				<div className={styles.logo}>
 					<LogoIcon />
 				</div>
@@ -30,7 +29,7 @@ export default function LoginPage() {
 				<p className={styles.rulesLink}>
 					Or read our <Link href={PAGES.ABOUT}>rules</Link>
 				</p>
-			</ShadowCard>
+			</div>
 		</div>
 	);
 }
