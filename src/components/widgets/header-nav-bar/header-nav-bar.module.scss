@@ -1,4 +1,5 @@
 @use "@/styles/mixins" as *;
+@use "@/styles/vars" as *;
 
 .bar {
 	background: var(--color-neutral-950);
@@ -10,6 +11,10 @@
 	display: flex;
 	align-items: center;
 	gap: var(--space-32);
+
+	@media (max-width: $screen-phone) {
+		gap: var(--space-16);
+	}
 }
 
 .logoLink {
@@ -17,6 +22,12 @@
 	width: 80px;
 	height: 80px;
 	transform: translateY(25px);
+
+	@media (max-width: $screen-phone) {
+		width: 52px;
+		height: 52px;
+		transform: translateY(14px);
+	}
 }
 
 .logo {
@@ -25,6 +36,11 @@
 	height: 80px;
 	border: 1px solid var(--color-neutral-800);
 	border-radius: 50%;
+
+	@media (max-width: $screen-phone) {
+		width: 52px;
+		height: 52px;
+	}
 }
 
 .navLinks {
@@ -32,6 +48,10 @@
 	align-items: center;
 	gap: var(--space-32);
 	margin-left: auto;
+
+	@media (max-width: $screen-phone) {
+		gap: var(--space-16);
+	}
 }
 
 .navItem {

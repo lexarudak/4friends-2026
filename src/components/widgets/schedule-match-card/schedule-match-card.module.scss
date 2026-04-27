@@ -124,6 +124,11 @@
 	text-align: center;
 	min-width: 52px;
 
+	@media (max-width: 450px) {
+		font-size: var(--font-size-16);
+		min-width: 40px;
+	}
+
 	[data-status="live"] & {
 		color: var(--color-yellow-400);
 	}

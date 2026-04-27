@@ -12,6 +12,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-64);
+
+	@media (max-width: 450px) {
+		gap: var(--space-40);
+		padding-block: var(--space-24);
+	}
 }
 
 // ── Nav ─────────────────────────────────────
@@ -36,6 +41,10 @@
 	line-height: 1.6;
 	color: var(--color-neutral-300);
 	margin: 0;
+
+	@media (max-width: 450px) {
+		font-size: var(--font-size-16);
+	}
 }
 
 // ── Sections ─────────────────────────────────
@@ -65,6 +74,10 @@
 	color: var(--color-neutral-white);
 	margin: 0;
 	letter-spacing: -0.01em;
+
+	@media (max-width: 450px) {
+		font-size: var(--font-size-18);
+	}
 }
 
 .sectionText {

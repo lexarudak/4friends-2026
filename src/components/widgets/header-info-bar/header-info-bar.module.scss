@@ -1,8 +1,13 @@
 @use "@/styles/mixins" as *;
+@use "@/styles/vars" as *;
 
 .bar {
 	background: var(--color-neutral-950);
 	border-bottom: 1px solid var(--color-neutral-800);
+
+	@media (max-width: $screen-phone) {
+		display: none;
+	}
 }
 
 .container {
