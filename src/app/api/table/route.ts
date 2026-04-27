@@ -10,7 +10,7 @@ export async function GET() {
 	if (!session?.user?.email) {
 		return NextResponse.json(
 			{ error: API_ERROR_CODES.UNAUTHORIZED },
-			{ status: 401 },
+			{ status: 401 }
 		);
 	}
 
@@ -18,10 +18,10 @@ export async function GET() {
 	if (!roomId) {
 		return NextResponse.json(
 			{ error: API_ERROR_CODES.NO_ACTIVE_ROOM },
-			{ status: 403 },
+			{ status: 403 }
 		);
 	}
 
-	const table = await TableService.getSmallTable(roomId);
+	const table = await TableService.getTopTable(roomId, "", "", 100);
 	return NextResponse.json(table);
 }
