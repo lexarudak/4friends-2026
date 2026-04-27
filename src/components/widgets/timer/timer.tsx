@@ -62,8 +62,21 @@ export const Timer: FC<Props> = ({
 		return () => clearInterval(id);
 	}, [targetDate]);
 
+	const totalSecs = countdown
+		? countdown.days * 86400 +
+			countdown.hours * 3600 +
+			countdown.mins * 60 +
+			countdown.secs
+		: Infinity;
+	const urgency =
+		totalSecs < 600 ? "red" : totalSecs < 3600 ? "gold" : undefined;
+
 	return (
-		<div {...props} className={cn(styles.container, className)}>
+		<div
+			{...props}
+			className={cn(styles.container, className)}
+			data-urgency={urgency}
+		>
 			{message && <p className={styles.message}>{message}</p>}
 			{homeTeam && awayTeam && (
 				<div className={styles.teams}>
