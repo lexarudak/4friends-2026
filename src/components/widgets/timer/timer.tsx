@@ -1,20 +1,17 @@
 "use client";
 
-import {
-	Fragment,
-	useState,
-	useEffect,
-	type FC,
-	type HTMLAttributes,
-} from "react";
+import { useState, useEffect, type FC, type HTMLAttributes } from "react";
 import { cn } from "@/utils/lib";
+import { TeamBadge } from "@/components/shared/team-badge";
 import styles from "./timer.module.scss";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
 	targetDate: Date;
 	message?: string;
 	homeTeam?: string;
+	homeFlag?: string;
 	awayTeam?: string;
+	awayFlag?: string;
 };
 
 type Countdown = {
@@ -49,7 +46,9 @@ export const Timer: FC<Props> = ({
 	targetDate,
 	message,
 	homeTeam,
+	homeFlag = "",
 	awayTeam,
+	awayFlag = "",
 	className,
 	...props
 }) => {
@@ -80,24 +79,17 @@ export const Timer: FC<Props> = ({
 			{message && <p className={styles.message}>{message}</p>}
 			{homeTeam && awayTeam && (
 				<div className={styles.teams}>
-					<span className={styles.team}>{homeTeam}</span>
-					<span className={styles.vs}>vs</span>
-					<span className={styles.team}>{awayTeam}</span>
+					<TeamBadge name={homeTeam} flag={homeFlag} className={styles.team} />
+					<span className={styles.vs}>VS</span>
+					<TeamBadge name={awayTeam} flag={awayFlag} className={styles.team} />
 				</div>
 			)}
 			<div className={styles.countdown}>
-				{UNITS.map(({ key, label }, i) => (
-					<Fragment key={key}>
-						{i > 0 && (
-							<span className={styles.sep} aria-hidden>
-								:
-							</span>
-						)}
-						<div className={styles.unit}>
-							<span className={styles.value}>{pad(countdown?.[key] ?? 0)}</span>
-							<span className={styles.label}>{label}</span>
-						</div>
-					</Fragment>
+				{UNITS.map(({ key, label }) => (
+					<div key={key} className={styles.unit}>
+						<span className={styles.value}>{pad(countdown?.[key] ?? 0)}</span>
+						<span className={styles.label}>{label}</span>
+					</div>
 				))}
 			</div>
 		</div>

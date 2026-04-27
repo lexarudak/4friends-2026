@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import type { Match } from "@/types/api";
 import { ScoreInput } from "@/components/shared/score-input";
+import { TeamBadge } from "@/components/shared/team-badge";
 import { cn } from "@/utils/lib";
 import styles from "./match-card.module.scss";
 
@@ -31,10 +32,12 @@ export const MatchCard: FC<Props> = ({
 		<div className={cn(styles.card, className)} data-status={status}>
 			<span className={styles.group}>{match.group}</span>
 
-			<div className={styles.team} data-side="home">
-				<span className={styles.teamName}>{match.home.name}</span>
-				<span className={styles.flag}>{match.home.flag}</span>
-			</div>
+			<TeamBadge
+				name={match.home.name}
+				flag={match.home.flag}
+				direction="rtl"
+				className={styles.team}
+			/>
 
 			<div className={styles.scores}>
 				<ScoreInput
@@ -50,10 +53,11 @@ export const MatchCard: FC<Props> = ({
 				/>
 			</div>
 
-			<div className={styles.team} data-side="away">
-				<span className={styles.flag}>{match.away.flag}</span>
-				<span className={styles.teamName}>{match.away.name}</span>
-			</div>
+			<TeamBadge
+				name={match.away.name}
+				flag={match.away.flag}
+				className={styles.team}
+			/>
 
 			<div className={styles.meta}>
 				<span>{match.time}</span>

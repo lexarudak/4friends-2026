@@ -2,6 +2,7 @@ import type { FC } from "react";
 import type { BetHistoryItem } from "@/db/bet-history";
 import { cn } from "@/utils/lib";
 import { SectionLabel } from "@/components/shared/section-label";
+import { TeamBadge } from "@/components/shared/team-badge";
 import styles from "./bet-history-list.module.scss";
 
 type Props = {
@@ -38,19 +39,22 @@ export const BetHistoryList: FC<Props> = ({ items, className }) => {
 						<li key={item.id} className={styles.row} data-status={status}>
 							<span className={styles.group}>Group {item.group}</span>
 
-							<span className={styles.team} data-side="home">
-								<span className={styles.teamName}>{item.homeTeam}</span>
-								<span className={styles.flag}>{item.homeFlag}</span>
-							</span>
+							<TeamBadge
+								name={item.homeTeam}
+								flag={item.homeFlag}
+								direction="rtl"
+								className={styles.team}
+							/>
 
 							<span className={styles.bet}>
 								{item.betHome} : {item.betAway}
 							</span>
 
-							<span className={styles.team} data-side="away">
-								<span className={styles.flag}>{item.awayFlag}</span>
-								<span className={styles.teamName}>{item.awayTeam}</span>
-							</span>
+							<TeamBadge
+								name={item.awayTeam}
+								flag={item.awayFlag}
+								className={styles.team}
+							/>
 
 							<span className={styles.meta}>
 								<span className={styles.time}>{item.time}</span>

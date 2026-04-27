@@ -67,25 +67,7 @@
 }
 
 .name {
-	display: flex;
-	align-items: center;
-	gap: var(--space-8);
 	min-width: 0;
-}
-
-.flag {
-	font-size: var(--font-size-16);
-	flex-shrink: 0;
-	line-height: 1;
-}
-
-.teamName {
-	font-size: var(--font-size-14);
-	font-weight: var(--font-weight-medium);
-	color: var(--color-neutral-white);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .stat {

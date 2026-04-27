@@ -64,13 +64,11 @@
 	display: flex;
 	align-items: center;
 	gap: var(--space-10);
+	flex-wrap: wrap;
 }
 
 .team {
-	font-size: var(--font-size-20);
-	font-weight: 800;
-	color: var(--color-neutral-white);
-	letter-spacing: -0.02em;
+	min-width: 0;
 }
 
 .vs {
@@ -78,14 +76,13 @@
 	font-weight: var(--font-weight-medium);
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: var(--color-neutral-700);
-	padding: 0 var(--space-4);
+	color: var(--color-neutral-600);
 }
 
 .countdown {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: var(--space-12);
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--space-8);
 }
 
 .unit {

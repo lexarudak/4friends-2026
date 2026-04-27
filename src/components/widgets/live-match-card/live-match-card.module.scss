@@ -68,36 +68,14 @@
 	display: flex;
 	align-items: center;
 	gap: var(--space-8);
-	justify-content: flex-end;
 	min-width: 0;
 }
 
 .teamAway {
-	display: flex;
-	align-items: center;
-	gap: var(--space-8);
-	justify-content: flex-start;
 	min-width: 0;
 }
 
-.flag {
-	font-size: var(--font-size-20);
-	flex-shrink: 0;
-}
-
-.teamName {
-	font-size: var(--font-size-14);
-	font-weight: var(--font-weight-semibold);
-	color: var(--color-neutral-white);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
 .score {
-	display: flex;
-	align-items: center;
-	gap: var(--space-6);
 	font-size: var(--font-size-20);
 	font-weight: 800;
 	font-family: var(--font-geist-mono);
@@ -106,11 +84,4 @@
 	white-space: nowrap;
 	text-align: center;
 	min-width: 52px;
-}
-
-.scoreFlag {
-	font-size: var(--font-size-16);
-	line-height: 1;
-	font-family: var(--font-geist-sans);
-	letter-spacing: 0;
 }

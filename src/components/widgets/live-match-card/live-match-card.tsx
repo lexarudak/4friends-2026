@@ -2,6 +2,7 @@ import type { FC } from "react";
 import type { LiveMatch } from "@/db/live-matches";
 import { calcMatchPoints } from "@/db/live-matches";
 import { PaginatedTable } from "@/components/features/paginated-table";
+import { TeamBadge } from "@/components/shared/team-badge";
 import styles from "./live-match-card.module.scss";
 
 type Props = {
@@ -40,17 +41,20 @@ export const LiveMatchCard: FC<Props> = ({ match }) => {
 
 			{/* Match score */}
 			<div className={styles.matchScore}>
-				<span className={styles.teamHome}>
-					<span className={styles.teamName}>{match.homeTeam}</span>
-				</span>
+				<TeamBadge
+					name={match.homeTeam}
+					flag={match.homeFlag}
+					direction="rtl"
+					className={styles.teamHome}
+				/>
 				<span className={styles.score}>
-					<span className={styles.scoreFlag}>{match.homeFlag}</span>
 					{match.currentHome}&nbsp;:&nbsp;{match.currentAway}
-					<span className={styles.scoreFlag}>{match.awayFlag}</span>
 				</span>
-				<span className={styles.teamAway}>
-					<span className={styles.teamName}>{match.awayTeam}</span>
-				</span>
+				<TeamBadge
+					name={match.awayTeam}
+					flag={match.awayFlag}
+					className={styles.teamAway}
+				/>
 			</div>
 
 			{/* Bets table */}

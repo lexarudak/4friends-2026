@@ -38,8 +38,10 @@ export default function RootLayout({
 							<Timer
 								targetDate={new Date("2026-06-11T20:00:00")}
 								message="Next match — Group A · Opening"
-								homeTeam="Mexico 🇲🇽"
-								awayTeam="🇿🇦 South Africa"
+								homeTeam="Bosnia-Herzegovina"
+								homeFlag="🇧🇦"
+								awayTeam="Trinidad and Tobago"
+								awayFlag="🇹🇹"
 							/>
 							<LiveSection />
 							<TopTable />

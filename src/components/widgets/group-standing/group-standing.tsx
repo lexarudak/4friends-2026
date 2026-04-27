@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import type { WcGroup } from "@/db/world-cup";
+import { TeamBadge } from "@/components/shared/team-badge";
 import styles from "./group-standing.module.scss";
 
 type Props = {
@@ -28,10 +29,12 @@ export const GroupStanding: FC<Props> = ({ group }) => {
 				{sorted.map((team, i) => (
 					<div key={team.name} className={styles.row} data-rank={i + 1}>
 						<span className={styles.pos}>{i + 1}</span>
-						<span className={styles.name}>
-							<span className={styles.flag}>{team.flag}</span>
-							<span className={styles.teamName}>{team.name}</span>
-						</span>
+						<TeamBadge
+							name={team.name}
+							flag={team.flag}
+							size="s"
+							className={styles.name}
+						/>
 						<span className={styles.stat}>{team.played}</span>
 						<span className={styles.stat}>
 							{team.played > 0 ? `${team.goalsFor}:${team.goalsAgainst}` : "—"}

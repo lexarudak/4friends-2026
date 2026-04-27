@@ -48,33 +48,11 @@
 }
 
 .team {
-	display: flex;
-	align-items: center;
-	gap: var(--space-12);
 	min-width: 0;
 
-	&[data-side="home"] {
-		justify-content: flex-end;
+	&:first-of-type {
+		justify-self: end;
 	}
-
-	&[data-side="away"] {
-		justify-content: flex-start;
-	}
-}
-
-.flag {
-	font-size: var(--font-size-32);
-	line-height: 1;
-	flex-shrink: 0;
-}
-
-.teamName {
-	font-size: var(--font-size-18);
-	font-weight: var(--font-weight-semibold);
-	color: var(--color-neutral-200);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .scores {

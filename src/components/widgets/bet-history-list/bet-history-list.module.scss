@@ -77,32 +77,7 @@
 }
 
 .team {
-	display: flex;
-	align-items: center;
-	gap: var(--space-8);
 	min-width: 0;
-
-	&[data-side="home"] {
-		justify-content: flex-end;
-	}
-
-	&[data-side="away"] {
-		justify-content: flex-start;
-	}
-}
-
-.flag {
-	font-size: var(--font-size-18);
-	flex-shrink: 0;
-}
-
-.teamName {
-	font-size: var(--font-size-14);
-	font-weight: var(--font-weight-semibold);
-	color: var(--color-neutral-white);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .bet {
