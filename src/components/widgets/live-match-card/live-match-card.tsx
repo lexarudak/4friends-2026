@@ -54,7 +54,12 @@ export const LiveMatchCard: FC<Props> = ({ match }) => {
 			</div>
 
 			{/* Bets table */}
-			<PaginatedTable rows={rows} pageSize={5} tableClassName={styles.betsTable} hidePosition />
+			<PaginatedTable
+				rows={rows}
+				pageSize={5}
+				tableClassName={styles.betsTable}
+				hidePosition
+			/>
 		</div>
 	);
 };

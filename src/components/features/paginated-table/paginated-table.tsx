@@ -15,7 +15,13 @@ type Props = {
 	hidePosition?: boolean;
 };
 
-export const PaginatedTable: FC<Props> = ({ title = "", rows, pageSize = 10, tableClassName, hidePosition }) => {
+export const PaginatedTable: FC<Props> = ({
+	title = "",
+	rows,
+	pageSize = 10,
+	tableClassName,
+	hidePosition,
+}) => {
 	const [page, setPage] = useState(0);
 	const totalPages = Math.ceil(rows.length / pageSize);
 	const pageRows = rows.slice(page * pageSize, (page + 1) * pageSize);
@@ -24,7 +30,13 @@ export const PaginatedTable: FC<Props> = ({ title = "", rows, pageSize = 10, tab
 
 	return (
 		<div className={styles.wrapper}>
-			<ScoreTable title={title} rows={pageRows} ghostCount={ghostCount} className={tableClassName} hidePosition={hidePosition} />
+			<ScoreTable
+				title={title}
+				rows={pageRows}
+				ghostCount={ghostCount}
+				className={tableClassName}
+				hidePosition={hidePosition}
+			/>
 			{totalPages > 1 && (
 				<div className={styles.pagination}>
 					<button

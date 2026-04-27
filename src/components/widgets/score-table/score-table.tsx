@@ -37,7 +37,9 @@ export const ScoreTable: FC<Props> = ({
 						data-first={row.position === 1 || undefined}
 						data-me={row.isCurrentUser || undefined}
 					>
-						{!hidePosition && <span className={styles.position}>{row.position}</span>}
+						{!hidePosition && (
+							<span className={styles.position}>{row.position}</span>
+						)}
 						{row.tag && <span className={styles.tag}>{row.tag}</span>}
 						<span className={styles.name}>{row.name}</span>
 						<span className={styles.score}>{row.score}</span>
