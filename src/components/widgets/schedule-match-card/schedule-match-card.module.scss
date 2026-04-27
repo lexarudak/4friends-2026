@@ -1,7 +1,11 @@
 @keyframes breathe {
 	0%,
-	100% { opacity: 1; }
-	50%  { opacity: 0.4; }
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
 }
 
 .card {
@@ -31,13 +35,29 @@
 	border-bottom: 1px solid var(--color-neutral-800);
 
 	[data-status="live"] & {
-		background: color-mix(in srgb, var(--color-yellow-500) 6%, var(--color-neutral-900));
-		border-bottom-color: color-mix(in srgb, var(--color-yellow-500) 30%, transparent);
+		background: color-mix(
+			in srgb,
+			var(--color-yellow-500) 6%,
+			var(--color-neutral-900)
+		);
+		border-bottom-color: color-mix(
+			in srgb,
+			var(--color-yellow-500) 30%,
+			transparent
+		);
 	}
 
 	[data-status="finished"] & {
-		background: color-mix(in srgb, var(--color-green-500) 5%, var(--color-neutral-900));
-		border-bottom-color: color-mix(in srgb, var(--color-green-500) 25%, transparent);
+		background: color-mix(
+			in srgb,
+			var(--color-green-500) 5%,
+			var(--color-neutral-900)
+		);
+		border-bottom-color: color-mix(
+			in srgb,
+			var(--color-green-500) 25%,
+			transparent
+		);
 	}
 }
 
@@ -111,4 +131,3 @@
 		color: var(--color-green-400);
 	}
 }
-

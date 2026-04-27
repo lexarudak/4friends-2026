@@ -38,7 +38,8 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 
 	const getBetStatus = (bet: ScheduleBet) => {
 		if (!hasResult) return "pending";
-		if (bet.betHome === match.resultHome && bet.betAway === match.resultAway) return "exact";
+		if (bet.betHome === match.resultHome && bet.betAway === match.resultAway)
+			return "exact";
 		const betOutcome = Math.sign(bet.betHome - bet.betAway);
 		const realOutcome = Math.sign(match.resultHome! - match.resultAway!);
 		if (betOutcome === realOutcome) return "win";
@@ -72,9 +73,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				{status === "live" && match.minute != null && (
 					<span className={styles.minute}>{match.minute}&apos;</span>
 				)}
-				{status !== "live" && (
-					<span className={styles.date}>{match.date}</span>
-				)}
+				{status !== "live" && <span className={styles.date}>{match.date}</span>}
 			</div>
 
 			{/* Score row */}

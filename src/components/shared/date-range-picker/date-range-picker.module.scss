@@ -109,7 +109,9 @@
 	align-items: center;
 	justify-content: center;
 	font-size: var(--font-size-12);
-	transition: border-color var(--duration-base), color var(--duration-base);
+	transition:
+		border-color var(--duration-base),
+		color var(--duration-base);
 
 	&:hover {
 		border-color: var(--color-primary-600);
@@ -163,7 +165,9 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background var(--duration-fast), color var(--duration-fast);
+	transition:
+		background var(--duration-fast),
+		color var(--duration-fast);
 	border-radius: 0;
 
 	&:hover {

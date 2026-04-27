@@ -43,9 +43,20 @@ export const ScheduleSection = ({ matches }: Props) => {
 		const to = range.to ?? range.from;
 		return matches.filter((m) => {
 			const d = parseDDMMYY(m.date);
-			if (from && d < new Date(from.getFullYear(), from.getMonth(), from.getDate())) return false;
+			if (
+				from &&
+				d < new Date(from.getFullYear(), from.getMonth(), from.getDate())
+			)
+				return false;
 			if (to) {
-				const toEnd = new Date(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59);
+				const toEnd = new Date(
+					to.getFullYear(),
+					to.getMonth(),
+					to.getDate(),
+					23,
+					59,
+					59
+				);
 				if (d > toEnd) return false;
 			}
 			if (debouncedCountry) {
@@ -86,7 +97,12 @@ export const ScheduleSection = ({ matches }: Props) => {
 				/>
 
 				<div className={styles.actions}>
-					<Button variant="outline" color="neutral" size="md" onClick={handleClear}>
+					<Button
+						variant="outline"
+						color="neutral"
+						size="md"
+						onClick={handleClear}
+					>
 						Clear
 					</Button>
 				</div>

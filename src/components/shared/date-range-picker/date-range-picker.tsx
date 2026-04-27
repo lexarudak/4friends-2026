@@ -22,7 +22,13 @@ function fmt(d?: Date): string {
 	});
 }
 
-export const DateRangePicker: FC<Props> = ({ value, onChange, fromDate, toDate, className }) => {
+export const DateRangePicker: FC<Props> = ({
+	value,
+	onChange,
+	fromDate,
+	toDate,
+	className,
+}) => {
 	const [open, setOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 
