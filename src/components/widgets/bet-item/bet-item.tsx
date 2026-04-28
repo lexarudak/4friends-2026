@@ -34,7 +34,11 @@ export const BetItem: FC<Props> = ({
 	result,
 }) => {
 	return (
-		<li className={styles.row} data-status={status} data-show-result={!!result}>
+		<li
+			className={styles.row}
+			data-status={status}
+			data-show-result={!!result || undefined}
+		>
 			<span className={styles.group}>Group {group}</span>
 
 			<TeamBadge
