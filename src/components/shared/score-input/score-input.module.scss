@@ -1,15 +1,18 @@
 .input {
-	width: 40px;
-	height: 40px;
-	background: var(--color-primary-600);
+	width: 44px;
+	height: 44px;
+	background: transparent;
 	color: var(--color-neutral-white);
-	border: none;
-	font-size: var(--font-size-16);
-	font-weight: var(--font-weight-bold);
+	border: 1px solid var(--color-neutral-700);
+	font-size: var(--font-size-18, 18px);
+	font-weight: 800;
+	font-family: var(--font-geist-mono);
 	text-align: center;
 	cursor: pointer;
 	appearance: textfield;
-	transition: filter var(--duration-base);
+	transition:
+		border-color var(--duration-base) var(--ease-standard),
+		background var(--duration-base) var(--ease-standard);
 
 	&::-webkit-outer-spin-button,
 	&::-webkit-inner-spin-button {
@@ -18,15 +21,18 @@
 	}
 
 	&::placeholder {
-		color: var(--color-primary-300);
+		color: var(--color-neutral-600);
+		font-weight: 400;
+	}
+
+	&:hover:not(:focus) {
+		border-color: var(--color-neutral-500);
+		background: var(--color-neutral-800);
 	}
 
 	&:focus {
-		outline: 2px solid var(--color-primary-300);
-		outline-offset: 2px;
-	}
-
-	&:hover {
-		filter: brightness(1.15);
+		outline: none;
+		border-color: var(--color-primary-500);
+		background: color-mix(in srgb, var(--color-primary-600) 8%, transparent);
 	}
 }

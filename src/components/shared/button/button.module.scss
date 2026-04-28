@@ -11,17 +11,21 @@
 	justify-content: center;
 	gap: var(--space-8);
 	padding: var(--space-10) var(--space-16);
-	border: none;
+	border: 1px solid transparent;
 	font-size: var(--font-size-14);
 	font-weight: var(--font-weight-medium);
 	cursor: pointer;
-	letter-spacing: 0.01em;
+	letter-spacing: 0.02em;
 	color: var(--color-neutral-white);
 	text-decoration: none;
-	transition: filter var(--duration-base);
+	transition:
+		background var(--duration-base) var(--ease-standard),
+		border-color var(--duration-base) var(--ease-standard),
+		color var(--duration-base) var(--ease-standard),
+		filter var(--duration-base) var(--ease-standard);
 
 	&:disabled:not([data-loading]) {
-		opacity: 0.4;
+		opacity: 0.35;
 		cursor: not-allowed;
 	}
 
@@ -30,7 +34,7 @@
 	}
 
 	&:hover:not(:disabled) {
-		filter: brightness(1.2);
+		filter: brightness(1.15);
 	}
 
 	&:active:not(:disabled) {
@@ -40,20 +44,28 @@
 	// ── Color variants ──────────────────────────────────
 
 	&[data-color="neutral"] {
-		background: var(--color-neutral-950);
+		background: var(--color-neutral-800);
+		border-color: var(--color-neutral-700);
 	}
 	&[data-color="green"] {
-		background: var(--color-green-800);
+		background: color-mix(in srgb, var(--color-green-600) 20%, transparent);
+		border-color: var(--color-green-700);
+		color: var(--color-green-300);
 	}
 	&[data-color="primary"] {
-		background: var(--color-primary-600);
+		background: color-mix(in srgb, var(--color-primary-600) 20%, transparent);
+		border-color: var(--color-primary-700);
+		color: var(--color-primary-300);
 	}
 	&[data-color="red"] {
-		background: var(--color-red-600);
+		background: color-mix(in srgb, var(--color-red-600) 20%, transparent);
+		border-color: var(--color-red-700);
+		color: var(--color-red-300);
 	}
 	&[data-color="yellow"] {
-		background: var(--color-yellow-500);
-		color: var(--color-neutral-950);
+		background: color-mix(in srgb, var(--color-yellow-500) 15%, transparent);
+		border-color: color-mix(in srgb, var(--color-yellow-500) 50%, transparent);
+		color: var(--color-yellow-300);
 	}
 }
 
@@ -84,6 +96,7 @@
 .btn.inline {
 	padding: 0;
 	background: none;
+	border: none;
 	color: var(--color-primary-400);
 	font-size: inherit;
 	font-weight: var(--font-weight-medium);
