@@ -2,91 +2,46 @@ import type { FC } from "react";
 import type { BetHistoryItem } from "@/db/bet-history";
 import { cn } from "@/utils/lib";
 import { SectionLabel } from "@/components/shared/section-label";
-import { TeamBadge } from "@/components/shared/team-badge";
+import { BetItem } from "@/components/widgets/bet-item";
+import { getBetItemStatus } from "@/utils/bet";
 import styles from "./bet-history-list.module.scss";
 
 type Props = {
 	items: BetHistoryItem[];
+	showResult?: boolean;
 	className?: string;
 };
 
-export const BetHistoryList: FC<Props> = ({ items, className }) => {
+export const BetHistoryList: FC<Props> = ({
+	items,
+	showResult = true,
+	className,
+}) => {
 	return (
 		<div className={cn(styles.container, className)}>
 			<SectionLabel label="Bets History" />
 			<ul className={styles.list}>
-				{items.map((item) => {
-					const hasResult =
-						item.resultHome !== null && item.resultAway !== null;
-					const isExact =
-						hasResult &&
-						item.resultHome === item.betHome &&
-						item.resultAway === item.betAway;
-					const isWin =
-						hasResult &&
-						!isExact &&
-						Math.sign(item.betHome - item.betAway) ===
-							Math.sign(item.resultHome! - item.resultAway!);
-					const status = !hasResult
-						? "pending"
-						: isExact
-							? "exact"
-							: isWin
-								? "win"
-								: "miss";
-
-					return (
-						<li key={item.id} className={styles.row} data-status={status}>
-							<span className={styles.group}>Group {item.group}</span>
-
-							<TeamBadge
-								name={item.homeTeam}
-								flag={item.homeFlag}
-								direction="rtl"
-								className={styles.team}
-							/>
-
-							<span className={styles.bet}>
-								{item.betHome} : {item.betAway}
-							</span>
-
-							<TeamBadge
-								name={item.awayTeam}
-								flag={item.awayFlag}
-								className={styles.team}
-							/>
-
-							<span className={styles.meta}>
-								<span className={styles.time}>{item.time}</span>
-								<span className={styles.date}>{item.date}</span>
-							</span>
-
-							<span className={styles.result}>
-								{hasResult ? (
-									<>
-										<span className={styles.resultLabel}>Result</span>
-										<span className={styles.resultScore}>
-											{item.resultHome} : {item.resultAway}
-										</span>
-									</>
-								) : (
-									<span className={styles.resultLabel}>Pending</span>
-								)}
-							</span>
-
-							<span className={styles.points}>
-								{item.points !== null ? (
-									<>
-										<span className={styles.pointsValue}>{item.points}</span>
-										<span className={styles.pointsLabel}>pts</span>
-									</>
-								) : (
-									<span className={styles.pointsDash}>—</span>
-								)}
-							</span>
-						</li>
-					);
-				})}
+				{items.map((item) => (
+					<BetItem
+						key={item.id}
+						status={getBetItemStatus(item)}
+						showResult={showResult}
+						group={item.group}
+						homeTeam={item.homeTeam}
+						homeFlag={item.homeFlag}
+						awayTeam={item.awayTeam}
+						awayFlag={item.awayFlag}
+						betHome={item.betHome}
+						betAway={item.betAway}
+						time={item.time}
+						date={item.date}
+						result={{
+							home: item.resultHome,
+							away: item.resultAway,
+							points: item.points,
+						}}
+					/>
+				))}
 			</ul>
 		</div>
 	);
