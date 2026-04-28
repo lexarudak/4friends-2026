@@ -101,7 +101,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				<PaginatedTable
 					rows={betRows}
 					pageSize={5}
-					tableClassName={styles.betsTable}
+					tableClassName={styles.table}
 					hidePosition
 				/>
 			)}

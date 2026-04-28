@@ -1,5 +1,5 @@
 import { getLiveMatches } from "@/db/live-matches";
-import { LiveMatchCard } from "@/components/widgets/live-match-card";
+import { ScheduleMatchCard } from "@/components/widgets/schedule-match-card";
 import styles from "./live-section.module.scss";
 
 export function LiveSection() {
@@ -14,7 +14,7 @@ export function LiveSection() {
 				Live
 			</h2>
 			{matches.map((match) => (
-				<LiveMatchCard key={match.id} match={match} />
+				<ScheduleMatchCard key={match.id} match={match} />
 			))}
 		</section>
 	);
