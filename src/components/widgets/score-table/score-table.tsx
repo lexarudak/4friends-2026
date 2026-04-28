@@ -34,7 +34,7 @@ export const ScoreTable: FC<Props> = ({
 					<li
 						key={row.position}
 						className={styles.row}
-						data-first={row.position === 1 || undefined}
+						data-first={(row.position === 1 && !hidePosition) || undefined}
 						data-me={row.isCurrentUser || undefined}
 						data-status={row.status || undefined}
 					>
