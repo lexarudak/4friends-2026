@@ -30,9 +30,9 @@ export const BetItemResult: FC<Props> = ({ result }) => {
 			</span>
 
 			<span className={styles.points}>
-				{points != null ? (
+				{result?.points != null ? (
 					<>
-						<span className={styles.pointsValue}>{points}</span>
+						<span className={styles.pointsValue}>{result.points}</span>
 						<span className={styles.pointsLabel}>pts</span>
 					</>
 				) : (
