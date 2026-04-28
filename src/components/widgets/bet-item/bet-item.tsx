@@ -1,7 +1,8 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { TeamBadge } from "@/components/shared/team-badge";
 import { BetItemResult } from "./bet-item-result";
 import type { BetItemResultData } from "./bet-item-result";
+import { cn } from "@/utils/lib";
 import styles from "./bet-item.module.scss";
 
 export type BetItemStatus = "pending" | "exact" | "win" | "miss";
@@ -12,12 +13,14 @@ type Props = {
 	homeFlag: string;
 	awayTeam: string;
 	awayFlag: string;
-	betHome: number;
-	betAway: number;
+	betHome?: number;
+	betAway?: number;
+	scoreSlot?: ReactNode;
 	time: string;
 	date: string;
-	status: BetItemStatus;
+	status: BetItemStatus | string;
 	result?: BetItemResultData | null;
+	className?: string;
 };
 
 export const BetItem: FC<Props> = ({
@@ -28,14 +31,16 @@ export const BetItem: FC<Props> = ({
 	awayFlag,
 	betHome,
 	betAway,
+	scoreSlot,
 	time,
 	date,
 	status,
 	result,
+	className,
 }) => {
 	return (
 		<li
-			className={styles.row}
+			className={cn(styles.row, className)}
 			data-status={status}
 			data-show-result={!!result || undefined}
 		>
@@ -48,9 +53,11 @@ export const BetItem: FC<Props> = ({
 				className={styles.team}
 			/>
 
-			<span className={styles.bet}>
-				{betHome} : {betAway}
-			</span>
+			{scoreSlot ?? (
+				<span className={styles.bet}>
+					{betHome} : {betAway}
+				</span>
+			)}
 
 			<TeamBadge name={awayTeam} flag={awayFlag} className={styles.team} />
 

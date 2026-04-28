@@ -8,15 +8,10 @@ import styles from "./bet-history-list.module.scss";
 
 type Props = {
 	items: BetHistoryItem[];
-	showResult?: boolean;
 	className?: string;
 };
 
-export const BetHistoryList: FC<Props> = ({
-	items,
-	showResult = true,
-	className,
-}) => {
+export const BetHistoryList: FC<Props> = ({ items, className }) => {
 	return (
 		<div className={cn(styles.container, className)}>
 			<SectionLabel label="Bets History" />
@@ -25,7 +20,6 @@ export const BetHistoryList: FC<Props> = ({
 					<BetItem
 						key={item.id}
 						status={getBetItemStatus(item)}
-						showResult={showResult}
 						group={item.group}
 						homeTeam={item.homeTeam}
 						homeFlag={item.homeFlag}

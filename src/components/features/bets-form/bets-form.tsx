@@ -105,22 +105,21 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 		<form onSubmit={formik.handleSubmit} className={styles.form}>
 			<ul className={styles.list}>
 				{matches.map((match) => (
-					<li key={match.id}>
-						<MatchCard
-							match={match}
-							homeFieldName={`bets.${match.id}.home`}
-							awayFieldName={`bets.${match.id}.away`}
-							homeValue={formik.values.bets[match.id]?.home ?? ""}
-							awayValue={formik.values.bets[match.id]?.away ?? ""}
-							status={getMatchStatus(
-								match.id,
-								formik.values,
-								showErrors,
-								betErrors
-							)}
-							onChange={formik.handleChange}
-						/>
-					</li>
+					<MatchCard
+						key={match.id}
+						match={match}
+						homeFieldName={`bets.${match.id}.home`}
+						awayFieldName={`bets.${match.id}.away`}
+						homeValue={formik.values.bets[match.id]?.home ?? ""}
+						awayValue={formik.values.bets[match.id]?.away ?? ""}
+						status={getMatchStatus(
+							match.id,
+							formik.values,
+							showErrors,
+							betErrors
+						)}
+						onChange={formik.handleChange}
+					/>
 				))}
 			</ul>
 
