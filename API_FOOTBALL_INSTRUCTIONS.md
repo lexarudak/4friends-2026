@@ -30,16 +30,32 @@
 | Requests today | tracked at runtime via `GET /status` |
 | Daily limit    | 100                                  |
 
-## Current Usage (from legacy)
+## Tournament: World Cup 2026
+
+**League ID `1`** = FIFA World Cup  
+**Season `2026`** = World Cup 2026  
+**Tournament dates:** 2026-06-11 → 2026-07-19  
+**Teams:** 48 (expanded format — first time)  
+**Estimated fixtures:** ~104 matches
+
+> Previous app targeted **Euro 2024** (league `4`, season `2024`). All legacy DB tables and seed data were for that tournament. The new implementation targets **WC 2026**.
+
+### ⚠️ Free Plan Limitations for WC 2026 (verified April 30, 2026)
+
+| Endpoint                              | Status       | Notes                                                                   |
+| ------------------------------------- | ------------ | ----------------------------------------------------------------------- |
+| `GET /fixtures?league=1&season=2026`  | ❌ 0 results | Fixtures not yet published by API                                       |
+| `GET /teams?league=1&season=2026`     | ❌ 0 results | Teams not yet available                                                 |
+| `GET /standings?league=1&season=2026` | ❌ Error     | `"Free plans do not have access to this season, try from 2022 to 2024"` |
+
+**Implication:** The seed strategy from the Euro 2024 migration (fetch everything from API) **will not work yet** for WC 2026. Fixtures, teams and standings must be seeded **manually or from a different source** until the API populates them. Poll `GET /fixtures?league=1&season=2026` periodically — data should appear closer to June 2026.
+
+### Legacy usage (Euro 2024 — for reference only)
 
 | Endpoint         | Params                                               | Purpose                             |
 | ---------------- | ---------------------------------------------------- | ----------------------------------- |
 | `GET /fixtures`  | `league=4&season=2024&from=2024-06-14&to=2024-07-14` | Fetch all Euro 2024 fixture results |
 | `GET /standings` | `league=4&season=2024`                               | Fetch group standings               |
-
-**League ID `4`** = UEFA European Championship  
-**Season `2024`** = Euro 2024  
-**Total fixtures:** 51 (confirmed via API)
 
 ---
 
@@ -281,8 +297,10 @@ Condition: only if any match has datetime <= NOW() AND status NOT IN (finished t
 Action: GET /fixtures?live=all  →  upsert apiData  →  sync allMatches scores/winner
 
 Trigger: once daily at 03:00 UTC
-Action: GET /standings  →  overwrite standingsData.jsonstring
+Action: GET /standings?league=1&season=2026  →  overwrite standingsData.jsonstring
 ```
+
+> ⚠️ Standings endpoint currently returns an error on the free plan for season 2026. Monitor and enable once data becomes available.
 
 **Budget calculation (match day with 3 games):**
 
@@ -303,10 +321,12 @@ In the migration, this lookup should be handled in the Prisma sync service, not 
 
 ## Notes for Migration
 
-- **`countryCodeMapping` table is no longer needed** — the API's `GET /teams` returns a `code` field directly (e.g. `"FRA"`). Seed teams from the API instead.
-- ⚠️ **Code collision:** Both Slovakia (`773`) and Slovenia (`1091`) have code `SLO` in the API. Handle explicitly in Prisma seed.
-- `fixture.periods.first/second` are **Unix timestamps**, not minutes. Store as-is or convert.
+- **WC 2026 data is not yet available on the free plan** (verified 2026-04-30). Teams, fixtures and standings all return empty. Implement a manual seed path as fallback; switch to API-driven seed once data is published.
+- **`countryCodeMapping` table is no longer needed** — the API's `GET /teams` returns a `code` field directly. Seed teams from the API once available.
+- ⚠️ **Code collision in Euro 2024 data:** Both Slovakia (`773`) and Slovenia (`1091`) had code `SLO`. Watch for similar issues in WC 2026 team data.
+- `fixture.periods.first/second` are **Unix timestamps**, not minutes elapsed.
 - `winner` field in API response can be `null` during a live match — always gate on `status.short` before trusting it.
 - `GET /fixtures?live=all` returns only currently live matches — use full `/fixtures` with date range for initial DB seed.
 - `home`/`away` split stats in standings are always `null` for international tournaments — ignore them.
 - Logo URLs follow the pattern `https://media.api-sports.io/football/teams/{id}.png` — can be stored or constructed on the fly.
+- WC 2026 has **48 teams** and **~104 matches** (vs 24 teams / 51 matches for Euro 2024) — the bet pre-fill on registration will be significantly larger.
