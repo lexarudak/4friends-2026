@@ -3,6 +3,7 @@ import { cn } from "@/utils/lib";
 import styles from "./hero-section.module.scss";
 import { Button } from "@/components/shared/button";
 import { SectionLabel } from "@/components/shared/section-label";
+import { PAGES } from "@/utils/constants";
 
 type Props = HTMLAttributes<HTMLDivElement>;
 
@@ -21,7 +22,7 @@ export const HeroSection: FC<Props> = ({ className, ...props }) => {
 						<span className={styles.metaItem}>48 teams</span>
 						<span className={styles.metaItem}>USA · Canada · Mexico</span>
 					</div>
-					<Button href="/tournament" color="primary" className={styles.cta}>
+					<Button href={PAGES.WORLD_CUP} color="primary" className={styles.cta}>
 						Discover the tournament
 						<span aria-hidden>→</span>
 					</Button>

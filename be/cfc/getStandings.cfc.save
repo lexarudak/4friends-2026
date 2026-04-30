@@ -1,0 +1,2 @@
+<cffunction name="getUsersBets" access="remote" returntype="struct" returnformat="json" output="false">
+        <cfset var result = {}>Sta
