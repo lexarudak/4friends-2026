@@ -8,17 +8,18 @@
 
 ## 1. Application Config (`Application.cfc`)
 
-| Setting | Value |
-|---|---|
-| App name | `restgtcs` |
-| Session timeout | ~1 hour |
-| App timeout | ~13 hours |
-| Database | MySQL via JDBC — `jdbc:mysql://4friends_mysql:3306/4friends` |
-| Datasource alias | `gtcs` / `application.datasource` |
-| DB user | `4friends_CF` |
-| CORS origin | `https://gtcs.quest` |
+| Setting          | Value                                                        |
+| ---------------- | ------------------------------------------------------------ |
+| App name         | `restgtcs`                                                   |
+| Session timeout  | ~1 hour                                                      |
+| App timeout      | ~13 hours                                                    |
+| Database         | MySQL via JDBC — `jdbc:mysql://4friends_mysql:3306/4friends` |
+| Datasource alias | `gtcs` / `application.datasource`                            |
+| DB user          | `4friends_CF`                                                |
+| CORS origin      | `https://gtcs.quest`                                         |
 
 ### Session variables (cleared on session start)
+
 ```
 session.auth.isLoggedIn  = false
 session.auth.ID          = ""
@@ -34,11 +35,13 @@ session.auth.lastError   = ""
 ## 2. Authentication
 
 ### How it works
+
 - No JWT. Tokens are SHA-256 hashes stored in the DB table `userTokens`.
 - After login a cookie named `TOKEN` is set (domain `4friends.live`, expiry 1-2 months).
 - Every protected endpoint reads `COOKIE.TOKEN`, validates it against `userTokens`, and rejects expired ones.
 
 ### Token generation
+
 ```
 token = SHA256( UUID + "_" + timestamp + "_" + accountUniqueID )
 ```
@@ -60,22 +63,31 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 **Auth required:** No
 
 **Request body:**
+
 ```json
 { "email": "string", "password": "string" }
 ```
 
 **Logic:**
+
 1. Deserialise JSON body.
 2. Look up `accounts` by `email`.
 3. Hash `password + salt` with SHA-256, compare to stored hash.
 4. On success: insert into `userTokens`, set `TOKEN` cookie.
 
 **Response (success):**
+
 ```json
-{ "SUCCESS": true, "MESSAGE": "Login successful", "TOKEN": "...", "ACCESSLEVEL": 1 }
+{
+	"SUCCESS": true,
+	"MESSAGE": "Login successful",
+	"TOKEN": "...",
+	"ACCESSLEVEL": 1
+}
 ```
 
 **Response (failure):**
+
 ```json
 { "SUCCESS": false, "MESSAGE": "Invalid password", "ERRORFIELD": "password" }
 ```
@@ -92,11 +104,13 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 **Auth required:** No
 
 **Request body:**
+
 ```json
 { "login": "string", "email": "string", "password": "string", "room": "string" }
 ```
 
 **Logic:**
+
 1. Validate required fields.
 2. Check for duplicate username/email in `accounts`.
 3. Validate room exists in `rooms` and has capacity.
@@ -106,6 +120,7 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 7. Pre-populate `allBetsEuro2024` with empty bets for all existing matches.
 
 **Response (success):**
+
 ```json
 { "success": true, "message": "Registration success" }
 ```
@@ -120,15 +135,16 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Response (success):**
+
 ```json
 {
-  "success": true,
-  "userid": 42,
-  "data": {
-    "username": "john",
-    "activeroom": 3,
-    "rooms": { "1": "Room Alpha", "3": "Room Beta" }
-  }
+	"success": true,
+	"userid": 42,
+	"data": {
+		"username": "john",
+		"activeroom": 3,
+		"rooms": { "1": "Room Alpha", "3": "Room Beta" }
+	}
 }
 ```
 
@@ -144,22 +160,23 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Response (success):**
+
 ```json
 {
-  "SUCCESS": true,
-  "DATA": {
-    "101": {
-      "USERID": 42,
-      "MATCHID": 101,
-      "INFO": "Group A",
-      "TIME": "2024-06-15 18:00:00",
-      "SERVERTIME": "...",
-      "EXTRA": false,
-      "WINNER": "FRA",
-      "TEAM1": { "CODE": "FRA", "SCORE": 2 },
-      "TEAM2": { "CODE": "GER", "SCORE": 1 }
-    }
-  }
+	"SUCCESS": true,
+	"DATA": {
+		"101": {
+			"USERID": 42,
+			"MATCHID": 101,
+			"INFO": "Group A",
+			"TIME": "2024-06-15 18:00:00",
+			"SERVERTIME": "...",
+			"EXTRA": false,
+			"WINNER": "FRA",
+			"TEAM1": { "CODE": "FRA", "SCORE": 2 },
+			"TEAM2": { "CODE": "GER", "SCORE": 1 }
+		}
+	}
 }
 ```
 
@@ -175,12 +192,15 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Request body:**
+
 ```json
 { "from": "2024-06-01", "to": "2024-07-31" }
 ```
+
 > Note: date filtering is currently commented out in the query.
 
 **Side effects (on every call):**
+
 - Updates `allBetsEuro2024.points_match` and `points_match_extra` for all finished/live matches.
 - Recalculates `totalPoints.points` for all users.
 
@@ -194,28 +214,33 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 | Correct extra-time winner (`points_match_extra`) | +2 |
 
 **Response structure per match:**
+
 ```json
 {
-  "MATCHID: 101": {
-    "TEAM1": { "CODE": "FRA", "SCORE": 2 },
-    "TEAM2": { "CODE": "GER", "SCORE": 1 },
-    "INFO": "Group A",
-    "TIME": "...",
-    "EXTRA": false,
-    "WINNER": "FRA",
-    "STATUS": { "SHORT": "FT", "LONG": "Match Finished", "TYPE": "finished" },
-    "PERIODS": { "PERIODS_FIRST": 45, "PERIODS_SECOND": 90, "SERVER_TIME": "..." },
-    "USER BETS": [
-      {
-        "USERNAME": "john",
-        "TEAM1": { "CODE": "FRA", "SCORE": 2 },
-        "TEAM2": { "CODE": "GER", "SCORE": 1 },
-        "WINNER": "FRA",
-        "POINTS": 3,
-        "POINTS_EXTRA": 0
-      }
-    ]
-  }
+	"MATCHID: 101": {
+		"TEAM1": { "CODE": "FRA", "SCORE": 2 },
+		"TEAM2": { "CODE": "GER", "SCORE": 1 },
+		"INFO": "Group A",
+		"TIME": "...",
+		"EXTRA": false,
+		"WINNER": "FRA",
+		"STATUS": { "SHORT": "FT", "LONG": "Match Finished", "TYPE": "finished" },
+		"PERIODS": {
+			"PERIODS_FIRST": 45,
+			"PERIODS_SECOND": 90,
+			"SERVER_TIME": "..."
+		},
+		"USER BETS": [
+			{
+				"USERNAME": "john",
+				"TEAM1": { "CODE": "FRA", "SCORE": 2 },
+				"TEAM2": { "CODE": "GER", "SCORE": 1 },
+				"WINNER": "FRA",
+				"POINTS": 3,
+				"POINTS_EXTRA": 0
+			}
+		]
+	}
 }
 ```
 
@@ -223,7 +248,7 @@ All endpoints are ColdFusion components (`*.cfc`) invoked via the ColdFusion rem
 
 ---
 
-### 3.6 `cfc/Save.cfc` → `SaveAndGetMatches`  &  `cfc/suggest.cfc` → `Save`
+### 3.6 `cfc/Save.cfc` → `SaveAndGetMatches` & `cfc/suggest.cfc` → `Save`
 
 Two components implement (slightly different versions of) the same save-bets flow.  
 `suggest.cfc::Save` is the **newer/canonical** version.
@@ -234,21 +259,23 @@ Two components implement (slightly different versions of) the same save-bets flo
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Request body:**
+
 ```json
 {
-  "data": [
-    {
-      "userid": 42,
-      "matchid": 101,
-      "team1": { "code": "FRA", "score": 2 },
-      "team2": { "code": "GER", "score": 1 },
-      "winner": "FRA"
-    }
-  ]
+	"data": [
+		{
+			"userid": 42,
+			"matchid": 101,
+			"team1": { "code": "FRA", "score": 2 },
+			"team2": { "code": "GER", "score": 1 },
+			"winner": "FRA"
+		}
+	]
 }
 ```
 
 **Validation:**
+
 - Token must be valid.
 - `data[].userid` must match the authenticated user (anti-cheat).
 - Match must not have started yet (`datetime > NOW()`).
@@ -267,26 +294,27 @@ Two components implement (slightly different versions of) the same save-bets flo
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "data": {
-    "mainTable":  [ { "username": "john", "points": 42 } ],
-    "topAll":     [ { "username": "john", "points": 55 } ],
-    "exact":      [ { "username": "john", "points": 12 } ],
-    "wins":       [ { "username": "john", "points": 30 } ],
-    "average":    [ { "username": "john", "points": "1.75" } ]
-  }
+	"success": true,
+	"data": {
+		"mainTable": [{ "username": "john", "points": 42 }],
+		"topAll": [{ "username": "john", "points": 55 }],
+		"exact": [{ "username": "john", "points": 12 }],
+		"wins": [{ "username": "john", "points": 30 }],
+		"average": [{ "username": "john", "points": "1.75" }]
+	}
 }
 ```
 
-| Key | Description |
-|---|---|
-| `mainTable` | Points in current active room |
-| `topAll` | Max points across all rooms (global top) |
-| `exact` | Count of exact-score predictions |
-| `wins` | Count of matches with at least 1 point |
-| `average` | Average points per played match |
+| Key         | Description                              |
+| ----------- | ---------------------------------------- |
+| `mainTable` | Points in current active room            |
+| `topAll`    | Max points across all rooms (global top) |
+| `exact`     | Count of exact-score predictions         |
+| `wins`      | Count of matches with at least 1 point   |
+| `average`   | Average points per played match          |
 
 ---
 
@@ -298,6 +326,7 @@ Two components implement (slightly different versions of) the same save-bets flo
 **Auth required:** No
 
 **Response:**
+
 ```json
 { "SUCCESS": true, "DATA": "<raw json string from standingsData table>" }
 ```
@@ -312,6 +341,7 @@ Two components implement (slightly different versions of) the same save-bets flo
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Request body:**
+
 ```json
 { "userid": 42, "roomname": "Room Beta" }
 ```
@@ -328,6 +358,7 @@ Two components implement (slightly different versions of) the same save-bets flo
 **Auth required:** Yes (cookie `TOKEN`)
 
 **Request body:**
+
 ```json
 { "userid": 42, "roomid": 3 }
 ```
@@ -344,18 +375,19 @@ Two components implement (slightly different versions of) the same save-bets flo
 **Auth required:** No
 
 **Response:**
+
 ```json
 {
-  "SUCCESS": true,
-  "DATA": [
-    { "match_id": 101, "datetime": "2024-06-15 18:00:00", "servertime": "..." }
-  ]
+	"SUCCESS": true,
+	"DATA": [
+		{ "match_id": 101, "datetime": "2024-06-15 18:00:00", "servertime": "..." }
+	]
 }
 ```
 
 ---
 
-### 3.12 `cfc/apiDataUpdate.cfc` → `apiDataUpdate`  (internal / cron)
+### 3.12 `cfc/apiDataUpdate.cfc` → `apiDataUpdate` (internal / cron)
 
 **Purpose:** Triggered by scheduler. Checks if any past matches are not yet "Match Finished" and, if so, calls `connectorapi::getFixturesEuro2024` to refresh from the external API.
 
@@ -363,11 +395,11 @@ Two components implement (slightly different versions of) the same save-bets flo
 
 ### 3.13 `cfc/connectorapi.cfc` — External API integration
 
-| Function | Purpose |
-|---|---|
-| `getFixturesEuro2024` | Fetch all Euro 2024 fixture results from api-football.com, upsert into `apiData`, sync scores/winner into `allMatchesEuro2024` |
-| `getStandingsEuro2024` | Fetch group standings, store raw JSON into `standingsData` |
-| `processFixturesData` | Helper: parse fixture response, resolve winner team code via `countryCodeMapping`, upsert into `apiData` |
+| Function               | Purpose                                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `getFixturesEuro2024`  | Fetch all Euro 2024 fixture results from api-football.com, upsert into `apiData`, sync scores/winner into `allMatchesEuro2024` |
+| `getStandingsEuro2024` | Fetch group standings, store raw JSON into `standingsData`                                                                     |
+| `processFixturesData`  | Helper: parse fixture response, resolve winner team code via `countryCodeMapping`, upsert into `apiData`                       |
 
 **External API:** `https://v3.football.api-sports.io`  
 **League ID:** `4` (UEFA Euro), **Season:** `2024`
@@ -378,53 +410,183 @@ Two components implement (slightly different versions of) the same save-bets flo
 
 Derived from SQL queries across all components.
 
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    accounts {
+        int accountUniqueID PK
+        varchar email
+        varchar username
+        varchar password
+        varchar salt
+        int status
+        int accesslevel
+        timestamp createdDate
+        int activeroomID FK
+    }
+
+    userTokens {
+        int id PK
+        int userID FK
+        varchar token
+        timestamp expirationDate
+        varchar ip
+        varchar browser
+    }
+
+    rooms {
+        int id PK
+        varchar name
+        int capacity
+    }
+
+    userRooms {
+        int userID FK
+        int roomID FK
+    }
+
+    allMatchesEuro2024 {
+        int match_id PK
+        varchar Team1
+        varchar Team2
+        int GoalsTeam1
+        int GoalsTeam2
+        varchar winner
+        tinyint extra
+        timestamp datetime
+        varchar info
+    }
+
+    allBetsEuro2024 {
+        int id PK
+        int room_id FK
+        int player_id FK
+        int match_id FK
+        varchar Team1
+        int GoalsTeam1
+        int GoalsTeam2
+        varchar Team2
+        varchar winner
+        int points_match
+        int points_match_extra
+        timestamp createdDate
+        varchar createdBy
+        timestamp updatedDate
+        varchar updatedBy
+    }
+
+    totalPoints {
+        int id PK
+        int userID FK
+        varchar username
+        int points
+        int roomID FK
+    }
+
+    apiData {
+        int match_id PK_FK
+        bigint fixture_id
+        timestamp fixture_date
+        varchar status FK
+        varchar league_name
+        int league_season
+        varchar league_round
+        varchar team_home_name
+        varchar team_away_name
+        int goals_home
+        int goals_away
+        int halftime_home
+        int halftime_away
+        int fulltime_home
+        int fulltime_away
+        int extratime_home
+        int extratime_away
+        int penalty_home
+        int penalty_away
+        int periods_first
+        int periods_second
+        varchar winner
+    }
+
+    fixturesStatus {
+        varchar long PK
+        varchar short
+        varchar type
+    }
+
+    standingsData {
+        longtext jsonstring
+    }
+
+    countryCodeMapping {
+        varchar name PK
+        varchar code
+    }
+
+    accounts ||--o{ userTokens       : "has tokens"
+    accounts ||--o{ userRooms        : "belongs to"
+    accounts }o--|| rooms            : "active room"
+    accounts ||--o{ totalPoints      : "has points"
+    accounts ||--o{ allBetsEuro2024  : "places bets"
+
+    rooms    ||--o{ userRooms        : "has members"
+    rooms    ||--o{ allBetsEuro2024  : "scopes bets"
+    rooms    ||--o{ totalPoints      : "scopes points"
+
+    allMatchesEuro2024 ||--o{ allBetsEuro2024 : "bet on"
+    allMatchesEuro2024 ||--|| apiData         : "synced from"
+
+    apiData }o--|| fixturesStatus : "status lookup"
+```
+
 ---
 
 ### `accounts`
 
-| Column | Type | Notes |
-|---|---|---|
-| `accountUniqueID` | INT PK AUTO | User ID |
-| `email` | VARCHAR | Unique |
-| `username` | VARCHAR | Unique display name |
-| `password` | VARCHAR | SHA-256 hash |
-| `salt` | VARCHAR | AES-generated random salt |
-| `status` | INT | 1 = active |
-| `accesslevel` | INT | Role (1 = user, higher = admin) |
-| `createdDate` | TIMESTAMP | |
-| `activeroomID` | INT FK → rooms.id | Currently selected room |
+| Column            | Type              | Notes                           |
+| ----------------- | ----------------- | ------------------------------- |
+| `accountUniqueID` | INT PK AUTO       | User ID                         |
+| `email`           | VARCHAR           | Unique                          |
+| `username`        | VARCHAR           | Unique display name             |
+| `password`        | VARCHAR           | SHA-256 hash                    |
+| `salt`            | VARCHAR           | AES-generated random salt       |
+| `status`          | INT               | 1 = active                      |
+| `accesslevel`     | INT               | Role (1 = user, higher = admin) |
+| `createdDate`     | TIMESTAMP         |                                 |
+| `activeroomID`    | INT FK → rooms.id | Currently selected room         |
 
 ---
 
 ### `userTokens`
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | INT PK AUTO | |
-| `userID` | INT FK → accounts | |
-| `token` | VARCHAR | SHA-256 hash |
-| `expirationDate` | TIMESTAMP | |
-| `ip` | VARCHAR | Client IP at login |
-| `browser` | VARCHAR | User-Agent at login |
+| Column           | Type              | Notes               |
+| ---------------- | ----------------- | ------------------- |
+| `id`             | INT PK AUTO       |                     |
+| `userID`         | INT FK → accounts |                     |
+| `token`          | VARCHAR           | SHA-256 hash        |
+| `expirationDate` | TIMESTAMP         |                     |
+| `ip`             | VARCHAR           | Client IP at login  |
+| `browser`        | VARCHAR           | User-Agent at login |
 
 ---
 
 ### `rooms`
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | INT PK AUTO | |
-| `name` | VARCHAR | Human-readable room name |
-| `capacity` | INT | Max number of users |
+| Column     | Type        | Notes                    |
+| ---------- | ----------- | ------------------------ |
+| `id`       | INT PK AUTO |                          |
+| `name`     | VARCHAR     | Human-readable room name |
+| `capacity` | INT         | Max number of users      |
 
 ---
 
 ### `userRooms`
 
-| Column | Type | Notes |
-|---|---|---|
-| `userID` | INT FK → accounts | |
-| `roomID` | INT FK → rooms | |
+| Column   | Type              | Notes |
+| -------- | ----------------- | ----- |
+| `userID` | INT FK → accounts |       |
+| `roomID` | INT FK → rooms    |       |
 
 Composite PK implied (userID, roomID).
 
@@ -432,39 +594,39 @@ Composite PK implied (userID, roomID).
 
 ### `allMatchesEuro2024`
 
-| Column | Type | Notes |
-|---|---|---|
-| `match_id` | INT PK | Matches api-football fixture ID |
-| `Team1` | VARCHAR | Home team country code (e.g. `FRA`) |
-| `Team2` | VARCHAR | Away team country code |
-| `GoalsTeam1` | INT | Synced from `apiData` |
-| `GoalsTeam2` | INT | Synced from `apiData` |
-| `winner` | VARCHAR | Country code or `"draw"` — synced from `apiData` |
-| `extra` | TINYINT | 1 = extra-time possible (knockout match) |
-| `datetime` | TIMESTAMP | Match kick-off time (UTC) |
-| `info` | VARCHAR | Group / round label (e.g. "Group A") |
+| Column       | Type      | Notes                                            |
+| ------------ | --------- | ------------------------------------------------ |
+| `match_id`   | INT PK    | Matches api-football fixture ID                  |
+| `Team1`      | VARCHAR   | Home team country code (e.g. `FRA`)              |
+| `Team2`      | VARCHAR   | Away team country code                           |
+| `GoalsTeam1` | INT       | Synced from `apiData`                            |
+| `GoalsTeam2` | INT       | Synced from `apiData`                            |
+| `winner`     | VARCHAR   | Country code or `"draw"` — synced from `apiData` |
+| `extra`      | TINYINT   | 1 = extra-time possible (knockout match)         |
+| `datetime`   | TIMESTAMP | Match kick-off time (UTC)                        |
+| `info`       | VARCHAR   | Group / round label (e.g. "Group A")             |
 
 ---
 
 ### `allBetsEuro2024`
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | INT PK AUTO | |
-| `room_id` | INT FK → rooms | |
-| `player_id` | INT FK → accounts | |
-| `match_id` | INT FK → allMatchesEuro2024 | |
-| `Team1` | VARCHAR | Predicted home team code |
-| `GoalsTeam1` | INT NULL | Predicted home goals |
-| `GoalsTeam2` | INT NULL | Predicted away goals |
-| `Team2` | VARCHAR | Predicted away team code |
-| `winner` | VARCHAR NULL | Predicted winner code (for knockout) |
-| `points_match` | INT | Calculated: 0/1/2/3 |
-| `points_match_extra` | INT | Calculated: 0 or 2 |
-| `createdDate` | TIMESTAMP | |
-| `createdBy` | VARCHAR | username at insert time |
-| `updatedDate` | TIMESTAMP NULL | |
-| `updatedBy` | VARCHAR NULL | |
+| Column               | Type                        | Notes                                |
+| -------------------- | --------------------------- | ------------------------------------ |
+| `id`                 | INT PK AUTO                 |                                      |
+| `room_id`            | INT FK → rooms              |                                      |
+| `player_id`          | INT FK → accounts           |                                      |
+| `match_id`           | INT FK → allMatchesEuro2024 |                                      |
+| `Team1`              | VARCHAR                     | Predicted home team code             |
+| `GoalsTeam1`         | INT NULL                    | Predicted home goals                 |
+| `GoalsTeam2`         | INT NULL                    | Predicted away goals                 |
+| `Team2`              | VARCHAR                     | Predicted away team code             |
+| `winner`             | VARCHAR NULL                | Predicted winner code (for knockout) |
+| `points_match`       | INT                         | Calculated: 0/1/2/3                  |
+| `points_match_extra` | INT                         | Calculated: 0 or 2                   |
+| `createdDate`        | TIMESTAMP                   |                                      |
+| `createdBy`          | VARCHAR                     | username at insert time              |
+| `updatedDate`        | TIMESTAMP NULL              |                                      |
+| `updatedBy`          | VARCHAR NULL                |                                      |
 
 Unique key implied on `(room_id, player_id, match_id)`.
 
@@ -472,13 +634,13 @@ Unique key implied on `(room_id, player_id, match_id)`.
 
 ### `totalPoints`
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | INT PK AUTO | |
-| `userID` | INT FK → accounts | |
-| `username` | VARCHAR | Denormalised for query speed |
-| `points` | INT | Total points, recalculated on every `getUsersBets` call |
-| `roomID` | INT FK → rooms | |
+| Column     | Type              | Notes                                                   |
+| ---------- | ----------------- | ------------------------------------------------------- |
+| `id`       | INT PK AUTO       |                                                         |
+| `userID`   | INT FK → accounts |                                                         |
+| `username` | VARCHAR           | Denormalised for query speed                            |
+| `points`   | INT               | Total points, recalculated on every `getUsersBets` call |
+| `roomID`   | INT FK → rooms    |                                                         |
 
 ---
 
@@ -486,30 +648,30 @@ Unique key implied on `(room_id, player_id, match_id)`.
 
 Live fixture data synced from api-football.com.
 
-| Column | Type | Notes |
-|---|---|---|
-| `match_id` | INT PK | = `allMatchesEuro2024.match_id` |
-| `fixture_id` | BIGINT | api-football fixture ID |
-| `fixture_date` | TIMESTAMP | |
-| `status` | VARCHAR | e.g. `"Match Finished"`, `"In Play"`, `"Not Started"` |
-| `league_name` | VARCHAR | |
-| `league_season` | INT | |
-| `league_round` | VARCHAR | |
-| `team_home_name` | VARCHAR | Full name from API |
-| `team_away_name` | VARCHAR | Full name from API |
-| `goals_home` | INT | |
-| `goals_away` | INT | |
-| `halftime_home` | INT | |
-| `halftime_away` | INT | |
-| `fulltime_home` | INT | |
-| `fulltime_away` | INT | |
-| `extratime_home` | INT | |
-| `extratime_away` | INT | |
-| `penalty_home` | INT | |
-| `penalty_away` | INT | |
-| `periods_first` | INT | Minutes played in first half (or 45 if done) |
-| `periods_second` | INT | Minutes played in second half |
-| `winner` | VARCHAR | Country code resolved via `countryCodeMapping` |
+| Column           | Type      | Notes                                                 |
+| ---------------- | --------- | ----------------------------------------------------- |
+| `match_id`       | INT PK    | = `allMatchesEuro2024.match_id`                       |
+| `fixture_id`     | BIGINT    | api-football fixture ID                               |
+| `fixture_date`   | TIMESTAMP |                                                       |
+| `status`         | VARCHAR   | e.g. `"Match Finished"`, `"In Play"`, `"Not Started"` |
+| `league_name`    | VARCHAR   |                                                       |
+| `league_season`  | INT       |                                                       |
+| `league_round`   | VARCHAR   |                                                       |
+| `team_home_name` | VARCHAR   | Full name from API                                    |
+| `team_away_name` | VARCHAR   | Full name from API                                    |
+| `goals_home`     | INT       |                                                       |
+| `goals_away`     | INT       |                                                       |
+| `halftime_home`  | INT       |                                                       |
+| `halftime_away`  | INT       |                                                       |
+| `fulltime_home`  | INT       |                                                       |
+| `fulltime_away`  | INT       |                                                       |
+| `extratime_home` | INT       |                                                       |
+| `extratime_away` | INT       |                                                       |
+| `penalty_home`   | INT       |                                                       |
+| `penalty_away`   | INT       |                                                       |
+| `periods_first`  | INT       | Minutes played in first half (or 45 if done)          |
+| `periods_second` | INT       | Minutes played in second half                         |
+| `winner`         | VARCHAR   | Country code resolved via `countryCodeMapping`        |
 
 ---
 
@@ -517,11 +679,11 @@ Live fixture data synced from api-football.com.
 
 Lookup table mapping api-football long status strings to short codes and types.
 
-| Column | Type | Notes |
-|---|---|---|
-| `long` | VARCHAR PK | e.g. `"Match Finished"` |
-| `short` | VARCHAR | e.g. `"FT"` |
-| `type` | VARCHAR | e.g. `"finished"`, `"in_play"`, `"scheduled"` |
+| Column  | Type       | Notes                                         |
+| ------- | ---------- | --------------------------------------------- |
+| `long`  | VARCHAR PK | e.g. `"Match Finished"`                       |
+| `short` | VARCHAR    | e.g. `"FT"`                                   |
+| `type`  | VARCHAR    | e.g. `"finished"`, `"in_play"`, `"scheduled"` |
 
 ---
 
@@ -529,8 +691,8 @@ Lookup table mapping api-football long status strings to short codes and types.
 
 Single-row table holding the cached standings JSON.
 
-| Column | Type |
-|---|---|
+| Column       | Type     |
+| ------------ | -------- |
 | `jsonstring` | LONGTEXT |
 
 ---
@@ -539,10 +701,10 @@ Single-row table holding the cached standings JSON.
 
 Maps full team names (from api-football) to 3-letter country codes used in `allMatchesEuro2024`.
 
-| Column | Type |
-|---|---|
+| Column | Type                                    |
+| ------ | --------------------------------------- |
 | `name` | VARCHAR PK (full name, e.g. `"France"`) |
-| `code` | VARCHAR (e.g. `"FRA"`) |
+| `code` | VARCHAR (e.g. `"FRA"`)                  |
 
 ---
 
