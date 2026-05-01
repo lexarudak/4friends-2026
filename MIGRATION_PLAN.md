@@ -36,7 +36,7 @@ CRON_SECRET=            # Vercel sets this automatically
 
 ## Phase 1 — Database
 
-- [ ] **1.1** Create Neon project at [neon.tech](https://neon.tech), copy `DATABASE_URL` + `DATABASE_URL_UNPOOLED` to `.env`
+- [x] **1.1** Create Neon project at [neon.tech](https://neon.tech), copy `DATABASE_URL` + `DATABASE_URL_UNPOOLED` to `.env`
 - [ ] **1.2** Write `prisma/schema.prisma` with all models (see model list below)
 - [ ] **1.3** `npx prisma migrate dev --name init`
 - [ ] **1.4** Write + run `prisma/seed.ts` — teams → matches → standings cache

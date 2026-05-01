@@ -19,7 +19,7 @@ Env vars:
 
 ## Phase 1 — Database
 
-- [ ] 1.1 Create Neon project
+- [x] 1.1 Create Neon project
 - [ ] 1.2 Define Prisma schema
 - [ ] 1.3 Run initial migration
 - [ ] 1.4 Implement seed script (manual fallback + API mode)
