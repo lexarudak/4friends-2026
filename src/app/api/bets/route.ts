@@ -24,7 +24,7 @@ export async function GET() {
 		);
 	}
 
-	const bets = BetsService.getBets(userId, roomId);
+	const bets = await BetsService.getBets(userId, roomId);
 	return NextResponse.json(bets);
 }
 
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 	}
 
 	const body: { bets: Bet[] } = await req.json();
-	BetsService.saveBets(userId, roomId, body.bets);
+	await BetsService.saveBets(userId, roomId, body.bets);
 	return NextResponse.json({ ok: true });
 }
 
@@ -71,6 +71,6 @@ export async function DELETE() {
 		);
 	}
 
-	BetsService.clearBets(userId, roomId);
+	await BetsService.clearBets(userId, roomId);
 	return NextResponse.json({ ok: true });
 }

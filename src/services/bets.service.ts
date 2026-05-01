@@ -1,14 +1,45 @@
-import * as BetsDb from "@/db/bets";
+import { prisma } from "@/lib/prisma";
 import type { Bet } from "@/types/api";
 
 export const BetsService = {
-  getBets(userId: string, roomId: string): Bet[] {
-    return BetsDb.getBets(userId, roomId);
-  },
-  saveBets(userId: string, roomId: string, bets: Bet[]): void {
-    BetsDb.saveBets(userId, roomId, bets);
-  },
-  clearBets(userId: string, roomId: string): void {
-    BetsDb.clearBets(userId, roomId);
-  },
+	async getBets(userId: string, roomId: string): Promise<Bet[]> {
+		const rows = await prisma.bet.findMany({
+			where: { userId, roomId },
+			select: { matchId: true, betHome: true, betAway: true },
+		});
+		return rows.map((r) => ({
+			matchId: String(r.matchId),
+			home: r.betHome,
+			away: r.betAway,
+		}));
+	},
+
+	async saveBets(userId: string, roomId: string, bets: Bet[]): Promise<void> {
+		const ops = bets
+			.filter((b) => b.home !== null && b.away !== null)
+			.map((b) =>
+				prisma.bet.upsert({
+					where: {
+						userId_matchId_roomId: {
+							userId,
+							matchId: Number(b.matchId),
+							roomId,
+						},
+					},
+					update: { betHome: b.home!, betAway: b.away! },
+					create: {
+						userId,
+						matchId: Number(b.matchId),
+						roomId,
+						betHome: b.home!,
+						betAway: b.away!,
+					},
+				})
+			);
+		await prisma.$transaction(ops);
+	},
+
+	async clearBets(userId: string, roomId: string): Promise<void> {
+		await prisma.bet.deleteMany({ where: { userId, roomId } });
+	},
 };

@@ -55,6 +55,11 @@ export type ScoreTableData = {
 	currentUserRow?: TableRow;
 };
 
+export type StatSection = {
+	title: string;
+	rows: TableRow[];
+};
+
 export type BetsFormValues = {
 	bets: Record<string, { home: string; away: string }>;
 };

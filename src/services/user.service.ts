@@ -2,6 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type DbUser = {
+	name?: string | null;
 	current_room: string | null;
 };
 
@@ -36,10 +37,10 @@ export const UserService = {
 		try {
 			const user = await prisma.user.upsert({
 				where: { id },
-				update: { currentRoom: userData.current_room },
-				create: { id, currentRoom: userData.current_room },
+				update: { currentRoom: userData.current_room, name: userData.name },
+				create: { id, name: userData.name, currentRoom: userData.current_room },
 			});
-			return { current_room: user.currentRoom ?? null };
+			return { current_room: user.currentRoom ?? null, name: user.name };
 		} catch (err) {
 			if (isDbUnreachable(err)) throw new DbUnavailableError();
 			throw err;

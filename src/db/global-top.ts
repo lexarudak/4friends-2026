@@ -1,9 +1,4 @@
-import type { TableRow } from "@/types/api";
-
-export type StatSection = {
-	title: string;
-	rows: TableRow[];
-};
+import type { StatSection, TableRow } from "@/types/api";
 
 const CURRENT_USER_PLACEHOLDER = "me";
 

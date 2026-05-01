@@ -19,7 +19,7 @@ export async function BetsSection({ className }: Props) {
 	const userId = session?.user?.email;
 	const roomId = await getActiveRoomId();
 	const initialBets =
-		userId && roomId ? BetsService.getBets(userId, roomId) : [];
+		userId && roomId ? await BetsService.getBets(userId, roomId) : [];
 
 	return (
 		<section className={cn(styles.container, className)}>

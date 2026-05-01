@@ -21,7 +21,10 @@ export async function joinNewRoom(
 	const session = await auth();
 	if (session?.user?.email) {
 		try {
-			await UserService.addUser(session.user.email, { current_room: roomName });
+			await UserService.addUser(session.user.email, {
+				name: session.user.name,
+				current_room: roomName,
+			});
 		} catch (err) {
 			if (err instanceof DbUnavailableError) return { error: err.message };
 			throw err;
@@ -43,7 +46,10 @@ export const selectRoom = async (
 	const session = await auth();
 	if (session?.user?.email) {
 		try {
-			await UserService.addUser(session.user.email, { current_room: roomId });
+			await UserService.addUser(session.user.email, {
+				name: session.user.name,
+				current_room: roomId,
+			});
 		} catch (err) {
 			if (err instanceof DbUnavailableError) return { error: err.message };
 			throw err;
