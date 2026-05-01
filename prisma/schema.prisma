@@ -22,6 +22,7 @@ model User {
   id          String  @id // email from Google auth
   currentRoom String?
   room        Room?   @relation(fields: [currentRoom], references: [name])
+  bets        Bet[]
 }
 
 model Match {
@@ -74,4 +75,35 @@ model Match {
   extratimeAway  Int?
   penaltyHome    Int?
   penaltyAway    Int?
+
+  bets           Bet[]
+}
+
+model Bet {
+  id           Int      @id @default(autoincrement())
+  userId       String
+  matchId      Int
+  roomId       String
+
+  betHome      Int
+  betAway      Int
+  // Playoff bonus: ID of the team predicted to advance to next round
+  winPick      Int?
+
+  // null = match not finished yet; set once when match result is saved
+  points       Int?
+  // 0 or 2 — playoff bonus for correctly picking the advancing team
+  bonusPoints  Int?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id])
+  match        Match    @relation(fields: [matchId], references: [id])
+
+  // one bet per user per match per room
+  @@unique([userId, matchId, roomId])
+  @@index([userId, roomId])
+  @@index([matchId])
+  @@index([roomId])
 }
