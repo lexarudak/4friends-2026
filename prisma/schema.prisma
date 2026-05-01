@@ -15,4 +15,11 @@ datasource db {
 model Room {
   id   String @id @default(cuid())
   name String @unique
+  users User[]
+}
+
+model User {
+  id          String  @id // email from Google auth
+  currentRoom String?
+  room        Room?   @relation(fields: [currentRoom], references: [name])
 }

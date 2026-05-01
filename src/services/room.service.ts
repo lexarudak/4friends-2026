@@ -1,13 +1,10 @@
-import * as RoomsDb from "@/db/rooms";
 import { prisma } from "@/lib/prisma";
 
 export const RoomService = {
 	async getUserRooms(userId: string): Promise<string[]> {
-		return RoomsDb.getUserRooms(userId);
-	},
-
-	async addRoom(userId: string, roomId: string): Promise<string[]> {
-		return RoomsDb.addUserRoom(userId, roomId);
+		const user = await prisma.user.findUnique({ where: { id: userId } });
+		if (!user?.currentRoom) return [];
+		return [user.currentRoom];
 	},
 
 	async getAllRooms() {

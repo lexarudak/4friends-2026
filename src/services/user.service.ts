@@ -1,14 +1,22 @@
-import * as UsersDb from "@/db/users";
-import type { DbUser } from "@/db/users";
+import { prisma } from "@/lib/prisma";
 
-export type { DbUser };
+export type DbUser = {
+	current_room: string | null;
+};
 
 export const UserService = {
 	async getUserById(id: string): Promise<DbUser | null> {
-		return UsersDb.getUserById(id);
+		const user = await prisma.user.findUnique({ where: { id } });
+		if (!user) return null;
+		return { current_room: user.currentRoom ?? null };
 	},
 
 	async addUser(id: string, userData: DbUser): Promise<DbUser> {
-		return UsersDb.addUser(id, userData);
+		const user = await prisma.user.upsert({
+			where: { id },
+			update: { currentRoom: userData.current_room },
+			create: { id, currentRoom: userData.current_room },
+		});
+		return { current_room: user.currentRoom ?? null };
 	},
 };

@@ -1,7 +1,6 @@
 import NextAuth, { DefaultSession } from "next-auth";
-import Google from "next-auth/providers/google";
 import { UserService } from "./services/user.service";
-import { PAGES } from "./utils/constants";
+import { authConfig } from "./auth.config";
 
 declare module "next-auth" {
 	interface Session {
@@ -11,14 +10,12 @@ declare module "next-auth" {
 	}
 }
 
-const publicPaths = [PAGES.LOGIN, PAGES.ABOUT, PAGES.ADMIN];
+export { authConfig };
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
-	providers: [Google],
-	pages: {
-		signIn: PAGES.LOGIN,
-	},
+	...authConfig,
 	callbacks: {
+		...authConfig.callbacks,
 		async jwt({ token, user, trigger, session }) {
 			if (user?.email) {
 				const userInfo = await UserService.getUserById(user.email);
@@ -34,30 +31,6 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 		async session({ session, token }) {
 			session.user.current_room = (token.current_room as string) ?? null;
 			return session;
-		},
-		authorized({ auth, request: { nextUrl } }) {
-			const isLoggedIn = !!auth?.user;
-
-			const isPublic = publicPaths.some((path) =>
-				nextUrl.pathname.startsWith(path)
-			);
-			if (isPublic) {
-				return isLoggedIn && nextUrl.pathname.startsWith(PAGES.LOGIN)
-					? Response.redirect(new URL(PAGES.HOME, nextUrl))
-					: true;
-			}
-
-			if (!isLoggedIn) {
-				return Response.redirect(new URL(PAGES.LOGIN, nextUrl));
-			}
-
-			const hasRoom = !!auth?.user?.current_room;
-			const isRoomsPage = nextUrl.pathname.startsWith(PAGES.ROOMS);
-			if (!hasRoom && !isRoomsPage) {
-				return Response.redirect(new URL(PAGES.ROOMS, nextUrl));
-			}
-
-			return true;
 		},
 	},
 });
