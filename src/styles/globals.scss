@@ -23,8 +23,8 @@ body {
 		system-ui,
 		-apple-system,
 		sans-serif;
-	color: var(--text-color, #111);
-	background: var(--background-color, #fff);
+	color: var(--color-text-primary);
+	background: var(--color-bg-primary);
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	flex-grow: 1;

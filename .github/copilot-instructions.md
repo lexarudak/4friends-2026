@@ -158,3 +158,17 @@ src/components/shared/button/
 - Services in `src/services/` (business logic), DB access in `src/db/` (in-memory stores)
 - Constants in `src/utils/constants.ts`
 - Design tokens only in `src/styles/vars.scss` — no hardcoded colors, spacings, or radii elsewhere
+
+---
+
+## Migration docs (canonical paths)
+
+For backend migration tasks use these files:
+
+- `docs/migration/migration-agent-instructions.md`
+- `docs/migration/migration-plan.md`
+
+Reference docs:
+
+- `BE_LEGACY.md`
+- `API_FOOTBALL_INSTRUCTIONS.md`
