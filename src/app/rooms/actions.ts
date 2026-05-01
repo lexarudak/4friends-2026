@@ -4,7 +4,7 @@ import { auth, signOut, unstable_update } from "@/auth";
 import { RoomService } from "@/services/room.service";
 import { PAGES } from "@/utils/constants";
 import { redirect } from "next/navigation";
-import { UserService } from "@/services/user.service";
+import { DbUnavailableError, UserService } from "@/services/user.service";
 
 export type JoinRoomState = { error: string | null };
 
@@ -20,7 +20,12 @@ export async function joinNewRoom(
 
 	const session = await auth();
 	if (session?.user?.email) {
-		await UserService.addUser(session.user.email, { current_room: roomName });
+		try {
+			await UserService.addUser(session.user.email, { current_room: roomName });
+		} catch (err) {
+			if (err instanceof DbUnavailableError) return { error: err.message };
+			throw err;
+		}
 	}
 
 	await unstable_update({ user: { current_room: roomName } });
@@ -31,10 +36,18 @@ export async function signOutUser() {
 	await signOut({ redirectTo: PAGES.LOGIN });
 }
 
-export const selectRoom = async (roomId: string) => {
+export const selectRoom = async (
+	roomId: string,
+	_prevState: { error: string } | null
+): Promise<{ error: string } | never> => {
 	const session = await auth();
 	if (session?.user?.email) {
-		await UserService.addUser(session.user.email, { current_room: roomId });
+		try {
+			await UserService.addUser(session.user.email, { current_room: roomId });
+		} catch (err) {
+			if (err instanceof DbUnavailableError) return { error: err.message };
+			throw err;
+		}
 	}
 
 	await unstable_update({ user: { current_room: roomId } });

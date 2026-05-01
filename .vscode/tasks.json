@@ -1,0 +1,33 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Next.js Dev Server",
+			"type": "shell",
+			"command": "npm run dev",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Next.js Dev Server",
+			"type": "shell",
+			"command": "npm run dev",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Prisma Studio",
+			"type": "shell",
+			"command": "npx prisma studio",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Prisma Studio",
+			"type": "shell",
+			"command": "npx prisma studio --url \"$DATABASE_URL\"",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
