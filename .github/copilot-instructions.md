@@ -172,3 +172,14 @@ Reference docs:
 
 - `BE_LEGACY.md`
 - `API_FOOTBALL_INSTRUCTIONS.md`
+
+---
+
+## `save` command rule
+
+Whenever the user mentions running the `save` command in the terminal, immediately update **both** of these files to reflect the current state of the codebase:
+
+- `docs/be-doc.md` — backend documentation (API routes, server actions, services, auth flow, error codes, in-memory stubs)
+- `docs/db-doc.md` — database documentation (schema, models, migrations, Prisma setup, access patterns, what's not yet in DB)
+
+Update the `Last updated` date at the top of each file. Keep all sections accurate and in sync with the actual code.

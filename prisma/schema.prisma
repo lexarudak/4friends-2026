@@ -23,3 +23,55 @@ model User {
   currentRoom String?
   room        Room?   @relation(fields: [currentRoom], references: [name])
 }
+
+model Match {
+  // fixture.*
+  id             Int      @id // fixture.id from API (stable numeric ID)
+  referee        String?
+  timezone       String
+  date           DateTime
+  timestamp      Int
+  periodsFirst   Int?     // Unix timestamp when 1st half started
+  periodsSecond  Int?     // Unix timestamp when 2nd half started
+  venueId        Int?
+  venueName      String?
+  venueCity      String?
+  statusLong     String
+  statusShort    String   // NS, 1H, HT, 2H, ET, BT, P, FT, AET, PEN, ...
+  statusElapsed  Int?
+  statusExtra    Int?
+
+  // league.*
+  leagueId       Int
+  leagueName     String
+  leagueCountry  String
+  leagueLogo     String
+  leagueSeason   Int
+  round          String
+
+  // teams.home.*
+  homeTeamId     Int
+  homeTeamName   String
+  homeTeamLogo   String
+  homeTeamWinner Boolean? // null during live / not started
+
+  // teams.away.*
+  awayTeamId     Int
+  awayTeamName   String
+  awayTeamLogo   String
+  awayTeamWinner Boolean?
+
+  // goals.*
+  goalsHome      Int?
+  goalsAway      Int?
+
+  // score.*
+  halftimeHome   Int?
+  halftimeAway   Int?
+  fulltimeHome   Int?
+  fulltimeAway   Int?
+  extratimeHome  Int?
+  extratimeAway  Int?
+  penaltyHome    Int?
+  penaltyAway    Int?
+}
