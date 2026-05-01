@@ -11,7 +11,7 @@ declare module "next-auth" {
 	}
 }
 
-const publicPaths = [PAGES.LOGIN, PAGES.ABOUT];
+const publicPaths = [PAGES.LOGIN, PAGES.ABOUT, PAGES.ADMIN];
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 	providers: [Google],

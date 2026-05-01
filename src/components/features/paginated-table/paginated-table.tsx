@@ -13,6 +13,7 @@ type Props = {
 	currentUserId?: string;
 	tableClassName?: string;
 	hidePosition?: boolean;
+	hideScore?: boolean;
 };
 
 export const PaginatedTable: FC<Props> = ({
@@ -21,6 +22,7 @@ export const PaginatedTable: FC<Props> = ({
 	pageSize = 10,
 	tableClassName,
 	hidePosition,
+	hideScore,
 }) => {
 	const [page, setPage] = useState(0);
 	const totalPages = Math.ceil(rows.length / pageSize);
@@ -36,6 +38,7 @@ export const PaginatedTable: FC<Props> = ({
 				ghostCount={ghostCount}
 				className={tableClassName}
 				hidePosition={hidePosition}
+				hideScore={hideScore}
 			/>
 			{totalPages > 1 && (
 				<div className={styles.pagination}>

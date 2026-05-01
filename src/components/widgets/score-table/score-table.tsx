@@ -13,6 +13,7 @@ type Props = {
 	linkLabel?: string;
 	className?: string;
 	hidePosition?: boolean;
+	hideScore?: boolean;
 };
 
 export const ScoreTable: FC<Props> = ({
@@ -24,6 +25,7 @@ export const ScoreTable: FC<Props> = ({
 	linkLabel = "More statistic",
 	className,
 	hidePosition = false,
+	hideScore = false,
 }) => {
 	return (
 		<div className={cn(styles.container, className)}>
@@ -43,7 +45,7 @@ export const ScoreTable: FC<Props> = ({
 						)}
 						{row.tag && <span className={styles.tag}>{row.tag}</span>}
 						<span className={styles.name}>{row.name}</span>
-						<span className={styles.score}>{row.score}</span>
+						{!hideScore && <span className={styles.score}>{row.score}</span>}
 					</li>
 				))}
 
@@ -53,9 +55,9 @@ export const ScoreTable: FC<Props> = ({
 						className={cn(styles.row, styles.ghost)}
 						aria-hidden
 					>
-						<span className={styles.position}>&nbsp;</span>
+						{!hidePosition && <span className={styles.position}>&nbsp;</span>}
 						<span className={styles.name}>&nbsp;</span>
-						<span className={styles.score}>&nbsp;</span>
+						{!hideScore && <span className={styles.score}>&nbsp;</span>}
 					</li>
 				))}
 
@@ -65,9 +67,13 @@ export const ScoreTable: FC<Props> = ({
 							<span>···</span>
 						</li>
 						<li className={styles.row} data-me>
-							<span className={styles.position}>{currentUserRow.position}</span>
+							{!hidePosition && (
+								<span className={styles.position}>{currentUserRow.position}</span>
+							)}
 							<span className={styles.name}>{currentUserRow.name}</span>
-							<span className={styles.score}>{currentUserRow.score}</span>
+							{!hideScore && (
+								<span className={styles.score}>{currentUserRow.score}</span>
+							)}
 						</li>
 					</>
 				)}
