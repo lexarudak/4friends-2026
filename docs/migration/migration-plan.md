@@ -10,6 +10,7 @@ npx prisma init --datasource-provider postgresql
 ```
 
 Env vars:
+
 - `DATABASE_URL`
 - `DATABASE_URL_UNPOOLED`
 - `FOOTBALL_API_KEY`
@@ -25,6 +26,7 @@ Env vars:
 - [ ] 1.4 Implement seed script (manual fallback + API mode)
 
 Models:
+
 - `Room`
 - `User`
 - `UserRoom`
@@ -36,6 +38,7 @@ Models:
 - `StandingsCache`
 
 Notes:
+
 - no `UserTokens` table
 - no `CountryCodeMapping` table
 - `User.id` = Google email
@@ -69,6 +72,7 @@ Notes:
 - [ ] 4.3 `/api/cron/sync-standings`
 
 Recommended schedules:
+
 - sync fixtures: every 5 min
 - calc points: every 10 min
 - sync standings: daily 03:00 UTC
@@ -93,6 +97,7 @@ Recommended schedules:
 ## Important WC2026 API limitation
 
 As of 2026-04-30 on free plan:
+
 - `league=1&season=2026` fixtures/teams unavailable
 - standings endpoint returns plan access error
 

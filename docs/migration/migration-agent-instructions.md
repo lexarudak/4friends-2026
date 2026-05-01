@@ -26,6 +26,7 @@ Before writing code, always do a legacy audit for the endpoint/service.
 ### 1) Find legacy equivalent
 
 From `BE_LEGACY.md`, identify:
+
 - function name
 - file/component
 - method
@@ -34,26 +35,31 @@ From `BE_LEGACY.md`, identify:
 ### 2) Audit concerns
 
 #### 🔴 Security
+
 - auth/authz completeness
 - user spoofing checks
 - input validation gaps
 
 #### 🟡 Logic
+
 - race conditions / transaction needs
 - hidden side effects in reads
 - winner/score correctness edge cases
 
 #### 🟠 Performance
+
 - N+1 query patterns
 - missing indexes
 - expensive synchronous work that should be cron/background
 
 #### 🔵 Data model
+
 - denormalized legacy fields
 - missing unique constraints
 - ambiguous column naming
 
 #### ⚪ Compatibility
+
 - response shape differences
 - uppercase legacy keys consumed by frontend
 
@@ -68,15 +74,15 @@ From `BE_LEGACY.md`, identify:
 
 ## Standing decisions
 
-| Topic | Decision |
-| --- | --- |
-| Auth | NextAuth v5 (`auth()`), no legacy token table |
-| DB | Neon Postgres + Prisma |
-| Runtime | Vercel serverless |
-| Point recalc | Cron job only (not API read side-effect) |
-| External sync | Cron jobs |
-| Save bets reference | `suggest.cfc::Save` |
-| Login reference | `loginUserMain.cfc` |
+| Topic               | Decision                                      |
+| ------------------- | --------------------------------------------- |
+| Auth                | NextAuth v5 (`auth()`), no legacy token table |
+| DB                  | Neon Postgres + Prisma                        |
+| Runtime             | Vercel serverless                             |
+| Point recalc        | Cron job only (not API read side-effect)      |
+| External sync       | Cron jobs                                     |
+| Save bets reference | `suggest.cfc::Save`                           |
+| Login reference     | `loginUserMain.cfc`                           |
 
 ---
 
@@ -86,12 +92,15 @@ From `BE_LEGACY.md`, identify:
 ## Legacy audit: <name>
 
 ### What it does
+
 ...
 
 ### Concerns
+
 ...
 
 ### Proposed implementation
+
 ...
 ```
 
@@ -100,4 +109,5 @@ From `BE_LEGACY.md`, identify:
 ## Plan location
 
 Detailed phases and task checklist are in:
+
 - `docs/migration/migration-plan.md`
