@@ -47,6 +47,21 @@
 	gap: var(--space-12);
 }
 
+.addRoomRow {
+	display: flex;
+	gap: var(--space-12);
+	align-items: stretch;
+
+	> :first-child {
+		flex: 1;
+	}
+}
+
+.addRoomButton {
+	height: var(--size-48);
+	min-width: 132px;
+}
+
 .label {
 	font-size: var(--font-size-12);
 	font-weight: var(--font-weight-medium);

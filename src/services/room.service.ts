@@ -13,4 +13,12 @@ export const RoomService = {
 	async getAllRooms() {
 		return prisma.room.findMany({ orderBy: { name: "asc" } });
 	},
+
+	async getRoomByName(name: string) {
+		return prisma.room.findUnique({ where: { name } });
+	},
+
+	async createRoom(name: string) {
+		return prisma.room.create({ data: { name } });
+	},
 };
