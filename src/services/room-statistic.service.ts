@@ -66,7 +66,9 @@ export const RoomStatisticService = {
 		if (allUserIds.length === 0) return [];
 
 		// Build name map directly from room members (already fetched)
-		const nameMap = new Map(roomUsers.map((u) => [u.id, u.name ?? u.id]));
+		const nameMap = new Map(
+			roomUsers.map((u) => [u.id, u.name ?? u.id.split("@")[0]])
+		);
 
 		// Build rows for each section
 		const totalScoreRows = buildRows(

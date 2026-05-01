@@ -26,7 +26,7 @@ export const UserService = {
 		try {
 			const user = await prisma.user.findUnique({ where: { id } });
 			if (!user) return null;
-			return { current_room: user.currentRoom ?? null };
+			return { current_room: user.currentRoom ?? null, name: user.name };
 		} catch (err) {
 			if (isDbUnreachable(err)) return null;
 			throw err;
@@ -43,6 +43,18 @@ export const UserService = {
 			return { current_room: user.currentRoom ?? null, name: user.name };
 		} catch (err) {
 			if (isDbUnreachable(err)) throw new DbUnavailableError();
+			throw err;
+		}
+	},
+
+	async ensureNameSaved(id: string, name: string): Promise<void> {
+		try {
+			await prisma.user.updateMany({
+				where: { id, name: null },
+				data: { name },
+			});
+		} catch (err) {
+			if (isDbUnreachable(err)) return;
 			throw err;
 		}
 	},

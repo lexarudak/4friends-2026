@@ -19,7 +19,15 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 		async jwt({ token, user, trigger, session }) {
 			if (user?.email) {
 				const userInfo = await UserService.getUserById(user.email);
+				// Persist name on every login (ensures DB is always up to date)
+				await UserService.addUser(user.email, {
+					name: user.name ?? token.name ?? null,
+					current_room: userInfo?.current_room ?? null,
+				});
 				token.current_room = userInfo?.current_room ?? null;
+			} else if (token.email && token.name) {
+				// Existing session — backfill name if it was null in DB
+				await UserService.ensureNameSaved(token.email, token.name as string);
 			}
 
 			if (trigger === "update" && !!session?.user?.current_room) {
