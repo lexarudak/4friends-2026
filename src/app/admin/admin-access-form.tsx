@@ -10,7 +10,7 @@ const initialState: AdminAccessState = { error: null };
 export function AdminAccessForm() {
 	const [state, formAction, isPending] = useActionState(
 		unlockAdmin,
-		initialState,
+		initialState
 	);
 
 	return (

@@ -18,6 +18,6 @@ export async function GET() {
 		rooms.map((room) => ({
 			id: room.id,
 			name: room.name,
-		})),
+		}))
 	);
 }

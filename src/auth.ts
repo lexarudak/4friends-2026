@@ -39,7 +39,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 			const isLoggedIn = !!auth?.user;
 
 			const isPublic = publicPaths.some((path) =>
-				nextUrl.pathname.startsWith(path),
+				nextUrl.pathname.startsWith(path)
 			);
 			if (isPublic) {
 				return isLoggedIn && nextUrl.pathname.startsWith(PAGES.LOGIN)

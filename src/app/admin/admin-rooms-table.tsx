@@ -43,7 +43,7 @@ export function AdminRoomsTable() {
 						name: room.name,
 						score: 0,
 						tag: room.id.slice(0, 6),
-					})),
+					}))
 				);
 			} catch {
 				if (!isMounted) {
@@ -70,7 +70,9 @@ export function AdminRoomsTable() {
 	}
 
 	if (error) {
-		return <p className={`${styles.stateText} ${styles.stateError}`}>{error}</p>;
+		return (
+			<p className={`${styles.stateText} ${styles.stateError}`}>{error}</p>
+		);
 	}
 
 	if (!rows.length) {

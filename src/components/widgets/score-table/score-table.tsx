@@ -68,7 +68,9 @@ export const ScoreTable: FC<Props> = ({
 						</li>
 						<li className={styles.row} data-me>
 							{!hidePosition && (
-								<span className={styles.position}>{currentUserRow.position}</span>
+								<span className={styles.position}>
+									{currentUserRow.position}
+								</span>
 							)}
 							<span className={styles.name}>{currentUserRow.name}</span>
 							{!hideScore && (

@@ -8,7 +8,7 @@ export type AdminAccessState = { error: string | null };
 
 export async function unlockAdmin(
 	_prevState: AdminAccessState,
-	formData: FormData,
+	formData: FormData
 ): Promise<AdminAccessState> {
 	const password = (formData.get("password") as string | null)?.trim();
 	const path = (formData.get("path") as string | null)?.trim() || PAGES.ADMIN;
