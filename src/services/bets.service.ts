@@ -3,15 +3,20 @@ import type { Bet } from "@/types/api";
 
 export const BetsService = {
 	async getBets(userId: string, roomId: string): Promise<Bet[]> {
-		const rows = await prisma.bet.findMany({
-			where: { userId, roomId },
-			select: { matchId: true, betHome: true, betAway: true },
-		});
-		return rows.map((r) => ({
-			matchId: String(r.matchId),
-			home: r.betHome,
-			away: r.betAway,
-		}));
+		try {
+			const rows = await prisma.bet.findMany({
+				where: { userId, roomId },
+				select: { matchId: true, betHome: true, betAway: true },
+			});
+			return rows.map((r) => ({
+				matchId: String(r.matchId),
+				home: r.betHome,
+				away: r.betAway,
+			}));
+		} catch (err) {
+			console.error("[BetsService.getBets]", err);
+			return [];
+		}
 	},
 
 	async saveBets(userId: string, roomId: string, bets: Bet[]): Promise<void> {
