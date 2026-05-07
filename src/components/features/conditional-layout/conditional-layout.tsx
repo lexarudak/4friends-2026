@@ -2,9 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
+import { PAGES } from "@/utils/constants";
 import styles from "./conditional-layout.module.scss";
 
-const MINIMAL_PATHS = ["/login", "/rooms", "/about"];
+const MINIMAL_PATHS = [PAGES.LOGIN, PAGES.ROOMS, PAGES.ABOUT, PAGES.ADMIN];
 
 type Props = {
 	children: ReactNode;

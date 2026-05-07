@@ -18,8 +18,7 @@ export default async function AdminPage() {
 					<p className={styles.eyebrow}>Restricted area</p>
 					<h1 className={styles.title}>Admin access</h1>
 					<p className={styles.subtitle}>
-						Enter the password to unlock the admin page. On success we store the
-						route path in a cookie and use that to show the page.
+						Enter the password to unlock the admin page.
 					</p>
 					<AdminAccessForm />
 				</div>

@@ -89,13 +89,13 @@ Relations: `room Room?` — optional many-to-one with Room.
 
 ## Migrations
 
-| Migration name                  | Applied | Description        |
-| ------------------------------- | ------- | ------------------ |
-| `20260501081502_add_user_table` | ✅      | Added `User` model |
-| `20260501062538_create_room_table` | ✅   | Added `Room` model |
-| `20260501100551_add_match_table` | ✅    | Added `Match` model |
-| `20260501140828_add_bet_table` | ✅      | Added `Bet` model |
-| `20260501141552_add_user_name` | ✅      | Added `User.name` |
+| Migration name                     | Applied | Description         |
+| ---------------------------------- | ------- | ------------------- |
+| `20260501081502_add_user_table`    | ✅      | Added `User` model  |
+| `20260501062538_create_room_table` | ✅      | Added `Room` model  |
+| `20260501100551_add_match_table`   | ✅      | Added `Match` model |
+| `20260501140828_add_bet_table`     | ✅      | Added `Bet` model   |
+| `20260501141552_add_user_name`     | ✅      | Added `User.name`   |
 
 Location: `prisma/migrations/`
 
@@ -178,15 +178,15 @@ prisma.room.findUnique({ where: { name } });
 
 ## What is NOT yet in the DB (in-memory stubs)
 
-| Data          | Stub file                      | Planned migration |
-| ------------- | ------------------------------ | ----------------- |
+| Data          | Stub file                      | Planned migration     |
+| ------------- | ------------------------------ | --------------------- |
 | Bets          | —                              | ✅ migrated to Prisma |
-| Matches       | `src/db/matches.ts`            | Phase 3.1         |
-| Scores/table  | `src/db/scores.ts`             | Phase 3.3         |
-| Standings     | _(not yet implemented)_        | Phase 3.7         |
-| Live matches  | `src/db/live-matches.ts`       | —                 |
-| Global top    | `src/db/global-top.ts`         | —                 |
-| Personal stat | `src/db/personal-statistic.ts` | —                 |
-| Room stat     | `src/db/room-statistic.ts`     | —                 |
-| World Cup     | `src/db/world-cup.ts`          | —                 |
-| Bet history   | `src/db/bet-history.ts`        | —                 |
+| Matches       | `src/db/matches.ts`            | Phase 3.1             |
+| Scores/table  | `src/db/scores.ts`             | Phase 3.3             |
+| Standings     | _(not yet implemented)_        | Phase 3.7             |
+| Live matches  | `src/db/live-matches.ts`       | —                     |
+| Global top    | `src/db/global-top.ts`         | —                     |
+| Personal stat | `src/db/personal-statistic.ts` | —                     |
+| Room stat     | `src/db/room-statistic.ts`     | —                     |
+| World Cup     | `src/db/world-cup.ts`          | —                     |
+| Bet history   | `src/db/bet-history.ts`        | —                     |

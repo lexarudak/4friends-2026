@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/shared/button";
+import { PAGES } from "@/utils/constants";
 import { unlockAdmin, type AdminAccessState } from "./actions";
 import styles from "./page.module.scss";
 
@@ -15,7 +16,7 @@ export function AdminAccessForm() {
 
 	return (
 		<form action={formAction} className={styles.form}>
-			<input type="hidden" name="path" value="/admin" />
+			<input type="hidden" name="path" value={PAGES.ADMIN} />
 			<label className={styles.label} htmlFor="admin-password">
 				Password
 			</label>

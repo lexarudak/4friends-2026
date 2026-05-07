@@ -7,25 +7,25 @@
 
 ## Stack
 
-| Layer     | Technology                                       |
-| --------- | ------------------------------------------------ |
-| Framework | Next.js 16 (App Router, Turbopack)               |
-| Language  | TypeScript                                       |
-| Auth      | NextAuth v5 (`auth()`, Google + Apple OAuth)     |
-| DB client | Prisma 7.8 + `@prisma/adapter-pg`                |
-| Database  | Prisma Postgres (`db.prisma.io`)                 |
+| Layer     | Technology                                            |
+| --------- | ----------------------------------------------------- |
+| Framework | Next.js 16 (App Router, Turbopack)                    |
+| Language  | TypeScript                                            |
+| Auth      | NextAuth v5 (`auth()`, Google + Apple OAuth)          |
+| DB client | Prisma 7.8 + `@prisma/adapter-pg`                     |
+| Database  | Prisma Postgres (`db.prisma.io`)                      |
 | Runtime   | Node.js (server), Edge (middleware via middleware.ts) |
 
 ---
 
 ## Entry points
 
-| File                 | Role                                                   |
-| -------------------- | ------------------------------------------------------ |
-| `src/middleware.ts`  | Edge middleware — auth guard + redirect logic          |
-| `src/auth.ts`        | Full server auth (Prisma-backed jwt/session callbacks) |
+| File                 | Role                                                     |
+| -------------------- | -------------------------------------------------------- |
+| `src/middleware.ts`  | Edge middleware — auth guard + redirect logic            |
+| `src/auth.ts`        | Full server auth (Prisma-backed jwt/session callbacks)   |
 | `src/auth.config.ts` | Edge-safe auth config (no Prisma, used by middleware.ts) |
-| `src/lib/prisma.ts`  | Prisma singleton client (PrismaPg adapter)             |
+| `src/lib/prisma.ts`  | Prisma singleton client (PrismaPg adapter)               |
 
 ---
 
@@ -136,12 +136,12 @@ Exports `DbUnavailableError` — thrown when DB is unreachable (`P1001`, `ECONNR
 
 ### `RoomService` — `src/services/room.service.ts`
 
-| Method          | Description                               | Storage |
-| --------------- | ----------------------------------------- | ------- |
+| Method          | Description                                                                 | Storage |
+| --------------- | --------------------------------------------------------------------------- | ------- |
 | `getUserRooms`  | Returns user's current room as `string[]` (safe fallback `[]` on DB errors) | Prisma  |
-| `getAllRooms`   | Returns all rooms sorted by name (safe fallback `[]` on DB errors) | Prisma  |
-| `getRoomByName` | Find room by name                         | Prisma  |
-| `createRoom`    | Create new room                           | Prisma  |
+| `getAllRooms`   | Returns all rooms sorted by name (safe fallback `[]` on DB errors)          | Prisma  |
+| `getRoomByName` | Find room by name                                                           | Prisma  |
+| `createRoom`    | Create new room                                                             | Prisma  |
 
 ### `BetsService` — `src/services/bets.service.ts`
 
@@ -207,10 +207,10 @@ Room selected (/rooms)
 
 ## Shared backend helpers
 
-| File                  | Purpose |
-| --------------------- | ------- |
-| `src/utils/room.ts`   | Shared room-name normalization and validation (`3..15` chars) for API + UI |
-| `src/utils/api-client.ts` | Shared client-side JSON request/error parsing helper |
+| File                      | Purpose                                                                    |
+| ------------------------- | -------------------------------------------------------------------------- |
+| `src/utils/room.ts`       | Shared room-name normalization and validation (`3..15` chars) for API + UI |
+| `src/utils/api-client.ts` | Shared client-side JSON request/error parsing helper                       |
 
 ---
 

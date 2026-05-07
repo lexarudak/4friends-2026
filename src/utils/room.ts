@@ -1,5 +1,5 @@
 export const ROOM_NAME_MIN_LENGTH = 3;
-export const ROOM_NAME_MAX_LENGTH = 15;
+export const ROOM_NAME_MAX_LENGTH = 30;
 
 export function normalizeRoomName(value: unknown): string {
 	return typeof value === "string" ? value.trim() : "";
