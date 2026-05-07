@@ -26,16 +26,23 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 		...authConfig.callbacks,
 		async jwt({ token, user, trigger, session }) {
 			if (user?.email) {
-				const userInfo = await UserService.getUserById(user.email);
-				// Persist name on every login (ensures DB is always up to date)
-				await UserService.addUser(user.email, {
-					name: user.name ?? token.name ?? null,
-					current_room: userInfo?.current_room ?? null,
-				});
-				token.current_room = userInfo?.current_room ?? null;
+				try {
+					const userInfo = await UserService.getUserById(user.email);
+					await UserService.addUser(user.email, {
+						name: user.name ?? (token.name as string | null) ?? null,
+						current_room: userInfo?.current_room ?? null,
+					});
+					token.current_room = userInfo?.current_room ?? null;
+				} catch (err) {
+					console.error("[auth:jwt] DB error on login:", err);
+					// Don't throw — session must be created even if DB is down
+				}
 			} else if (token.email && token.name) {
-				// Existing session — backfill name if it was null in DB
-				await UserService.ensureNameSaved(token.email, token.name as string);
+				try {
+					await UserService.ensureNameSaved(token.email, token.name as string);
+				} catch (err) {
+					console.error("[auth:jwt] DB error on ensureNameSaved:", err);
+				}
 			}
 
 			if (trigger === "update" && !!session?.user?.current_room) {
