@@ -19,6 +19,7 @@ export function HeaderNavBar() {
 						<li key={link.href} className={styles.navItem}>
 							<Link
 								href={link.href}
+								prefetch={false}
 								className={link.icon ? styles.navLinkWithIcon : undefined}
 							>
 								{link.icon && <link.icon className={styles.navIcon} />}
