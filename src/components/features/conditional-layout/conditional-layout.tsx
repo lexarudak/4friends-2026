@@ -15,7 +15,7 @@ type Props = {
 
 export const ConditionalLayout = ({ children, header, sidebar }: Props) => {
 	const pathname = usePathname();
-	const isMinimal = MINIMAL_PATHS.includes(pathname);
+	const isMinimal = MINIMAL_PATHS.some((path) => path === pathname);
 
 	if (isMinimal) {
 		return <>{children}</>;
