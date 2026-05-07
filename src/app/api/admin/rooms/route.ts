@@ -1,15 +1,11 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { hasAdminAccess } from "@/lib/admin-access";
 import { RoomService } from "@/services/room.service";
-import { COOKIES_KEYS, PAGES } from "@/utils/constants";
-
-const ROOM_NAME_MIN_LENGTH = 3;
-const ROOM_NAME_MAX_LENGTH = 15;
-
-async function hasAdminAccess() {
-	const cookieStore = await cookies();
-	return cookieStore.get(COOKIES_KEYS.ADMIN_ACCESS_PATH)?.value === PAGES.ADMIN;
-}
+import {
+	getRoomNameLengthErrorMessage,
+	isRoomNameLengthValid,
+	normalizeRoomName,
+} from "@/utils/room";
 
 export async function GET() {
 	const hasAccess = await hasAdminAccess();
@@ -37,16 +33,13 @@ export async function POST(request: NextRequest) {
 
 	try {
 		const payload = (await request.json()) as { name?: unknown };
-		const name = typeof payload?.name === "string" ? payload.name.trim() : "";
+		const name = normalizeRoomName(payload?.name);
 
-		if (
-			name.length < ROOM_NAME_MIN_LENGTH ||
-			name.length > ROOM_NAME_MAX_LENGTH
-		) {
+		if (!isRoomNameLengthValid(name)) {
 			return NextResponse.json(
 				{
 					error: "INVALID_ROOM_NAME",
-					message: `Room name should be between ${ROOM_NAME_MIN_LENGTH} and ${ROOM_NAME_MAX_LENGTH} characters.`,
+					message: getRoomNameLengthErrorMessage(),
 				},
 				{ status: 400 }
 			);
@@ -69,10 +62,8 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ id: room.id, name: room.name }, { status: 201 });
 	} catch (err) {
 		console.error("[POST /api/admin/rooms]", err);
-		const message =
-			err instanceof Error ? err.message : "Could not create room.";
 		return NextResponse.json(
-			{ error: "INVALID_REQUEST", message },
+			{ error: "INVALID_REQUEST", message: "Could not create room." },
 			{ status: 400 }
 		);
 	}

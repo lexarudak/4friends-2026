@@ -1,7 +1,7 @@
 # Database Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-01
+> Last updated: 2026-05-07
 
 ---
 
@@ -28,8 +28,38 @@ model Room {
 
 model User {
   id          String  @id          // Google email address
+  name        String?
   currentRoom String?
   room        Room?   @relation(fields: [currentRoom], references: [name])
+  bets        Bet[]
+}
+
+model Match {
+  id            Int     @id
+  statusShort   String
+  leagueName    String
+  leagueSeason  Int
+  homeTeamName  String
+  awayTeamName  String
+  goalsHome     Int?
+  goalsAway     Int?
+  bets          Bet[]
+}
+
+model Bet {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  matchId     Int
+  roomId      String
+  betHome     Int
+  betAway     Int
+  points      Int?
+  bonusPoints Int?
+
+  user        User     @relation(fields: [userId], references: [id])
+  match       Match    @relation(fields: [matchId], references: [id])
+
+  @@unique([userId, matchId, roomId])
 }
 ```
 
@@ -62,6 +92,10 @@ Relations: `room Room?` — optional many-to-one with Room.
 | Migration name                  | Applied | Description        |
 | ------------------------------- | ------- | ------------------ |
 | `20260501081502_add_user_table` | ✅      | Added `User` model |
+| `20260501062538_create_room_table` | ✅   | Added `Room` model |
+| `20260501100551_add_match_table` | ✅    | Added `Match` model |
+| `20260501140828_add_bet_table` | ✅      | Added `Bet` model |
+| `20260501141552_add_user_name` | ✅      | Added `User.name` |
 
 Location: `prisma/migrations/`
 
@@ -119,6 +153,14 @@ prisma.room.findMany({ orderBy: { name: "asc" } });
 prisma.room.create({ data: { name } });
 ```
 
+### Get / Save / Clear bets
+
+```ts
+prisma.bet.findMany({ where: { userId, roomId } });
+prisma.bet.upsert({ ... });
+prisma.bet.deleteMany({ where: { userId, roomId } });
+```
+
 ### Check room exists (join validation)
 
 ```ts
@@ -138,7 +180,7 @@ prisma.room.findUnique({ where: { name } });
 
 | Data          | Stub file                      | Planned migration |
 | ------------- | ------------------------------ | ----------------- |
-| Bets          | `src/db/bets.ts`               | Phase 3.2         |
+| Bets          | —                              | ✅ migrated to Prisma |
 | Matches       | `src/db/matches.ts`            | Phase 3.1         |
 | Scores/table  | `src/db/scores.ts`             | Phase 3.3         |
 | Standings     | _(not yet implemented)_        | Phase 3.7         |

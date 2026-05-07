@@ -22,5 +22,3 @@ export const API_ERROR_CODES = {
 	NO_ACTIVE_ROOM: "NO_ACTIVE_ROOM",
 	UNAUTHORIZED: "UNAUTHORIZED",
 } as const;
-
-export const ROOM_WHITELIST: string[] = ["test", "room1"];

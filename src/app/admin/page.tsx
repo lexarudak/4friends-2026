@@ -1,17 +1,15 @@
-import { cookies } from "next/headers";
 import { Button } from "@/components/shared/button";
 import { PageContainer } from "@/components/shared/page-container";
 import { PageTitle } from "@/components/shared/page-title";
-import { COOKIES_KEYS, PAGES } from "@/utils/constants";
+import { hasAdminAccess } from "@/lib/admin-access";
+import { PAGES } from "@/utils/constants";
 import { AdminAccessForm } from "./admin-access-form";
 import { lockAdmin } from "./actions";
 import { AdminRoomsTable } from "@/app/admin/admin-rooms-table";
 import styles from "./page.module.scss";
 
 export default async function AdminPage() {
-	const cookieStore = await cookies();
-	const hasAccess =
-		cookieStore.get(COOKIES_KEYS.ADMIN_ACCESS_PATH)?.value === PAGES.ADMIN;
+	const hasAccess = await hasAdminAccess();
 
 	if (!hasAccess) {
 		return (

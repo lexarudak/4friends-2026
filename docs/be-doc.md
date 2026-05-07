@@ -1,7 +1,7 @@
 # Backend Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-01
+> Last updated: 2026-05-07
 
 ---
 
@@ -14,7 +14,7 @@
 | Auth      | NextAuth v5 (`auth()`, Google + Apple OAuth)     |
 | DB client | Prisma 7.8 + `@prisma/adapter-pg`                |
 | Database  | Prisma Postgres (`db.prisma.io`)                 |
-| Runtime   | Node.js (server), Edge (middleware via proxy.ts) |
+| Runtime   | Node.js (server), Edge (middleware via middleware.ts) |
 
 ---
 
@@ -22,9 +22,9 @@
 
 | File                 | Role                                                   |
 | -------------------- | ------------------------------------------------------ |
-| `src/proxy.ts`       | Edge middleware — auth guard + redirect logic          |
+| `src/middleware.ts`  | Edge middleware — auth guard + redirect logic          |
 | `src/auth.ts`        | Full server auth (Prisma-backed jwt/session callbacks) |
-| `src/auth.config.ts` | Edge-safe auth config (no Prisma, used by proxy.ts)    |
+| `src/auth.config.ts` | Edge-safe auth config (no Prisma, used by middleware.ts) |
 | `src/lib/prisma.ts`  | Prisma singleton client (PrismaPg adapter)             |
 
 ---
@@ -51,7 +51,7 @@
 - File: `src/app/api/bets/route.ts`
 - Auth: required
 - Active room: required
-- Body: `Bet[]`
+- Body: `{ bets: Bet[] }`
 - Action: saves bets via `BetsService.saveBets()`
 
 ### `DELETE /api/bets`
@@ -138,20 +138,20 @@ Exports `DbUnavailableError` — thrown when DB is unreachable (`P1001`, `ECONNR
 
 | Method          | Description                               | Storage |
 | --------------- | ----------------------------------------- | ------- |
-| `getUserRooms`  | Returns user's current room as `string[]` | Prisma  |
-| `getAllRooms`   | Returns all rooms sorted by name          | Prisma  |
+| `getUserRooms`  | Returns user's current room as `string[]` (safe fallback `[]` on DB errors) | Prisma  |
+| `getAllRooms`   | Returns all rooms sorted by name (safe fallback `[]` on DB errors) | Prisma  |
 | `getRoomByName` | Find room by name                         | Prisma  |
 | `createRoom`    | Create new room                           | Prisma  |
 
 ### `BetsService` — `src/services/bets.service.ts`
 
-| Method      | Description              | Storage   |
-| ----------- | ------------------------ | --------- |
-| `getBets`   | Get bets for user+room   | In-memory |
-| `saveBets`  | Save bets for user+room  | In-memory |
-| `clearBets` | Clear bets for user+room | In-memory |
+| Method      | Description              | Storage |
+| ----------- | ------------------------ | ------- |
+| `getBets`   | Get bets for user+room   | Prisma  |
+| `saveBets`  | Save bets for user+room  | Prisma  |
+| `clearBets` | Clear bets for user+room | Prisma  |
 
-⚠️ **Not yet migrated to DB.**
+`getBets` is non-blocking and returns `[]` on DB errors.
 
 ### `MatchService` — `src/services/match.service.ts`
 
@@ -205,11 +205,19 @@ Room selected (/rooms)
 
 ---
 
+## Shared backend helpers
+
+| File                  | Purpose |
+| --------------------- | ------- |
+| `src/utils/room.ts`   | Shared room-name normalization and validation (`3..15` chars) for API + UI |
+| `src/utils/api-client.ts` | Shared client-side JSON request/error parsing helper |
+
+---
+
 ## In-memory stubs (not yet migrated)
 
 | File                           | Used by        |
 | ------------------------------ | -------------- |
-| `src/db/bets.ts`               | `BetsService`  |
 | `src/db/matches.ts`            | `MatchService` |
 | `src/db/scores.ts`             | `TableService` |
 | `src/db/rooms.ts`              | _(orphaned)_   |

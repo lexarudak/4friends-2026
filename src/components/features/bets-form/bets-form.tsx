@@ -7,6 +7,7 @@ import type { Match, Bet, BetsFormValues } from "@/types/api";
 import type { CardStatus } from "@/components/widgets/match-card";
 import { MatchCard } from "@/components/widgets/match-card";
 import { Button } from "@/components/shared/button";
+import { requestApi } from "@/utils/api-client";
 import styles from "./bets-form.module.scss";
 
 type Props = {
@@ -80,7 +81,7 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 						? Number(values.bets[match.id]?.away)
 						: null,
 			}));
-			const res = await fetch("/api/bets", {
+			const res = await requestApi("/api/bets", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ bets }),
@@ -96,7 +97,7 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 
 	const handleClear = async () => {
 		const empty = buildInitialValues(matches, []);
-		await fetch("/api/bets", { method: "DELETE" });
+		await requestApi("/api/bets", { method: "DELETE" });
 		setSavedValues(empty);
 		formik.resetForm({ values: empty });
 	};

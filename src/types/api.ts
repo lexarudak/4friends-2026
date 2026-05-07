@@ -7,6 +7,15 @@ export type ApiError = {
 	error: ApiErrorCode;
 };
 
+export type ApiErrorWithMessage = ApiError & {
+	message?: string;
+};
+
+export type RoomItem = {
+	id: string;
+	name: string;
+};
+
 export type UserResponse = {
 	name: string | null;
 	email: string;

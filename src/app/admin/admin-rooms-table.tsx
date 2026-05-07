@@ -3,13 +3,16 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/shared/button";
 import { PaginatedTable } from "@/components/features/paginated-table";
-import type { TableRow } from "@/types/api";
+import type { RoomItem, TableRow } from "@/types/api";
+import { requestJson } from "@/utils/api-client";
+import {
+	getRoomNameLengthErrorMessage,
+	isRoomNameLengthValid,
+	ROOM_NAME_MAX_LENGTH,
+	ROOM_NAME_MIN_LENGTH,
+} from "@/utils/room";
+import { mapRoomsToTableRows } from "./admin-rooms-table.helpers";
 import styles from "./page.module.scss";
-
-type RoomItem = {
-	id: string;
-	name: string;
-};
 
 export function AdminRoomsTable() {
 	const [rows, setRows] = useState<TableRow[]>([]);
@@ -24,24 +27,13 @@ export function AdminRoomsTable() {
 			setIsLoading(true);
 			setError(null);
 
-			const response = await fetch("/api/admin/rooms", {
-				cache: "no-store",
-			});
-
-			if (!response.ok) {
-				throw new Error("Failed to load rooms");
-			}
-
-			const rooms = (await response.json()) as RoomItem[];
-
-			setRows(
-				rooms.map((room, index) => ({
-					position: index + 1,
-					name: room.name,
-					score: 0,
-					tag: room.id.slice(0, 6),
-				}))
+			const rooms = await requestJson<RoomItem[]>(
+				"/api/admin/rooms",
+				{ cache: "no-store" },
+				"Could not load rooms"
 			);
+
+			setRows(mapRoomsToTableRows(rooms));
 		} catch {
 			setError("Could not load rooms");
 		} finally {
@@ -58,8 +50,8 @@ export function AdminRoomsTable() {
 
 		const normalizedName = newRoomName.trim();
 
-		if (normalizedName.length < 3 || normalizedName.length > 15) {
-			setCreateError("Room name should be between 3 and 15 characters.");
+		if (!isRoomNameLengthValid(normalizedName)) {
+			setCreateError(getRoomNameLengthErrorMessage());
 			return;
 		}
 
@@ -67,18 +59,17 @@ export function AdminRoomsTable() {
 			setCreateError(null);
 			setIsSubmitting(true);
 
-			const response = await fetch("/api/admin/rooms", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			await requestJson<RoomItem>(
+				"/api/admin/rooms",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ name: normalizedName }),
 				},
-				body: JSON.stringify({ name: normalizedName }),
-			});
-
-			if (!response.ok) {
-				const payload = (await response.json()) as { message?: string };
-				throw new Error(payload.message || "Could not create room");
-			}
+				"Could not create room"
+			);
 
 			setNewRoomName("");
 			await loadRooms();
@@ -107,8 +98,8 @@ export function AdminRoomsTable() {
 						onChange={(event) => setNewRoomName(event.target.value)}
 						placeholder="Room name"
 						className={styles.input}
-						minLength={3}
-						maxLength={15}
+						minLength={ROOM_NAME_MIN_LENGTH}
+						maxLength={ROOM_NAME_MAX_LENGTH}
 						required
 					/>
 					<Button
