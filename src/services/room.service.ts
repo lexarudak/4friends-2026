@@ -22,12 +22,7 @@ export const RoomService = {
 	},
 
 	async getRoomByName(name: string) {
-		try {
-			return await prisma.room.findUnique({ where: { name } });
-		} catch (err) {
-			console.error("[RoomService.getRoomByName]", err);
-			return null;
-		}
+		return prisma.room.findUnique({ where: { name } });
 	},
 
 	async createRoom(name: string) {

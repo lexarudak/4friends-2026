@@ -67,7 +67,8 @@ export async function POST(request: NextRequest) {
 		const room = await RoomService.createRoom(name);
 
 		return NextResponse.json({ id: room.id, name: room.name }, { status: 201 });
-	} catch {
+	} catch (err) {
+		console.error("[POST /api/admin/rooms]", err);
 		return NextResponse.json(
 			{ error: "INVALID_REQUEST", message: "Could not create room." },
 			{ status: 400 }
