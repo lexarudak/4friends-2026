@@ -10,10 +10,12 @@ import { PAGES } from "@/utils/constants";
 export default async function RoomsPage() {
 	const session = await auth();
 
-	const currentRoom = session?.user?.current_room;
-	const rooms = session?.user?.email
-		? await RoomService.getUserRooms(session.user.email)
-		: [];
+	const currentRoom = session?.user?.current_room ?? null;
+	const dbRooms = await RoomService.getAllRooms();
+	const rooms = [
+		...(currentRoom ? [currentRoom] : []),
+		...dbRooms.map((room) => room.name),
+	].filter((roomId, index, allRooms) => allRooms.indexOf(roomId) === index);
 
 	return (
 		<div className={styles.page}>

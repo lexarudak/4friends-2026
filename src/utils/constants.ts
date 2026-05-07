@@ -16,8 +16,6 @@ export const COOKIES_KEYS = {
 	ADMIN_ACCESS_PATH: "admin_access_path",
 } as const;
 
-export const ADMIN_PAGE_PASSWORD = "dfrkam";
-
 export const API_ERROR_CODES = {
 	NO_ACTIVE_ROOM: "NO_ACTIVE_ROOM",
 	UNAUTHORIZED: "UNAUTHORIZED",

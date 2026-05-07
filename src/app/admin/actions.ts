@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ADMIN_PAGE_PASSWORD, COOKIES_KEYS, PAGES } from "@/utils/constants";
+import { COOKIES_KEYS, PAGES } from "@/utils/constants";
 
 export type AdminAccessState = { error: string | null };
 
@@ -12,12 +12,17 @@ export async function unlockAdmin(
 ): Promise<AdminAccessState> {
 	const password = (formData.get("password") as string | null)?.trim();
 	const path = (formData.get("path") as string | null)?.trim() || PAGES.ADMIN;
+	const adminPagePassword = process.env.ADMIN_PAGE_PASSWORD;
 
 	if (!password) {
 		return { error: "Please enter the admin password" };
 	}
 
-	if (password !== ADMIN_PAGE_PASSWORD) {
+	if (!adminPagePassword) {
+		return { error: "Admin password is not configured" };
+	}
+
+	if (password !== adminPagePassword) {
 		return { error: "Incorrect password" };
 	}
 
