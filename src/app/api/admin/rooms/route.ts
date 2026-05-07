@@ -69,8 +69,10 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ id: room.id, name: room.name }, { status: 201 });
 	} catch (err) {
 		console.error("[POST /api/admin/rooms]", err);
+		const message =
+			err instanceof Error ? err.message : "Could not create room.";
 		return NextResponse.json(
-			{ error: "INVALID_REQUEST", message: "Could not create room." },
+			{ error: "INVALID_REQUEST", message },
 			{ status: 400 }
 		);
 	}
