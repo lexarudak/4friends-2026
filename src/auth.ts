@@ -14,6 +14,14 @@ export { authConfig };
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 	...authConfig,
+	logger: {
+		error(code, ...message) {
+			console.error("[auth:error]", code, ...message);
+		},
+		warn(code) {
+			console.warn("[auth:warn]", code);
+		},
+	},
 	callbacks: {
 		...authConfig.callbacks,
 		async jwt({ token, user, trigger, session }) {

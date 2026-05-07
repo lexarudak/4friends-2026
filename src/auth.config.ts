@@ -6,6 +6,7 @@ export const authConfig = {
 	providers: [Google],
 	pages: {
 		signIn: PAGES.LOGIN,
+		error: "/auth-error",
 	},
 	callbacks: {
 		jwt({ token, trigger, session }) {
