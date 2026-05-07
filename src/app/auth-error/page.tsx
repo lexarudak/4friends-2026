@@ -18,9 +18,7 @@ export default async function AuthErrorPage({ searchParams }: Props) {
 						Error code: <code>{error}</code>
 					</p>
 				)}
-				<p className={styles.hint}>
-					Check the server logs for full details.
-				</p>
+				<p className={styles.hint}>Check the server logs for full details.</p>
 				<Link href={PAGES.LOGIN} className={styles.link}>
 					← Back to login
 				</Link>
