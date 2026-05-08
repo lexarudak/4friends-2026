@@ -9,21 +9,32 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 ## Frequent issues
 
-| #   | Type          | Often written                             | Better phrasing                                    | Note                                                        |
-| --- | ------------- | ----------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------- |
-| 1   | Spelling      | "dublications"                            | "duplications"                                     | Common typo                                                 |
-| 2   | Spelling      | "hole app"                                | "whole app"                                        | Common typo                                                 |
-| 3   | Spelling      | "rools"                                   | "rules"                                            | Common typo                                                 |
-| 4   | Preposition   | "enter to room123"                        | "enter room123" / "go to room123" / "join room123" | In English, “enter” usually does not take “to”              |
-| 5   | Request style | "why so much??"                           | "Why are there so many requests?"                  | Clearer and more natural                                    |
-| 6   | Wording       | "lets connect this request to this table" | "let’s connect this data source to this table"     | “request” is less natural than “data source” in API context |
-| 7   | Wording       | "lets she skeleton"                       | "let’s show a skeleton"                            | Likely typo: “she” → “show”                                 |
-| 8   | Grammar       | "if user have 2 rooms"                    | "if a user has 2 rooms"                            | Subject-verb agreement (`user has`)                         |
-| 9   | Spelling      | "Aslo"                                    | "also"                                             | Common typo                                                 |
-| 10  | Spelling      | "messege"                                 | "message"                                          | Common typo                                                 |
-| 11  | Grammar       | "we have now results yet"                 | "we have no results yet"                           | Use `no` (not `now`) in this sentence pattern               |
-| 12  | Spelling      | "transperent"                             | "transparent"                                      | Common typo                                                 |
-| 13  | Wording       | "centrify it"                             | "center it" / "align it to the center"             | More natural UI wording                                     |
+| #   | Type             | Often written                                                | Better phrasing                                                  | Note                                                        |
+| --- | ---------------- | ------------------------------------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------- |
+| 1   | Spelling         | "dublications"                                               | "duplications"                                                   | Common typo                                                 |
+| 2   | Spelling         | "hole app"                                                   | "whole app"                                                      | Common typo                                                 |
+| 3   | Spelling         | "rools"                                                      | "rules"                                                          | Common typo                                                 |
+| 4   | Preposition      | "enter to room123"                                           | "enter room123" / "go to room123" / "join room123"               | In English, “enter” usually does not take “to”              |
+| 5   | Request style    | "why so much??"                                              | "Why are there so many requests?"                                | Clearer and more natural                                    |
+| 6   | Wording          | "lets connect this request to this table"                    | "let’s connect this data source to this table"                   | “request” is less natural than “data source” in API context |
+| 7   | Wording          | "lets she skeleton"                                          | "let’s show a skeleton"                                          | Likely typo: “she” → “show”                                 |
+| 8   | Grammar          | "if user have 2 rooms"                                       | "if a user has 2 rooms"                                          | Subject-verb agreement (`user has`)                         |
+| 9   | Spelling         | "Aslo"                                                       | "also"                                                           | Common typo                                                 |
+| 10  | Spelling         | "messege"                                                    | "message"                                                        | Common typo                                                 |
+| 11  | Grammar          | "we have now results yet"                                    | "we have no results yet"                                         | Use `no` (not `now`) in this sentence pattern               |
+| 12  | Spelling         | "transperent"                                                | "transparent"                                                    | Common typo                                                 |
+| 13  | Wording          | "centrify it"                                                | "center it" / "align it to the center"                           | More natural UI wording                                     |
+| 14  | Grammar/Spelling | "do we concider this point distribution when highlight lins" | "do we consider this point distribution when highlighting lines" | Verb form + spelling (`consider`, `lines`)                  |
+| 15  | Grammar          | "lets test it with mocks"                                    | "let's test it with mocks"                                       | Repeated: use apostrophe in `let's`                         |
+| 16  | Grammar          | "why we dont apply 2 points bonus for it?"                   | "why don't we apply a 2-point bonus for it?"                     | Use auxiliary `don't` and article `a`                       |
+| 17  | Spelling/Grammar | "its imposible"                                              | "it's impossible"                                                | Apostrophe + spelling (`impossible`)                        |
+| 18  | Grammar          | "let the first match be also"                                | "let the first match also be"                                    | Prefer `also` before main verb                              |
+| 19  | Grammar          | "why 1:1 bet is 3 not 5?"                                    | "why is a 1:1 bet 3, not 5?"                                     | Use auxiliary verb `is` for questions                       |
+| 20  | Grammar          | "why we have 5 here?"                                        | "why do we have 5 here?"                                         | Use auxiliary `do` in present simple questions              |
+| 21  | Grammar          | "if he beted a draw"                                         | "if they bet on a draw"                                          | Use `bet` (not `beted`) and natural phrasing                |
+| 22  | Wording          | "this is so large"                                           | "this is too large"                                              | `too` is natural for excessive size                         |
+| 23  | Spelling         | "shoul" / "buterfull"                                        | "should" / "beautiful"                                           | Frequent typing mistakes                                    |
+| 24  | Spelling         | "usless"                                                     | "useless"                                                        | Common typo                                                 |
 
 ## Recent examples
 
@@ -76,6 +87,61 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "make it bigger, more transperent and centrify it"
 - Better: "Make it bigger, more transparent, and center it."
+
+### Example K
+
+- Original: "check, do we concider this point distribution when highlight lins in our live section?"
+- Better: "Can you check whether we consider this point distribution when highlighting lines in the Live section?"
+
+### Example L
+
+- Original: "lets test it with mocks"
+- Better: "Let's test it with mocks."
+
+### Example M
+
+- Original: "why we dont apply 2 points bonus for it?"
+- Better: "Why don't we apply a 2-point bonus for it?"
+
+### Example N
+
+- Original: "yeah. but its imposible. we just block bets like this. create realistic mocks"
+- Better: "Yeah, but it's impossible — we block bets like this. Please create realistic mocks."
+
+### Example O
+
+- Original: "and let the first match be also a playoff match but with 1:1 score"
+- Better: "And let the first match also be a playoff match, but with a 1:1 score."
+
+### Example P
+
+- Original: "and why 1:1 bet is 3 not 5?"
+- Better: "And why is a 1:1 bet 3, not 5?"
+
+### Example Q
+
+- Original: "and why we have 5 here?"
+- Better: "And why do we have 5 here?"
+
+### Example R
+
+- Original: "ok. we should add info which winner user selected if he beted a draw in playoff"
+- Better: "OK, we should show which winner the user selected if they bet on a draw in a playoff match."
+
+### Example S
+
+- Original: "this is so large. it can be just a dot left or right by score"
+- Better: "This is too large. It can be just a dot on the left or right of the score."
+
+### Example T
+
+- Original: "nice. but now we shoul keep this place for other bets. to make it buterfull"
+- Better: "Nice. But now we should keep this space for other bets to make it more beautiful."
+
+### Example U
+
+- Original: "make usless dots invisible"
+- Better: "Make useless dots invisible."
 
 ## Reminder cadence
 

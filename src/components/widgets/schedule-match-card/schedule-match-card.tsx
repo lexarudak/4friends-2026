@@ -8,6 +8,7 @@ export type ScheduleBet = {
 	name: string;
 	betHome: number;
 	betAway: number;
+	winPick?: "home" | "away" | null;
 	points?: number | null;
 };
 
@@ -36,28 +37,103 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 	const isStarted = status !== "upcoming";
 	const hasBets = isStarted && !!match.bets && match.bets.length > 0;
 	const hasResult = match.resultHome != null && match.resultAway != null;
+	const isPlayoffMatch = /round of 16|quarter|semi|third place|final/i.test(
+		match.group
+	);
 
-	const getBetStatus = (bet: ScheduleBet) => {
+	const getBasePoints = (bet: ScheduleBet) => {
+		if (!hasResult) return null;
+
+		if (bet.betHome === match.resultHome && bet.betAway === match.resultAway) {
+			return 3;
+		}
+
+		const betDiff = bet.betHome - bet.betAway;
+		const realDiff = match.resultHome! - match.resultAway!;
+
+		if (betDiff === realDiff) return 2;
+
+		const betOutcome = Math.sign(betDiff);
+		const realOutcome = Math.sign(realDiff);
+
+		if (betOutcome === realOutcome) return 1;
+
+		return 0;
+	};
+
+	const getBonusPoints = (bet: ScheduleBet) => {
+		if (!hasResult || !isPlayoffMatch || !bet.winPick) return 0;
+
+		const winnerSide =
+			match.resultHome! > match.resultAway!
+				? "home"
+				: match.resultHome! < match.resultAway!
+					? "away"
+					: null;
+
+		if (!winnerSide) return 0;
+
+		return bet.winPick === winnerSide ? 2 : 0;
+	};
+
+	const getTotalPoints = (bet: ScheduleBet) => {
+		const basePoints = getBasePoints(bet);
+		if (basePoints == null) return null;
+		return basePoints + getBonusPoints(bet);
+	};
+
+	const getDisplayPoints = (bet: ScheduleBet) => {
+		if (status === "live") {
+			return getTotalPoints(bet) ?? 0;
+		}
+
+		return bet.points ?? getTotalPoints(bet) ?? 0;
+	};
+
+	const getBetStatus = (points: number) => {
 		if (!hasResult) return "pending";
-		if (bet.betHome === match.resultHome && bet.betAway === match.resultAway)
-			return "exact";
-		const betOutcome = Math.sign(bet.betHome - bet.betAway);
-		const realOutcome = Math.sign(match.resultHome! - match.resultAway!);
-		if (betOutcome === realOutcome) return "win";
+		if (points > 3) return "bonus";
+		if (points === 3) return "exact";
+		if (points === 2) return "win-2";
+		if (points === 1) return "win-1";
 		return "miss";
 	};
 
+	const getBetTag = (bet: ScheduleBet) => {
+		const scoreTag = `${bet.betHome}:${bet.betAway}`;
+
+		if (!isPlayoffMatch) {
+			return scoreTag;
+		}
+
+		const markerPlaceholder = "\u00A0";
+		const leftMarker =
+			bet.betHome === bet.betAway && bet.winPick === "home"
+				? "•"
+				: markerPlaceholder;
+		const rightMarker =
+			bet.betHome === bet.betAway && bet.winPick === "away"
+				? "•"
+				: markerPlaceholder;
+
+		return `${leftMarker} ${scoreTag} ${rightMarker}`;
+	};
+
 	const sortedBets = hasBets
-		? [...match.bets!].sort((a, b) => (b.points ?? -1) - (a.points ?? -1))
+		? [...match.bets!].sort((a, b) => getDisplayPoints(b) - getDisplayPoints(a))
 		: [];
 
-	const betRows = sortedBets.map((bet, i) => ({
-		position: i + 1,
-		tag: `${bet.betHome}:${bet.betAway}`,
-		name: bet.name,
-		score: bet.points ?? 0,
-		status: getBetStatus(bet),
-	}));
+	const betRows = sortedBets.map((bet, i) => {
+		const points = getDisplayPoints(bet);
+
+		return {
+			position: i + 1,
+			tag: getBetTag(bet),
+			name: bet.name,
+			score: points,
+			status: getBetStatus(points),
+		};
+	});
 
 	return (
 		<div className={styles.card} data-status={status}>

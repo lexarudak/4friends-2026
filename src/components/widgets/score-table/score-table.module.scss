@@ -62,9 +62,44 @@
 		}
 	}
 
+	&[data-status="bonus"] {
+		background: color-mix(in srgb, var(--color-yellow-500) 16%, transparent);
+		border-color: color-mix(in srgb, var(--color-yellow-500) 36%, transparent);
+
+		.tag,
+		.score {
+			color: var(--color-yellow-300);
+		}
+
+		.name {
+			color: var(--color-neutral-white);
+			font-weight: var(--font-weight-semibold);
+		}
+	}
+
 	&[data-status="win"] {
 		background: color-mix(in srgb, var(--color-primary-500) 10%, transparent);
 		border-color: color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+
+		.tag,
+		.score {
+			color: var(--color-primary-300);
+		}
+	}
+
+	&[data-status="win-2"] {
+		background: color-mix(in srgb, var(--color-primary-500) 14%, transparent);
+		border-color: color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+
+		.tag,
+		.score {
+			color: var(--color-primary-200);
+		}
+	}
+
+	&[data-status="win-1"] {
+		background: color-mix(in srgb, var(--color-primary-500) 8%, transparent);
+		border-color: color-mix(in srgb, var(--color-primary-500) 18%, transparent);
 
 		.tag,
 		.score {

@@ -142,8 +142,15 @@ export const ScheduleService = {
 							matchId: true,
 							betHome: true,
 							betAway: true,
+							winPick: true,
 							points: true,
 							bonusPoints: true,
+							match: {
+								select: {
+									homeTeamId: true,
+									awayTeamId: true,
+								},
+							},
 							user: {
 								select: { id: true, name: true },
 							},
@@ -154,11 +161,20 @@ export const ScheduleService = {
 			const betsByMatchId = new Map<number, ScheduleMatch["bets"]>();
 			for (const bet of bets) {
 				const list = betsByMatchId.get(bet.matchId) ?? [];
+				const winPick =
+					bet.winPick == null
+						? null
+						: bet.winPick === bet.match.homeTeamId
+							? "home"
+							: bet.winPick === bet.match.awayTeamId
+								? "away"
+								: null;
 				list.push({
 					userId: bet.user.id,
 					name: bet.user.name ?? bet.user.id.split("@")[0],
 					betHome: bet.betHome,
 					betAway: bet.betAway,
+					winPick,
 					points:
 						bet.points === null
 							? null
