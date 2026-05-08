@@ -16,7 +16,7 @@ export const BetHistoryList: FC<Props> = ({ items, className }) => {
 		<div className={cn(styles.container, className)}>
 			<SectionLabel label="Bets History" />
 			{items.length === 0 ? (
-				<p className={styles.empty}>No results yet.</p>
+				<p className={styles.empty}>No bets yet.</p>
 			) : (
 				<ul className={styles.list}>
 					{items.map((item) => (

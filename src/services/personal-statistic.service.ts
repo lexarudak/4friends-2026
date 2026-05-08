@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { WC_GROUPS } from "@/db/world-cup";
 import type { BetHistoryItem, PersonalStat } from "@/types/api";
 
 type PersonalStatisticData = {
@@ -7,6 +8,31 @@ type PersonalStatisticData = {
 };
 
 const FALLBACK_FLAG = "🏳️";
+
+const TEAM_FLAG_MAP = new Map(
+	WC_GROUPS.flatMap((group) =>
+		group.teams.map((team) => [team.name.toLowerCase(), team.flag])
+	)
+);
+
+const TEAM_ALIASES: Record<string, string> = {
+	"czech republic": "czechia",
+	"south korea": "korea republic",
+	"united states": "usa",
+	"bosnia and herzegovina": "bosnia-herzegovina",
+	turkey: "türkiye",
+	turkiye: "türkiye",
+	"dr congo": "congo dr",
+	drcongo: "congo dr",
+	"cote d'ivoire": "côte d'ivoire",
+	iran: "ir iran",
+};
+
+function getTeamFlag(name: string): string {
+	const normalized = name.trim().toLowerCase();
+	const alias = TEAM_ALIASES[normalized];
+	return TEAM_FLAG_MAP.get(alias ?? normalized) ?? FALLBACK_FLAG;
+}
 
 function toShortDate(date: Date): string {
 	return new Intl.DateTimeFormat("en-GB", {
@@ -32,8 +58,11 @@ function toDayLabel(date: Date): string {
 }
 
 function extractGroup(round: string): string {
-	const match = round.match(/Group\s+([A-Z])/i);
-	return match?.[1] ?? "-";
+	const staged = round.match(/group\s+stage\s*-\s*group\s+([a-z])/i);
+	if (staged) return staged[1].toUpperCase();
+
+	const plain = round.match(/group\s+([a-z])/i);
+	return plain?.[1]?.toUpperCase() ?? "-";
 }
 
 function buildDefaultStats(): PersonalStat[] {
@@ -81,9 +110,9 @@ export const PersonalStatisticService = {
 					id: String(bet.id),
 					group: extractGroup(bet.match.round),
 					homeTeam: bet.match.homeTeamName,
-					homeFlag: FALLBACK_FLAG,
+					homeFlag: getTeamFlag(bet.match.homeTeamName),
 					awayTeam: bet.match.awayTeamName,
-					awayFlag: FALLBACK_FLAG,
+					awayFlag: getTeamFlag(bet.match.awayTeamName),
 					betHome: bet.betHome,
 					betAway: bet.betAway,
 					resultHome: bet.match.fulltimeHome ?? bet.match.goalsHome,
@@ -95,6 +124,7 @@ export const PersonalStatisticService = {
 			});
 
 			const finished = bets.filter((bet) => bet.points !== null);
+
 			const totalScore = finished.reduce(
 				(sum, bet) => sum + (bet.points ?? 0) + (bet.bonusPoints ?? 0),
 				0

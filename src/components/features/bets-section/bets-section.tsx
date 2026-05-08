@@ -13,7 +13,7 @@ type Props = {
 export async function BetsSection({ className }: Props) {
 	const [session, matches] = await Promise.all([
 		auth(),
-		Promise.resolve(MatchService.getMatches()),
+		MatchService.getMatches(),
 	]);
 
 	const userId = session?.user?.email;
