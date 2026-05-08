@@ -13,6 +13,7 @@ type TableResponse = {
 export const TopTable = () => {
 	const pathname = usePathname();
 	const [rows, setRows] = useState<TableRow[]>([]);
+	const [isFirstLoading, setIsFirstLoading] = useState(true);
 
 	useEffect(() => {
 		let isCancelled = false;
@@ -28,6 +29,10 @@ export const TopTable = () => {
 				}
 			} catch {
 				// keep previous data on transient errors
+			} finally {
+				if (!isCancelled) {
+					setIsFirstLoading(false);
+				}
 			}
 		};
 
@@ -45,6 +50,18 @@ export const TopTable = () => {
 		if (topHasCurrentUser) return undefined;
 		return rows.find((row) => row.isCurrentUser);
 	}, [rows, topRows]);
+
+	if (isFirstLoading) {
+		return (
+			<ScoreTable
+				title="Top 3"
+				rows={[]}
+				ghostCount={3}
+				href={PAGES.ROOM_STATISTIC}
+				linkLabel="More statistic"
+			/>
+		);
+	}
 
 	return (
 		<ScoreTable

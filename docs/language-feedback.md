@@ -17,6 +17,7 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 4   | Preposition   | "enter to room123"                        | "enter room123" / "go to room123" / "join room123" | In English, “enter” usually does not take “to”              |
 | 5   | Request style | "why so much??"                           | "Why are there so many requests?"                  | Clearer and more natural                                    |
 | 6   | Wording       | "lets connect this request to this table" | "let’s connect this data source to this table"     | “request” is less natural than “data source” in API context |
+| 7   | Wording       | "lets she skeleton"                       | "let’s show a skeleton"                            | Likely typo: “she” → “show”                                |
 
 ## Recent examples
 
@@ -44,6 +45,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "lets connect this request to this table"
 - Better: "Let’s connect this data source to this table."
+
+### Example F
+
+- Original: "ok, lets she skeleton for the first fetch"
+- Better: "OK, let’s show a skeleton for the first fetch."
 
 ## Reminder cadence
 
