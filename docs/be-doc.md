@@ -1,7 +1,7 @@
 # Backend Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-07
+> Last updated: 2026-05-08
 
 ---
 
@@ -68,7 +68,7 @@
 - File: `src/app/api/table/route.ts`
 - Auth: required
 - Active room: required
-- Returns: `ScoreTableData` (top 100 rows) via `TableService.getTopTable()`
+- Returns: `{ rows: TableRow[] }` from `RoomStatisticService.getSections()` using the `Total Score` section
 
 ---
 
@@ -169,6 +169,26 @@ Exports `DbUnavailableError` — thrown when DB is unreachable (`P1001`, `ECONNR
 
 ⚠️ **Not yet migrated to DB.**
 
+### `RoomStatisticService` — `src/services/room-statistic.service.ts`
+
+| Method        | Description                                   | Storage |
+| ------------- | --------------------------------------------- | ------- |
+| `getSections` | Returns room statistic sections (Prisma data) | Prisma  |
+
+Includes tie-aware ranking logic and safe fallback to `[]` on DB errors.
+
+### `GlobalTopService` — `src/services/global-top.service.ts`
+
+| Method        | Description                                                | Storage |
+| ------------- | ---------------------------------------------------------- | ------- |
+| `getSections` | Global ranking across all rooms (best room value per user) | Prisma  |
+
+### `PersonalStatisticService` — `src/services/personal-statistic.service.ts`
+
+| Method                 | Description                                                       | Storage |
+| ---------------------- | ----------------------------------------------------------------- | ------- |
+| `getPersonalStatistic` | Personal stat cards + bets history for `userId` + active `roomId` | Prisma  |
+
 ---
 
 ## Auth flow
@@ -211,20 +231,21 @@ Room selected (/rooms)
 | ------------------------- | -------------------------------------------------------------------------- |
 | `src/utils/room.ts`       | Shared room-name normalization and validation (`3..15` chars) for API + UI |
 | `src/utils/api-client.ts` | Shared client-side JSON request/error parsing helper                       |
+| `src/utils/ranking.ts`    | Competition ranking helper (tie positions: `1, 1, 3...`)                   |
 
 ---
 
 ## In-memory stubs (not yet migrated)
 
-| File                           | Used by        |
-| ------------------------------ | -------------- |
-| `src/db/matches.ts`            | `MatchService` |
-| `src/db/scores.ts`             | `TableService` |
-| `src/db/rooms.ts`              | _(orphaned)_   |
-| `src/db/users.ts`              | _(orphaned)_   |
-| `src/db/live-matches.ts`       | _(stub)_       |
-| `src/db/global-top.ts`         | _(stub)_       |
-| `src/db/personal-statistic.ts` | _(stub)_       |
-| `src/db/room-statistic.ts`     | _(stub)_       |
-| `src/db/world-cup.ts`          | _(stub)_       |
-| `src/db/bet-history.ts`        | _(stub)_       |
+| File                           | Used by                         |
+| ------------------------------ | ------------------------------- |
+| `src/db/matches.ts`            | `MatchService`                  |
+| `src/db/scores.ts`             | `TableService`                  |
+| `src/db/rooms.ts`              | _(orphaned)_                    |
+| `src/db/users.ts`              | _(orphaned)_                    |
+| `src/db/live-matches.ts`       | _(stub)_                        |
+| `src/db/global-top.ts`         | _(legacy stub, no longer used)_ |
+| `src/db/personal-statistic.ts` | _(deprecated, no longer used)_  |
+| `src/db/room-statistic.ts`     | _(stub)_                        |
+| `src/db/world-cup.ts`          | _(stub)_                        |
+| `src/db/bet-history.ts`        | _(deprecated, no longer used)_  |

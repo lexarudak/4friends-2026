@@ -72,3 +72,27 @@ export type StatSection = {
 export type BetsFormValues = {
 	bets: Record<string, { home: string; away: string }>;
 };
+
+export type PersonalStat = {
+	label: string;
+	value: string | number;
+	sub?: string;
+	size?: "sm" | "md" | "lg";
+	variant?: "default" | "highlight" | "warm";
+};
+
+export type BetHistoryItem = {
+	id: string;
+	group: string;
+	homeTeam: string;
+	homeFlag: string;
+	awayTeam: string;
+	awayFlag: string;
+	betHome: number;
+	betAway: number;
+	resultHome: number | null;
+	resultAway: number | null;
+	time: string;
+	date: string;
+	points: number | null;
+};

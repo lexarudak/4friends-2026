@@ -19,6 +19,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 6   | Wording       | "lets connect this request to this table" | "let’s connect this data source to this table"     | “request” is less natural than “data source” in API context |
 | 7   | Wording       | "lets she skeleton"                       | "let’s show a skeleton"                            | Likely typo: “she” → “show”                                 |
 | 8   | Grammar       | "if user have 2 rooms"                    | "if a user has 2 rooms"                            | Subject-verb agreement (`user has`)                         |
+| 9   | Spelling      | "Aslo"                                    | "also"                                             | Common typo                                                 |
+| 10  | Spelling      | "messege"                                 | "message"                                          | Common typo                                                 |
+| 11  | Grammar       | "we have now results yet"                 | "we have no results yet"                           | Use `no` (not `now`) in this sentence pattern               |
+| 12  | Spelling      | "transperent"                             | "transparent"                                      | Common typo                                                 |
+| 13  | Wording       | "centrify it"                             | "center it" / "align it to the center"             | More natural UI wording                                     |
 
 ## Recent examples
 
@@ -56,6 +61,21 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "if user have 2 rooms, we need to take the best value for him"
 - Better: "If a user has 2 rooms, we should take their best value."
+
+### Example H
+
+- Original: "Aslo we should create a way"
+- Better: "Also, we should create a way"
+
+### Example I
+
+- Original: "lest add a messege to Bets History that we have now results yet"
+- Better: "Let’s add a message to Bets History that says: ‘We have no results yet.’"
+
+### Example J
+
+- Original: "make it bigger, more transperent and centrify it"
+- Better: "Make it bigger, more transparent, and center it."
 
 ## Reminder cadence
 

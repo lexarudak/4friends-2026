@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { BetHistoryItem } from "@/db/bet-history";
+import type { BetHistoryItem } from "@/types/api";
 import { cn } from "@/utils/lib";
 import { SectionLabel } from "@/components/shared/section-label";
 import { BetItem } from "@/components/widgets/bet-item";
@@ -15,28 +15,32 @@ export const BetHistoryList: FC<Props> = ({ items, className }) => {
 	return (
 		<div className={cn(styles.container, className)}>
 			<SectionLabel label="Bets History" />
-			<ul className={styles.list}>
-				{items.map((item) => (
-					<BetItem
-						key={item.id}
-						status={getBetItemStatus(item)}
-						group={item.group}
-						homeTeam={item.homeTeam}
-						homeFlag={item.homeFlag}
-						awayTeam={item.awayTeam}
-						awayFlag={item.awayFlag}
-						betHome={item.betHome}
-						betAway={item.betAway}
-						time={item.time}
-						date={item.date}
-						result={{
-							home: item.resultHome,
-							away: item.resultAway,
-							points: item.points,
-						}}
-					/>
-				))}
-			</ul>
+			{items.length === 0 ? (
+				<p className={styles.empty}>No results yet.</p>
+			) : (
+				<ul className={styles.list}>
+					{items.map((item) => (
+						<BetItem
+							key={item.id}
+							status={getBetItemStatus(item)}
+							group={item.group}
+							homeTeam={item.homeTeam}
+							homeFlag={item.homeFlag}
+							awayTeam={item.awayTeam}
+							awayFlag={item.awayFlag}
+							betHome={item.betHome}
+							betAway={item.betAway}
+							time={item.time}
+							date={item.date}
+							result={{
+								home: item.resultHome,
+								away: item.resultAway,
+								points: item.points,
+							}}
+						/>
+					))}
+				</ul>
+			)}
 		</div>
 	);
 };

@@ -1,5 +1,5 @@
-import type { BetHistoryItem } from "@/db/bet-history";
 import type { BetItemStatus } from "@/components/widgets/bet-item";
+import type { BetHistoryItem } from "@/types/api";
 
 export function getBetItemStatus(item: BetHistoryItem): BetItemStatus {
 	const hasResult = item.resultHome !== null && item.resultAway !== null;

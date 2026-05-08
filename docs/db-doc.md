@@ -1,7 +1,7 @@
 # Database Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-07
+> Last updated: 2026-05-08
 
 ---
 
@@ -161,6 +161,26 @@ prisma.bet.upsert({ ... });
 prisma.bet.deleteMany({ where: { userId, roomId } });
 ```
 
+### Room statistic sections
+
+```ts
+prisma.user.findMany({ where: { currentRoom: roomId } });
+prisma.bet.groupBy({ by: ["userId"], where: { roomId, ... } });
+```
+
+### Global top (best room per user)
+
+```ts
+prisma.bet.groupBy({ by: ["userId", "roomId"], ... });
+// then app logic keeps best value per user across rooms
+```
+
+### Personal statistic page
+
+```ts
+prisma.bet.findMany({ where: { userId, roomId }, include: { match: true } });
+```
+
 ### Check room exists (join validation)
 
 ```ts
@@ -178,15 +198,15 @@ prisma.room.findUnique({ where: { name } });
 
 ## What is NOT yet in the DB (in-memory stubs)
 
-| Data          | Stub file                      | Planned migration     |
-| ------------- | ------------------------------ | --------------------- |
-| Bets          | —                              | ✅ migrated to Prisma |
-| Matches       | `src/db/matches.ts`            | Phase 3.1             |
-| Scores/table  | `src/db/scores.ts`             | Phase 3.3             |
-| Standings     | _(not yet implemented)_        | Phase 3.7             |
-| Live matches  | `src/db/live-matches.ts`       | —                     |
-| Global top    | `src/db/global-top.ts`         | —                     |
-| Personal stat | `src/db/personal-statistic.ts` | —                     |
-| Room stat     | `src/db/room-statistic.ts`     | —                     |
-| World Cup     | `src/db/world-cup.ts`          | —                     |
-| Bet history   | `src/db/bet-history.ts`        | —                     |
+| Data          | Stub file                  | Planned migration             |
+| ------------- | -------------------------- | ----------------------------- |
+| Bets          | —                          | ✅ migrated to Prisma         |
+| Matches       | `src/db/matches.ts`        | Phase 3.1                     |
+| Scores/table  | `src/db/scores.ts`         | Phase 3.3                     |
+| Standings     | _(not yet implemented)_    | Phase 3.7                     |
+| Live matches  | `src/db/live-matches.ts`   | —                             |
+| Global top    | —                          | ✅ migrated to Prisma service |
+| Personal stat | —                          | ✅ migrated to Prisma service |
+| Room stat     | `src/db/room-statistic.ts` | —                             |
+| World Cup     | `src/db/world-cup.ts`      | —                             |
+| Bet history   | —                          | ✅ migrated to Prisma service |
