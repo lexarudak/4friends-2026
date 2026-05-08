@@ -32,9 +32,9 @@ export const ScoreTable: FC<Props> = ({
 			{title && <SectionLabel label={title} />}
 
 			<ul className={styles.list}>
-				{rows.map((row) => (
+				{rows.map((row, index) => (
 					<li
-						key={row.position}
+						key={`${row.name}-${row.position}-${index}`}
 						className={styles.row}
 						data-first={(row.position === 1 && !hidePosition) || undefined}
 						data-me={row.isCurrentUser || undefined}

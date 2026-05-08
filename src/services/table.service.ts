@@ -1,5 +1,6 @@
 import type { ScoreTableData, TableRow } from "@/types/api";
 import { getRoomScores } from "@/db/scores";
+import { getCompetitionPosition } from "@/utils/ranking";
 
 export const TableService = {
 	async getTopTable(
@@ -14,9 +15,10 @@ export const TableService = {
 				: e
 		);
 		const sorted = [...scores].sort((a, b) => b.score - a.score);
+		const sortedScores = sorted.map((entry) => entry.score);
 
 		const rows: TableRow[] = sorted.slice(0, topN).map((entry, i) => ({
-			position: i + 1,
+			position: getCompetitionPosition(sortedScores, i),
 			name: entry.name,
 			score: entry.score,
 			isCurrentUser: entry.userId === userId,
@@ -28,7 +30,7 @@ export const TableService = {
 		const currentUserRow: TableRow | undefined =
 			!userInTop && userIndex !== -1
 				? {
-						position: userIndex + 1,
+						position: getCompetitionPosition(sortedScores, userIndex),
 						name: sorted[userIndex].name,
 						score: sorted[userIndex].score,
 						isCurrentUser: true,

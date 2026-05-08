@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { StatSection, TableRow } from "@/types/api";
+import { getCompetitionPosition } from "@/utils/ranking";
 
 function buildRows(
 	aggregated: { userId: string; value: number }[],
@@ -11,10 +12,12 @@ function buildRows(
 	const zeroEntries = allUserIds
 		.filter((id) => !scoredIds.has(id))
 		.map((id) => ({ userId: id, value: 0 }));
-	return [...aggregated, ...zeroEntries]
-		.sort((a, b) => b.value - a.value)
+	const sorted = [...aggregated, ...zeroEntries].sort((a, b) => b.value - a.value);
+	const sortedValues = sorted.map((entry) => entry.value);
+
+	return sorted
 		.map((entry, i) => ({
-			position: i + 1,
+			position: getCompetitionPosition(sortedValues, i),
 			name: nameMap.get(entry.userId) ?? entry.userId,
 			score: entry.value,
 			isCurrentUser: entry.userId === currentUserId,
