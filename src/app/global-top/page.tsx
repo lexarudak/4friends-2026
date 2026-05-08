@@ -7,7 +7,7 @@ import styles from "./page.module.scss";
 
 export default async function GlobalTopPage() {
 	const session = await auth();
-	const userId = session?.user?.email;
+	const userId = session?.user?.email ?? undefined;
 	const sections = await GlobalTopService.getSections(userId);
 
 	return (
