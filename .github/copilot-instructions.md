@@ -183,3 +183,21 @@ Whenever the user mentions running the `save` command in the terminal, immediate
 - `docs/db-doc.md` — database documentation (schema, models, migrations, Prisma setup, access patterns, what's not yet in DB)
 
 Update the `Last updated` date at the top of each file. Keep all sections accurate and in sync with the actual code.
+
+---
+
+## User language feedback tracking
+
+Maintain `docs/language-feedback.md` as an ongoing log of the user's most frequent or significant language mistakes.
+
+Rules:
+
+- Analyze each user request and add/update entries for repeated or major issues.
+- Include both grammar and wording/formulation issues (especially natural English phrasing).
+- For each issue, provide:
+  - what was written,
+  - a better version,
+  - a short note.
+- Keep examples concise and practical.
+- If the same issue repeats, update frequency/notes instead of duplicating rows.
+- Remind the user every few days to check this file.
