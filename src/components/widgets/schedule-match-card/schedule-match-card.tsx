@@ -33,7 +33,8 @@ type Props = {
 
 export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 	const status = match.status ?? "upcoming";
-	const hasBets = match.bets && match.bets.length > 0;
+	const isStarted = status !== "upcoming";
+	const hasBets = isStarted && !!match.bets && match.bets.length > 0;
 	const hasResult = match.resultHome != null && match.resultAway != null;
 
 	const getBetStatus = (bet: ScheduleBet) => {
