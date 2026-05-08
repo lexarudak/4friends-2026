@@ -6,3 +6,10 @@
 	display: flex;
 	flex-direction: column;
 }
+
+.empty {
+	margin: 0;
+	font-size: var(--font-size-14);
+	line-height: var(--line-height-20);
+	color: var(--color-neutral-400);
+}

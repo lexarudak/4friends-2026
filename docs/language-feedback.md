@@ -18,6 +18,7 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 5   | Request style | "why so much??"                           | "Why are there so many requests?"                  | Clearer and more natural                                    |
 | 6   | Wording       | "lets connect this request to this table" | "let’s connect this data source to this table"     | “request” is less natural than “data source” in API context |
 | 7   | Wording       | "lets she skeleton"                       | "let’s show a skeleton"                            | Likely typo: “she” → “show”                                 |
+| 8   | Grammar       | "if user have 2 rooms"                    | "if a user has 2 rooms"                            | Subject-verb agreement (`user has`)                         |
 
 ## Recent examples
 
@@ -50,6 +51,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "ok, lets she skeleton for the first fetch"
 - Better: "OK, let’s show a skeleton for the first fetch."
+
+### Example G
+
+- Original: "if user have 2 rooms, we need to take the best value for him"
+- Better: "If a user has 2 rooms, we should take their best value."
 
 ## Reminder cadence
 
