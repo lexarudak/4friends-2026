@@ -9,13 +9,14 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 ## Frequent issues
 
-| #   | Type          | Often written      | Better phrasing                                    | Note                                           |
-| --- | ------------- | ------------------ | -------------------------------------------------- | ---------------------------------------------- |
-| 1   | Spelling      | "dublications"     | "duplications"                                     | Common typo                                    |
-| 2   | Spelling      | "hole app"         | "whole app"                                        | Common typo                                    |
-| 3   | Spelling      | "rools"            | "rules"                                            | Common typo                                    |
-| 4   | Preposition   | "enter to room123" | "enter room123" / "go to room123" / "join room123" | In English, “enter” usually does not take “to” |
-| 5   | Request style | "why so much??"    | "Why are there so many requests?"                  | Clearer and more natural                       |
+| #   | Type          | Often written                             | Better phrasing                                    | Note                                                        |
+| --- | ------------- | ----------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------- |
+| 1   | Spelling      | "dublications"                            | "duplications"                                     | Common typo                                                 |
+| 2   | Spelling      | "hole app"                                | "whole app"                                        | Common typo                                                 |
+| 3   | Spelling      | "rools"                                   | "rules"                                            | Common typo                                                 |
+| 4   | Preposition   | "enter to room123"                        | "enter room123" / "go to room123" / "join room123" | In English, “enter” usually does not take “to”              |
+| 5   | Request style | "why so much??"                           | "Why are there so many requests?"                  | Clearer and more natural                                    |
+| 6   | Wording       | "lets connect this request to this table" | "let’s connect this data source to this table"     | “request” is less natural than “data source” in API context |
 
 ## Recent examples
 
@@ -38,6 +39,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "i enter to admin room"
 - Better: "I entered the admin room." / "I joined the admin room."
+
+### Example E
+
+- Original: "lets connect this request to this table"
+- Better: "Let’s connect this data source to this table."
 
 ## Reminder cadence
 

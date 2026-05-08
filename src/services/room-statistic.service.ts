@@ -12,16 +12,17 @@ function buildRows(
 	const zeroEntries = allUserIds
 		.filter((id) => !scoredIds.has(id))
 		.map((id) => ({ userId: id, value: 0 }));
-	const sorted = [...aggregated, ...zeroEntries].sort((a, b) => b.value - a.value);
+	const sorted = [...aggregated, ...zeroEntries].sort(
+		(a, b) => b.value - a.value
+	);
 	const sortedValues = sorted.map((entry) => entry.value);
 
-	return sorted
-		.map((entry, i) => ({
-			position: getCompetitionPosition(sortedValues, i),
-			name: nameMap.get(entry.userId) ?? entry.userId,
-			score: entry.value,
-			isCurrentUser: entry.userId === currentUserId,
-		}));
+	return sorted.map((entry, i) => ({
+		position: getCompetitionPosition(sortedValues, i),
+		name: nameMap.get(entry.userId) ?? entry.userId,
+		score: entry.value,
+		isCurrentUser: entry.userId === currentUserId,
+	}));
 }
 
 export const RoomStatisticService = {

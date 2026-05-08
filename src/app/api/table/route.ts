@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { getActiveRoomId } from "@/lib/active-room";
-import { TableService } from "@/services/table.service";
+import { RoomStatisticService } from "@/services/room-statistic.service";
 import { API_ERROR_CODES } from "@/utils/constants";
 import { NextResponse } from "next/server";
 
@@ -22,6 +22,13 @@ export async function GET() {
 		);
 	}
 
-	const table = await TableService.getTopTable(roomId, "", "", 100);
-	return NextResponse.json(table);
+	const sections = await RoomStatisticService.getSections(
+		roomId,
+		session.user.email
+	);
+	const totalScore = sections.find(
+		(section) => section.title === "Total Score"
+	);
+
+	return NextResponse.json({ rows: totalScore?.rows ?? [] });
 }
