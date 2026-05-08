@@ -48,6 +48,7 @@ export type Bet = {
 	matchId: string;
 	home: number | null;
 	away: number | null;
+	winPick?: "home" | "away" | null;
 };
 
 export type TableRow = {
@@ -70,7 +71,10 @@ export type StatSection = {
 };
 
 export type BetsFormValues = {
-	bets: Record<string, { home: string; away: string }>;
+	bets: Record<
+		string,
+		{ home: string; away: string; winPick: "" | "home" | "away" }
+	>;
 };
 
 export type PersonalStat = {

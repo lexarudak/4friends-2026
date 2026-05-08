@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { ChangeEvent, FC } from "react";
 import type { Match } from "@/types/api";
 import { ScoreInput } from "@/components/shared/score-input";
 import { BetItem } from "@/components/widgets/bet-item";
@@ -10,9 +10,14 @@ type Props = {
 	match: Match;
 	homeFieldName: string;
 	awayFieldName: string;
+	winnerFieldName: string;
 	homeValue: string;
 	awayValue: string;
-	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	winnerValue: "" | "home" | "away";
+	isPlayoff?: boolean;
+	winnerDisabled?: boolean;
+	onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	onScoreChange?: (side: "home" | "away", value: string) => void;
 	status?: CardStatus;
 	className?: string;
 };
@@ -21,9 +26,14 @@ export const MatchCard: FC<Props> = ({
 	match,
 	homeFieldName,
 	awayFieldName,
-	homeValue,
-	awayValue,
+	winnerFieldName,
+	homeValue = "",
+	awayValue = "",
+	winnerValue,
+	isPlayoff = false,
+	winnerDisabled = false,
 	onChange,
+	onScoreChange,
 	status = "default",
 	className,
 }) => {
@@ -45,15 +55,52 @@ export const MatchCard: FC<Props> = ({
 					<ScoreInput
 						name={homeFieldName}
 						value={homeValue}
-						onChange={onChange}
+						onChange={(e) => {
+							onChange(e);
+							onScoreChange?.("home", e.currentTarget.value);
+						}}
 					/>
 					<span className={styles.colon}>:</span>
 					<ScoreInput
 						name={awayFieldName}
 						value={awayValue}
-						onChange={onChange}
+						onChange={(e) => {
+							onChange(e);
+							onScoreChange?.("away", e.currentTarget.value);
+						}}
 					/>
 				</div>
+			}
+			detailsSlot={
+				isPlayoff ? (
+					<fieldset
+						className={styles.winner}
+						disabled={winnerDisabled}
+						data-selected={winnerValue !== "" || undefined}
+					>
+						<label className={styles.option} data-side="home">
+							<input
+								type="radio"
+								name={winnerFieldName}
+								value="home"
+								checked={winnerValue === "home"}
+								aria-label={`Winner ${match.home.name}`}
+								onChange={onChange}
+							/>
+						</label>
+						<span className={styles.winnerText}>Winner</span>
+						<label className={styles.option} data-side="away">
+							<input
+								type="radio"
+								name={winnerFieldName}
+								value="away"
+								checked={winnerValue === "away"}
+								aria-label={`Winner ${match.away.name}`}
+								onChange={onChange}
+							/>
+						</label>
+					</fieldset>
+				) : undefined
 			}
 		/>
 	);

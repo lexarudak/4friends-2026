@@ -10,9 +10,14 @@ type Props = Omit<
 };
 
 export const ScoreInput: FC<Props> = ({ className, ...props }) => {
+	const { value, defaultValue: _defaultValue, ...rest } = props;
+	const safeValue =
+		typeof value === "number" && Number.isNaN(value) ? "" : (value ?? "");
+
 	return (
 		<input
-			{...props}
+			{...rest}
+			value={safeValue}
 			type="number"
 			min={0}
 			max={99}

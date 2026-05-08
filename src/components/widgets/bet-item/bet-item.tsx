@@ -16,6 +16,7 @@ type Props = {
 	betHome?: number;
 	betAway?: number;
 	scoreSlot?: ReactNode;
+	detailsSlot?: ReactNode;
 	time: string;
 	date: string;
 	status: BetItemStatus | string;
@@ -32,6 +33,7 @@ export const BetItem: FC<Props> = ({
 	betHome,
 	betAway,
 	scoreSlot,
+	detailsSlot,
 	time,
 	date,
 	status,
@@ -67,6 +69,8 @@ export const BetItem: FC<Props> = ({
 			</span>
 
 			{result && <BetItemResult result={result} />}
+
+			{detailsSlot ? <div className={styles.details}>{detailsSlot}</div> : null}
 		</li>
 	);
 };

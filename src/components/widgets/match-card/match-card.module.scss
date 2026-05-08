@@ -10,3 +10,133 @@
 	font-weight: var(--font-weight-bold);
 	color: var(--color-neutral-700);
 }
+
+.winner {
+	display: grid;
+	grid-template-columns: 44px auto 44px;
+	align-items: center;
+	justify-content: center;
+	column-gap: var(--space-10);
+	border: 1px solid transparent;
+	border-radius: var(--radius-8, 8px);
+	margin: 0;
+	padding: var(--space-6) var(--space-8);
+
+	&[data-selected] {
+		border-color: color-mix(
+			in srgb,
+			var(--color-primary-400) 30%,
+			var(--color-neutral-700)
+		);
+		background: color-mix(
+			in srgb,
+			var(--color-primary-500) 10%,
+			var(--color-neutral-900)
+		);
+
+		.winnerText {
+			color: var(--color-primary-300);
+		}
+	}
+
+	&:disabled {
+		opacity: 1;
+	}
+}
+
+.option {
+	display: inline-flex;
+	align-items: center;
+	gap: 0;
+
+	&[data-side="home"] {
+		justify-self: start;
+	}
+
+	&[data-side="away"] {
+		justify-self: end;
+	}
+
+	input {
+		appearance: none;
+		width: var(--size-16);
+		height: var(--size-16);
+		border-radius: 50%;
+		border: 1px solid var(--color-neutral-600);
+		background: var(--color-neutral-900);
+		display: grid;
+		place-items: center;
+		cursor: pointer;
+		transition:
+			border-color var(--duration-base) var(--ease-standard),
+			background var(--duration-base) var(--ease-standard),
+			box-shadow var(--duration-base) var(--ease-standard);
+
+		&::before {
+			content: "";
+			width: var(--size-8);
+			height: var(--size-8);
+			border-radius: 50%;
+			background: var(--color-primary-500);
+			transform: scale(0);
+			transition: transform var(--duration-base) var(--ease-standard);
+		}
+
+		&:hover {
+			border-color: var(--color-neutral-400);
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: 0 0 0 2px
+				color-mix(in srgb, var(--color-primary-500) 40%, transparent);
+		}
+
+		&:checked {
+			border-color: var(--color-primary-500);
+			background: color-mix(
+				in srgb,
+				var(--color-primary-500) 16%,
+				var(--color-neutral-900)
+			);
+
+			&::before {
+				transform: scale(1);
+			}
+		}
+	}
+}
+
+.winner[data-selected] .option input {
+	&:checked {
+		box-shadow: 0 0 0 2px
+			color-mix(in srgb, var(--color-primary-500) 20%, transparent);
+	}
+}
+
+.winner:disabled .option input {
+	cursor: default;
+	border-color: var(--color-neutral-700);
+	opacity: 0.45;
+
+	&:checked {
+		opacity: 1;
+		border-color: var(--color-primary-400);
+		background: color-mix(
+			in srgb,
+			var(--color-primary-500) 12%,
+			var(--color-neutral-900)
+		);
+
+		&::before {
+			background: var(--color-primary-400);
+		}
+	}
+}
+
+.winnerText {
+	font-size: var(--font-size-12);
+	color: var(--color-neutral-500);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
