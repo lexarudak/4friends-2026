@@ -65,6 +65,12 @@
 	gap: var(--space-16);
 	margin: 0;
 	animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+
+	@media (max-width: 600px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-6);
+	}
 }
 
 .metaItem {
@@ -76,6 +82,12 @@
 		content: "·";
 		margin-right: var(--space-16);
 		color: var(--color-neutral-700);
+	}
+
+	@media (max-width: 600px) {
+		& + &::before {
+			display: none;
+		}
 	}
 }
 
