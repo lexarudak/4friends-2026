@@ -1,0 +1,62 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - link "← Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - link "Start →" [ref=e6] [cursor=pointer]:
+        - /url: /login
+    - generic [ref=e7]:
+      - paragraph [ref=e8]: How it works
+      - heading "Rules" [level=1] [ref=e9]
+    - paragraph [ref=e11]: 4friends is a platform for competitions with friends. Make predictions for World Cup 2026 matches, earn points, follow the statistics and win! You decide what the prize pool will be and how it's distributed — we make sure the game is fair and all results are calculated on time.
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - heading "Place a bet" [level=2] [ref=e14]
+        - paragraph [ref=e15]: When there are 48 hours left until a match, it appears on the main page. You can make and save your prediction before it kicks off.
+        - list [ref=e16]:
+          - listitem [ref=e17]: Grey — bet is not placed
+          - listitem [ref=e19]: Yellow — bet is being edited
+          - listitem [ref=e21]: Green — bet is saved
+      - generic [ref=e23]:
+        - heading "Match statuses" [level=2] [ref=e24]
+        - paragraph [ref=e25]: "After a match kicks off, you can see the bets made by other players. Match cards are color-coded too:"
+        - list [ref=e26]:
+          - listitem [ref=e27]: Grey — match has not started yet
+          - listitem [ref=e29]: Red — match is live right now
+          - listitem [ref=e31]: Green — match has ended
+      - generic [ref=e33]:
+        - heading "Point calculation — Group stage" [level=2] [ref=e34]
+        - paragraph [ref=e35]: "Points are awarded based on how accurate your prediction was:"
+        - generic [ref=e36]:
+          - generic [ref=e37]: "3"
+          - paragraph [ref=e38]: Exact score and correct winner
+          - generic [ref=e39]: "2"
+          - paragraph [ref=e40]: Correct winner and goal difference, but not the exact score
+          - generic [ref=e41]: "1"
+          - paragraph [ref=e42]: Correct outcome (win / draw / loss), but wrong goal difference
+          - generic [ref=e43]: "0"
+          - paragraph [ref=e44]: Incorrect outcome
+      - generic [ref=e45]:
+        - heading "Point calculation — Playoffs" [level=2] [ref=e46]
+        - paragraph [ref=e47]: Points follow the same 3-2-1 system based on the final scoreboard result — regardless of whether the match ended in regular time or extra time.
+        - paragraph [ref=e48]:
+          - text: The
+          - strong [ref=e49]: win
+          - text: checkbox gives
+          - strong [ref=e50]: +2 bonus points
+          - text: if you correctly predicted which team advances to the next round.
+      - generic [ref=e51]:
+        - heading "Statistics" [level=2] [ref=e52]
+        - paragraph [ref=e53]: "On the Statistics page you'll find the main leaderboard plus breakdowns: guessed victories, exact scores, and average points per match."
+        - paragraph [ref=e54]: The Overall Rating shows the global ranking across all rooms. If you're in multiple rooms, your best result counts.
+    - generic [ref=e55]:
+      - paragraph [ref=e56]:
+        - text: Good luck! To launch a room for your friends, contact
+        - link "@friendseuro2024" [ref=e57] [cursor=pointer]:
+          - /url: https://t.me/friendseuro2024
+        - text: on Telegram.
+      - link "Start playing →" [ref=e58] [cursor=pointer]:
+        - /url: /login
+  - button "Open Next.js Dev Tools" [ref=e64] [cursor=pointer]:
+    - img [ref=e65]
+  - alert [ref=e68]

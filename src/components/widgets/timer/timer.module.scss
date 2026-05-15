@@ -39,6 +39,12 @@
 	}
 }
 
+.messageBlock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4);
+}
+
 .message {
 	display: flex;
 	align-items: center;
@@ -58,6 +64,16 @@
 		background: var(--color-primary-600);
 		flex-shrink: 0;
 	}
+}
+
+.subMessage {
+	padding-left: 36px; // 24px line + 12px gap
+	font-size: var(--font-size-10);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-neutral-600);
+	margin: 0;
 }
 
 .teams {

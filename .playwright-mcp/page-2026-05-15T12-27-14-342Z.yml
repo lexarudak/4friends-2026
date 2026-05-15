@@ -1,0 +1,15 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - img [ref=e5]
+    - heading "Welcome to 4Friends!" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Choose how you'd like to continue
+    - button "Continue with Google" [ref=e11] [cursor=pointer]:
+      - img [ref=e12]
+      - text: Continue with Google
+    - paragraph [ref=e17]:
+      - text: Or read our
+      - link "rules" [ref=e18] [cursor=pointer]:
+        - /url: /about
+  - button "Open Next.js Dev Tools" [ref=e24] [cursor=pointer]:
+    - img [ref=e25]
+  - alert [ref=e28]

@@ -38,7 +38,8 @@ export default async function RootLayout({
 						<>
 							<Timer
 								targetDate={new Date("2026-06-11T20:00:00")}
-								message="Next match — Group A · Opening"
+								message="Next match"
+								subMessage="Group A · Opening"
 								homeTeam="Mexico"
 								homeFlag="🇲🇽"
 								awayTeam="South Africa"

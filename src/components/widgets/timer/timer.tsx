@@ -8,6 +8,7 @@ import styles from "./timer.module.scss";
 type Props = HTMLAttributes<HTMLDivElement> & {
 	targetDate: Date;
 	message?: string;
+	subMessage?: string;
 	homeTeam?: string;
 	homeFlag?: string;
 	awayTeam?: string;
@@ -45,6 +46,7 @@ const UNITS: { key: keyof Countdown; label: string }[] = [
 export const Timer: FC<Props> = ({
 	targetDate,
 	message,
+	subMessage,
 	homeTeam,
 	homeFlag = "",
 	awayTeam,
@@ -76,7 +78,12 @@ export const Timer: FC<Props> = ({
 			className={cn(styles.container, className)}
 			data-urgency={urgency}
 		>
-			{message && <p className={styles.message}>{message}</p>}
+			{(message || subMessage) && (
+				<div className={styles.messageBlock}>
+					{message && <p className={styles.message}>{message}</p>}
+					{subMessage && <p className={styles.subMessage}>{subMessage}</p>}
+				</div>
+			)}
 			{homeTeam && awayTeam && (
 				<div className={styles.teams}>
 					<TeamBadge name={homeTeam} flag={homeFlag} className={styles.team} />
