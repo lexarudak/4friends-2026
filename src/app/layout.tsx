@@ -22,16 +22,18 @@ export const metadata: Metadata = {
 	title: "4friends",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const header = await AppHeader();
+
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
 				<ConditionalLayout
-					header={<AppHeader />}
+					header={header}
 					sidebar={
 						<>
 							<Timer

@@ -11,7 +11,27 @@ import { config } from "dotenv";
 
 config({ path: ".env" });
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+function normalizeSSLMode(url: string | undefined): string | undefined {
+	if (!url) return url;
+	try {
+		const u = new URL(url);
+		const sslmode = u.searchParams.get("sslmode");
+		if (
+			sslmode === "require" ||
+			sslmode === "prefer" ||
+			sslmode === "verify-ca"
+		) {
+			u.searchParams.set("sslmode", "verify-full");
+		}
+		return u.toString();
+	} catch {
+		return url;
+	}
+}
+
+const adapter = new PrismaPg({
+	connectionString: normalizeSSLMode(process.env.DATABASE_URL)!,
+});
 const prisma = new PrismaClient({ adapter });
 
 // ─── League constants ────────────────────────────────────────────────────────

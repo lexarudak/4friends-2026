@@ -1,8 +1,28 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
+function normalizeSSLMode(url: string | undefined): string | undefined {
+	if (!url) return url;
+	try {
+		const u = new URL(url);
+		const sslmode = u.searchParams.get("sslmode");
+		if (
+			sslmode === "require" ||
+			sslmode === "prefer" ||
+			sslmode === "verify-ca"
+		) {
+			u.searchParams.set("sslmode", "verify-full");
+		}
+		return u.toString();
+	} catch {
+		return url;
+	}
+}
+
 const prisma = new PrismaClient({
-	adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+	adapter: new PrismaPg({
+		connectionString: normalizeSSLMode(process.env.DATABASE_URL),
+	}),
 });
 
 async function main() {
