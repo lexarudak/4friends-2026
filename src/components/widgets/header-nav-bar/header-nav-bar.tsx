@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { LogoIcon } from "@/components/icons";
 import styles from "./header-nav-bar.module.scss";
-import { NAV_LINKS } from "./header-nav-bar.constants";
-import { signOutUser } from "@/app/rooms/actions";
 import { PAGES } from "@/utils/constants";
 import { PageContainer } from "@/components/shared/page-container";
+import { NavMenu } from "./nav-menu";
 
 export function HeaderNavBar() {
 	return (
@@ -14,26 +13,7 @@ export function HeaderNavBar() {
 					<LogoIcon className={styles.logo} />
 				</Link>
 
-				<ul className={styles.navLinks}>
-					{NAV_LINKS.map((link) => (
-						<li key={link.href} className={styles.navItem}>
-							<Link
-								href={link.href}
-								prefetch={false}
-								className={link.icon ? styles.navLinkWithIcon : undefined}
-							>
-								{link.icon && <link.icon className={styles.navIcon} />}
-								{link.label}
-							</Link>
-						</li>
-					))}
-
-					<li className={styles.navItem}>
-						<button onClick={signOutUser} className={styles.navBtn}>
-							Logout
-						</button>
-					</li>
-				</ul>
+				<NavMenu />
 			</PageContainer>
 		</nav>
 	);
