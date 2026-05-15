@@ -20,6 +20,14 @@
 	justify-content: space-between;
 	padding: var(--space-96) 0 var(--space-80);
 	gap: var(--space-40);
+
+	@media (max-width: 768px) {
+		padding: var(--space-64) 0 var(--space-40);
+	}
+
+	@media (max-width: 450px) {
+		padding: var(--space-40) 0 var(--space-32);
+	}
 }
 
 .content {
@@ -83,4 +91,8 @@
 	opacity: 0.15;
 	filter: grayscale(1);
 	animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
 }

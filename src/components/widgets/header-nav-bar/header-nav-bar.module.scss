@@ -51,6 +51,15 @@
 
 	@media (max-width: $screen-phone) {
 		gap: var(--space-16);
+		overflow-x: auto;
+		scrollbar-width: none;
+		min-width: 0;
+		flex-shrink: 1;
+		padding-inline-end: var(--space-8);
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 }
 

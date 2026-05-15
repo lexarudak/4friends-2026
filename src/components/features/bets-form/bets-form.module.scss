@@ -41,4 +41,14 @@
 	> :first-child {
 		min-width: 220px;
 	}
+
+	@media (max-width: 450px) {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--space-16);
+
+		> :first-child {
+			min-width: unset;
+		}
+	}
 }

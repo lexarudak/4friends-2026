@@ -10,6 +10,13 @@
 	background: var(--color-neutral-900);
 	padding: var(--space-4);
 	width: fit-content;
+	max-width: 100%;
+	overflow-x: auto;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .tab {
