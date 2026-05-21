@@ -2,6 +2,138 @@ import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
 import type { BetHistoryItem, PersonalStat } from "@/types/api";
 
+const IS_DEV = process.env.NODE_ENV !== "production";
+
+const MOCK_PERSONAL_DATA: PersonalStatisticData = {
+	stats: [
+		{ label: "Total Score", value: 47, size: "lg", variant: "highlight" },
+		{ label: "Exact Score Hits", value: 5, size: "lg" },
+		{ label: "Predicted Wins", value: 12 },
+		{ label: "Avg Points per Match", value: 1.96 },
+		{
+			label: "Favorite Team",
+			value: "Bosnia and Herzegovina",
+			sub: "14 pts",
+			variant: "warm",
+			size: "lg",
+		},
+		{
+			label: "Favorite Score",
+			value: "1 : 0",
+			sub: "9 pts",
+			variant: "warm",
+		},
+		{ label: "Best Day", value: "14 Jun", sub: "8 pts", variant: "warm" },
+	],
+	history: [
+		{
+			id: "mock-h1",
+			group: "A",
+			homeTeam: "Bosnia and Herzegovina",
+			homeFlag: "🇧🇦",
+			awayTeam: "New Zealand",
+			awayFlag: "🇳🇿",
+			betHome: 2,
+			betAway: 0,
+			resultHome: 2,
+			resultAway: 0,
+			time: "15:00",
+			date: "14/06/26",
+			points: 3,
+		},
+		{
+			id: "mock-h2",
+			group: "B",
+			homeTeam: "United States of America",
+			homeFlag: "🇺🇸",
+			awayTeam: "Trinidad and Tobago",
+			awayFlag: "🇹🇹",
+			betHome: 1,
+			betAway: 0,
+			resultHome: 3,
+			resultAway: 0,
+			time: "18:00",
+			date: "14/06/26",
+			points: 1,
+		},
+		{
+			id: "mock-h3",
+			group: "C",
+			homeTeam: "Korea Republic",
+			homeFlag: "🇰🇷",
+			awayTeam: "Saudi Arabia",
+			awayFlag: "🇸🇦",
+			betHome: 0,
+			betAway: 1,
+			resultHome: 1,
+			resultAway: 0,
+			time: "21:00",
+			date: "15/06/26",
+			points: 0,
+		},
+		{
+			id: "mock-h4",
+			group: "D",
+			homeTeam: "Central African Republic",
+			homeFlag: "🇨🇫",
+			awayTeam: "Democratic Republic of the Congo",
+			awayFlag: "🇨🇩",
+			betHome: 1,
+			betAway: 1,
+			resultHome: 1,
+			resultAway: 1,
+			time: "12:00",
+			date: "16/06/26",
+			points: 3,
+		},
+		{
+			id: "mock-h5",
+			group: "E",
+			homeTeam: "Argentina",
+			homeFlag: "🇦🇷",
+			awayTeam: "Papua New Guinea",
+			awayFlag: "🇵🇬",
+			betHome: 5,
+			betAway: 0,
+			resultHome: 4,
+			resultAway: 0,
+			time: "18:00",
+			date: "16/06/26",
+			points: 1,
+		},
+		{
+			id: "mock-h6",
+			group: "F",
+			homeTeam: "Equatorial Guinea",
+			homeFlag: "🇬🇶",
+			awayTeam: "São Tomé and Príncipe",
+			awayFlag: "🇸🇹",
+			betHome: 2,
+			betAway: 2,
+			resultHome: null,
+			resultAway: null,
+			time: "15:00",
+			date: "20/06/26",
+			points: null,
+		},
+		{
+			id: "mock-h7",
+			group: "G",
+			homeTeam: "Brazil",
+			homeFlag: "🇧🇷",
+			awayTeam: "Tanzania",
+			awayFlag: "🇹🇿",
+			betHome: 3,
+			betAway: 0,
+			resultHome: null,
+			resultAway: null,
+			time: "21:00",
+			date: "20/06/26",
+			points: null,
+		},
+	],
+};
+
 type PersonalStatisticData = {
 	stats: PersonalStat[];
 	history: BetHistoryItem[];
@@ -86,6 +218,8 @@ export const PersonalStatisticService = {
 		userId: string,
 		roomId: string
 	): Promise<PersonalStatisticData> {
+		if (IS_DEV) return MOCK_PERSONAL_DATA;
+
 		try {
 			const bets = await prisma.bet.findMany({
 				where: { userId, roomId },

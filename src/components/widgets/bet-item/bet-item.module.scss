@@ -106,10 +106,7 @@
 
 .team {
 	min-width: 0;
-
-	> span:last-child {
-		max-width: 14ch;
-	}
+	overflow: hidden;
 }
 
 .bet {

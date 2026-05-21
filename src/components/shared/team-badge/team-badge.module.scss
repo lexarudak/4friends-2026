@@ -3,6 +3,7 @@
 	align-items: center;
 	gap: var(--space-8);
 	min-width: 0;
+	max-width: 100%;
 	justify-content: flex-start;
 
 	&[data-direction="rtl"] {
