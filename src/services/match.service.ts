@@ -4,6 +4,7 @@ import type { Match } from "@/types/api";
 
 const FALLBACK_FLAG = "🏳️";
 const NEXT_MATCH_WINDOW_HOURS = 24;
+const IS_DEV = process.env.NODE_ENV !== "production";
 
 const TEAM_FLAG_MAP = new Map(
 	WC_GROUPS.flatMap((group) =>
@@ -23,6 +24,41 @@ const TEAM_ALIASES: Record<string, string> = {
 	"cote d'ivoire": "côte d'ivoire",
 	iran: "ir iran",
 };
+
+const MOCK_PLAYOFF_MATCHES: Match[] = [
+	{
+		id: "mock-r16-1",
+		group: "1/8 Final",
+		time: "20:00",
+		date: "29/06/26",
+		home: { name: "Mexico", flag: "🇲🇽" },
+		away: { name: "Canada", flag: "🇨🇦" },
+	},
+	{
+		id: "mock-qf-1",
+		group: "Quarter Final",
+		time: "21:00",
+		date: "03/07/26",
+		home: { name: "South Korea", flag: "🇰🇷" },
+		away: { name: "Czech Republic", flag: "🇨🇿" },
+	},
+	{
+		id: "mock-sf-1",
+		group: "Semi Final",
+		time: "21:00",
+		date: "08/07/26",
+		home: { name: "Brazil", flag: "🇧🇷" },
+		away: { name: "Spain", flag: "🇪🇸" },
+	},
+	{
+		id: "mock-final-1",
+		group: "Final",
+		time: "20:00",
+		date: "19/07/26",
+		home: { name: "Argentina", flag: "🇦🇷" },
+		away: { name: "France", flag: "🇫🇷" },
+	},
+];
 
 function normalizeTeamName(name: string): string {
 	return name.trim().toLowerCase();
@@ -117,7 +153,7 @@ export const MatchService = {
 				},
 			});
 
-			return rows.map((row) => ({
+			const upcomingMatches = rows.map((row) => ({
 				id: String(row.id),
 				group: toGroupLabel(row.round),
 				time: toTime(row.date),
@@ -131,6 +167,12 @@ export const MatchService = {
 					flag: getTeamFlag(row.awayTeamName),
 				},
 			}));
+
+			if (!IS_DEV) {
+				return upcomingMatches;
+			}
+
+			return [...upcomingMatches, ...MOCK_PLAYOFF_MATCHES];
 		} catch (err) {
 			console.error("[MatchService.getMatches]", err);
 			return [];

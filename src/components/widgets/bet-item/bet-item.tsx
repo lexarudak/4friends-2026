@@ -46,27 +46,30 @@ export const BetItem: FC<Props> = ({
 			data-status={status}
 			data-show-result={!!result || undefined}
 		>
-			<span className={styles.group}>Group {group}</span>
-
-			<TeamBadge
-				name={homeTeam}
-				flag={homeFlag}
-				direction="rtl"
-				className={styles.team}
-			/>
-
-			{scoreSlot ?? (
-				<span className={styles.bet}>
-					{betHome} : {betAway}
+			<div className={styles.header}>
+				<span className={styles.group}>Group {group}</span>
+				<span className={styles.meta}>
+					<span className={styles.time}>{time}</span>
+					<span className={styles.date}>{date}</span>
 				</span>
-			)}
+			</div>
 
-			<TeamBadge name={awayTeam} flag={awayFlag} className={styles.team} />
+			<div className={styles.main}>
+				<TeamBadge
+					name={homeTeam}
+					flag={homeFlag}
+					direction="rtl"
+					className={styles.team}
+				/>
 
-			<span className={styles.meta}>
-				<span className={styles.time}>{time}</span>
-				<span className={styles.date}>{date}</span>
-			</span>
+				{scoreSlot ?? (
+					<span className={styles.bet}>
+						{betHome} : {betAway}
+					</span>
+				)}
+
+				<TeamBadge name={awayTeam} flag={awayFlag} className={styles.team} />
+			</div>
 
 			{result && <BetItemResult result={result} />}
 

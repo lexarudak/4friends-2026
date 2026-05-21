@@ -1,6 +1,6 @@
 # Language Feedback Log
 
-Last updated: 2026-05-08
+Last updated: 2026-05-21
 Last reminder shown: 2026-05-08
 
 ## Purpose
@@ -35,6 +35,9 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 22  | Wording          | "this is so large"                                           | "this is too large"                                              | `too` is natural for excessive size                         |
 | 23  | Spelling         | "shoul" / "buterfull"                                        | "should" / "beautiful"                                           | Frequent typing mistakes                                    |
 | 24  | Spelling         | "usless"                                                     | "useless"                                                        | Common typo                                                 |
+| 25  | Spelling         | "mok data"                                                   | "mock data"                                                      | Common typo in dev context                                  |
+| 26  | Spelling         | "tranket titles"                                             | "truncate titles"                                                | Correct verb for shortening text                            |
+| 27  | Spelling/Wording | "stik with responsive design"                                | "stick to responsive design"                                     | Natural phrasing in UI requests                             |
 
 ## Recent examples
 
@@ -142,6 +145,16 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "make usless dots invisible"
 - Better: "Make useless dots invisible."
+
+### Example V
+
+- Original: "add mok data to test playoff view of next matches"
+- Better: "Add mock data to test the playoff view in Next Matches."
+
+### Example W
+
+- Original: "and tranket titles"
+- Better: "And truncate titles."
 
 ## Reminder cadence
 
