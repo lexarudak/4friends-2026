@@ -118,7 +118,7 @@ const MOCK_PERSONAL_DATA: PersonalStatisticData = {
 		},
 		{
 			id: "mock-h7",
-			group: "G",
+			group: "R16",
 			homeTeam: "Brazil",
 			homeFlag: "🇧🇷",
 			awayTeam: "Tanzania",
@@ -130,6 +130,22 @@ const MOCK_PERSONAL_DATA: PersonalStatisticData = {
 			time: "21:00",
 			date: "20/06/26",
 			points: null,
+		},
+		{
+			id: "mock-h8",
+			group: "QF",
+			homeTeam: "France",
+			homeFlag: "🇫🇷",
+			awayTeam: "Argentina",
+			awayFlag: "🇦🇷",
+			betHome: 1,
+			betAway: 2,
+			resultHome: 2,
+			resultAway: 1,
+			time: "20:00",
+			date: "28/06/26",
+			points: 1,
+			winner: "home",
 		},
 	],
 };
@@ -254,6 +270,12 @@ export const PersonalStatisticService = {
 					time: toTime(bet.match.date),
 					date: toShortDate(bet.match.date),
 					points,
+					winner:
+						bet.match.homeTeamWinner === true
+							? "home"
+							: bet.match.awayTeamWinner === true
+								? "away"
+								: null,
 				};
 			});
 

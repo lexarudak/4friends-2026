@@ -99,4 +99,5 @@ export type BetHistoryItem = {
 	time: string;
 	date: string;
 	points: number | null;
+	winner?: "home" | "away" | null;
 };

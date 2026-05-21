@@ -1,6 +1,4 @@
 import type { FC, ReactNode } from "react";
-import { TeamBadge } from "@/components/shared/team-badge";
-import { BetItemResult } from "./bet-item-result";
 import type { BetItemResultData } from "./bet-item-result";
 import { cn } from "@/utils/lib";
 import styles from "./bet-item.module.scss";
@@ -54,24 +52,106 @@ export const BetItem: FC<Props> = ({
 				</span>
 			</div>
 
-			<div className={styles.main}>
-				<TeamBadge
-					name={homeTeam}
-					flag={homeFlag}
-					direction="rtl"
-					className={styles.team}
-				/>
-
-				{scoreSlot ?? (
-					<span className={styles.bet}>
-						{betHome} : {betAway}
-					</span>
+			<div className={styles.rowsGrid}>
+				{result && (
+					<div className={styles.pointsCol}>
+						{result.points != null ? (
+							<>
+								<span className={styles.pointsValue}>{result.points}</span>
+								<span className={styles.pointsLabel}>pts</span>
+							</>
+						) : (
+							<span className={styles.pointsDash}>—</span>
+						)}
+					</div>
 				)}
-
-				<TeamBadge name={awayTeam} flag={awayFlag} className={styles.team} />
+				{result ? (
+					<div
+						className={styles.resultBetsGrid}
+						data-playoff={result.winner != null || undefined}
+					>
+						<div className={styles.resultColHeader}>
+							<span className={styles.resultLabel}>Result</span>
+						</div>
+						<div className={styles.betsColHeader}>
+							<span className={styles.betsLabel}>Bets</span>
+						</div>
+						<div className={styles.resultRow}>
+							{result.winner != null && (
+								<span
+									className={cn(
+										styles.winnerDot,
+										result.winner === "home"
+											? styles.winnerDotActive
+											: undefined
+									)}
+								/>
+							)}
+							<span className={styles.resultScore}>
+								{result.home != null ? result.home : "–"}
+							</span>
+						</div>
+						<div className={styles.teamRow}>
+							{result.winner != null && (
+								<span
+									className={cn(
+										styles.winnerDot,
+										result.winner === "home"
+											? styles.winnerDotActive
+											: undefined
+									)}
+								/>
+							)}
+							<span className={styles.bet}>{scoreSlot ?? betHome}</span>
+							<span className={styles.flag}>{homeFlag}</span>
+							<span className={styles.teamName}>{homeTeam}</span>
+						</div>
+						<div className={styles.resultRow}>
+							{result.winner != null && (
+								<span
+									className={cn(
+										styles.winnerDot,
+										result.winner === "away"
+											? styles.winnerDotActive
+											: undefined
+									)}
+								/>
+							)}
+							<span className={styles.resultScore}>
+								{result.away != null ? result.away : "–"}
+							</span>
+						</div>
+						<div className={styles.teamRow}>
+							{result.winner != null && (
+								<span
+									className={cn(
+										styles.winnerDot,
+										result.winner === "away"
+											? styles.winnerDotActive
+											: undefined
+									)}
+								/>
+							)}
+							<span className={styles.bet}>{scoreSlot ?? betAway}</span>
+							<span className={styles.flag}>{awayFlag}</span>
+							<span className={styles.teamName}>{awayTeam}</span>
+						</div>
+					</div>
+				) : (
+					<div className={styles.betsCol}>
+						<div className={styles.teamRow}>
+							<span className={styles.bet}>{scoreSlot ?? betHome}</span>
+							<span className={styles.flag}>{homeFlag}</span>
+							<span className={styles.teamName}>{homeTeam}</span>
+						</div>
+						<div className={styles.teamRow}>
+							<span className={styles.bet}>{scoreSlot ?? betAway}</span>
+							<span className={styles.flag}>{awayFlag}</span>
+							<span className={styles.teamName}>{awayTeam}</span>
+						</div>
+					</div>
+				)}
 			</div>
-
-			{result && <BetItemResult result={result} />}
 
 			{detailsSlot ? <div className={styles.details}>{detailsSlot}</div> : null}
 		</li>

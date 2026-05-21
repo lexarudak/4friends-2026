@@ -36,6 +36,7 @@ export const BetHistoryList: FC<Props> = ({ items, className }) => {
 								home: item.resultHome,
 								away: item.resultAway,
 								points: item.points,
+								winner: item.winner,
 							}}
 						/>
 					))}

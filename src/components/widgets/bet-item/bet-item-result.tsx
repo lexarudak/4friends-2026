@@ -5,6 +5,7 @@ export type BetItemResultData = {
 	home: number | null;
 	away: number | null;
 	points: number | null;
+	winner?: "home" | "away" | null;
 };
 
 type Props = {
@@ -19,13 +20,11 @@ export const BetItemResult: FC<Props> = ({ result }) => {
 			<span className={styles.result}>
 				{hasResult ? (
 					<>
-						<span className={styles.resultLabel}>Result</span>
-						<span className={styles.resultScore}>
-							{result!.home} : {result!.away}
-						</span>
+						<span className={styles.resultScore}>{result!.home}</span>
+						<span className={styles.resultScore}>{result!.away}</span>
 					</>
 				) : (
-					<span className={styles.resultLabel}>Pending</span>
+					<span className={styles.resultLabel}>–</span>
 				)}
 			</span>
 
