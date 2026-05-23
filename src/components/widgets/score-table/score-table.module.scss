@@ -53,22 +53,38 @@
 	}
 
 	&[data-status="exact"] {
-		background: color-mix(in srgb, var(--color-green-500) 12%, transparent);
-		border-color: color-mix(in srgb, var(--color-green-500) 25%, transparent);
+		background: color-mix(in srgb, var(--color-points-3) 12%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-3) 25%, transparent);
 
 		.tag,
 		.score {
-			color: var(--color-green-400);
+			color: var(--color-points-3);
 		}
 	}
 
-	&[data-status="bonus"] {
-		background: color-mix(in srgb, var(--color-yellow-500) 16%, transparent);
-		border-color: color-mix(in srgb, var(--color-yellow-500) 36%, transparent);
+	&[data-status="bonus-4"] {
+		background: color-mix(in srgb, var(--color-points-4) 16%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-4) 36%, transparent);
 
 		.tag,
 		.score {
-			color: var(--color-yellow-300);
+			color: var(--color-points-4);
+		}
+
+		.name {
+			color: var(--color-neutral-white);
+			font-weight: var(--font-weight-semibold);
+		}
+	}
+
+	&[data-status="bonus"],
+	&[data-status="bonus-5"] {
+		background: color-mix(in srgb, var(--color-points-5) 16%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-5) 36%, transparent);
+
+		.tag,
+		.score {
+			color: var(--color-points-5);
 		}
 
 		.name {
@@ -78,42 +94,42 @@
 	}
 
 	&[data-status="win"] {
-		background: color-mix(in srgb, var(--color-primary-500) 10%, transparent);
-		border-color: color-mix(in srgb, var(--color-primary-500) 22%, transparent);
+		background: color-mix(in srgb, var(--color-points-1) 10%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-1) 22%, transparent);
 
 		.tag,
 		.score {
-			color: var(--color-primary-300);
+			color: var(--color-points-1);
 		}
 	}
 
 	&[data-status="win-2"] {
-		background: color-mix(in srgb, var(--color-primary-500) 14%, transparent);
-		border-color: color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+		background: color-mix(in srgb, var(--color-points-2) 14%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-2) 30%, transparent);
 
 		.tag,
 		.score {
-			color: var(--color-primary-200);
+			color: var(--color-points-2);
 		}
 	}
 
 	&[data-status="win-1"] {
-		background: color-mix(in srgb, var(--color-primary-500) 8%, transparent);
-		border-color: color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+		background: color-mix(in srgb, var(--color-points-1) 8%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-1) 18%, transparent);
 
 		.tag,
 		.score {
-			color: var(--color-primary-300);
+			color: var(--color-points-1);
 		}
 	}
 
 	&[data-status="miss"] {
-		background: color-mix(in srgb, var(--color-red-500) 12%, transparent);
-		border-color: color-mix(in srgb, var(--color-red-500) 25%, transparent);
+		background: color-mix(in srgb, var(--color-points-0) 12%, transparent);
+		border-color: color-mix(in srgb, var(--color-points-0) 25%, transparent);
 
 		.tag,
 		.score {
-			color: var(--color-red-400);
+			color: var(--color-points-0);
 		}
 	}
 }

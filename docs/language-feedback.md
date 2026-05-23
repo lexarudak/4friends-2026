@@ -39,6 +39,7 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 26  | Spelling         | "tranket titles"                                             | "truncate titles"                                                | Correct verb for shortening text                            |
 | 27  | Spelling/Wording | "stik with responsive design"                                | "stick to responsive design"                                     | Natural phrasing in UI requests                             |
 | 28  | Spelling         | "exapmle"                                                    | "example"                                                        | Common typo                                                 |
+| 29  | Spelling         | "posible" / "hightlight" / "hor"                             | "possible" / "highlight" / "for"                                 | Repeated typo pattern in UI requests                        |
 
 ## Recent examples
 
@@ -161,6 +162,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "also add an exapmle of playoff match where score is 2:1"
 - Better: "Also add an example of a playoff match where the score is 2:1."
+
+### Example Y
+
+- Original: "for all posible tables lets apply this colors hor hightlight"
+- Better: "For all possible tables, let’s apply these colors for highlight."
 
 ## Reminder cadence
 

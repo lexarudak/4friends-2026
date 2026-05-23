@@ -1,31 +1,31 @@
 # Backend Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-08
+> Last updated: 2026-05-23
 
 ---
 
 ## Stack
 
-| Layer     | Technology                                            |
-| --------- | ----------------------------------------------------- |
-| Framework | Next.js 16 (App Router, Turbopack)                    |
-| Language  | TypeScript                                            |
-| Auth      | NextAuth v5 (`auth()`, Google + Apple OAuth)          |
-| DB client | Prisma 7.8 + `@prisma/adapter-pg`                     |
-| Database  | Prisma Postgres (`db.prisma.io`)                      |
-| Runtime   | Node.js (server), Edge (middleware via middleware.ts) |
+| Layer     | Technology                                       |
+| --------- | ------------------------------------------------ |
+| Framework | Next.js 16 (App Router, Turbopack)               |
+| Language  | TypeScript                                       |
+| Auth      | NextAuth v5 (`auth()`, Google + Apple OAuth)     |
+| DB client | Prisma 7.8 + `@prisma/adapter-pg`                |
+| Database  | Prisma Postgres (`db.prisma.io`)                 |
+| Runtime   | Node.js (server), Edge (middleware via proxy.ts) |
 
 ---
 
 ## Entry points
 
-| File                 | Role                                                     |
-| -------------------- | -------------------------------------------------------- |
-| `src/middleware.ts`  | Edge middleware — auth guard + redirect logic            |
-| `src/auth.ts`        | Full server auth (Prisma-backed jwt/session callbacks)   |
-| `src/auth.config.ts` | Edge-safe auth config (no Prisma, used by middleware.ts) |
-| `src/lib/prisma.ts`  | Prisma singleton client (PrismaPg adapter)               |
+| File                 | Role                                                   |
+| -------------------- | ------------------------------------------------------ |
+| `src/proxy.ts`       | Edge middleware — auth guard + redirect logic          |
+| `src/auth.ts`        | Full server auth (Prisma-backed jwt/session callbacks) |
+| `src/auth.config.ts` | Edge-safe auth config (no Prisma, used by proxy.ts)    |
+| `src/lib/prisma.ts`  | Prisma singleton client (PrismaPg adapter)             |
 
 ---
 
@@ -243,7 +243,6 @@ Room selected (/rooms)
 | `src/db/scores.ts`             | `TableService`                  |
 | `src/db/rooms.ts`              | _(orphaned)_                    |
 | `src/db/users.ts`              | _(orphaned)_                    |
-| `src/db/live-matches.ts`       | _(stub)_                        |
 | `src/db/global-top.ts`         | _(legacy stub, no longer used)_ |
 | `src/db/personal-statistic.ts` | _(deprecated, no longer used)_  |
 | `src/db/room-statistic.ts`     | _(stub)_                        |

@@ -1,7 +1,7 @@
 # Database Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-08
+> Last updated: 2026-05-23
 
 ---
 
@@ -17,7 +17,9 @@
 
 ---
 
-## Schema
+## Schema (excerpt)
+
+Authoritative source: `prisma/schema.prisma`.
 
 ```prisma
 model Room {
@@ -36,13 +38,43 @@ model User {
 
 model Match {
   id            Int     @id
+  referee       String?
+  timezone      String
+  date          DateTime
+  timestamp     Int
+  periodsFirst  Int?
+  periodsSecond Int?
+  venueId       Int?
+  venueName     String?
+  venueCity     String?
+  statusLong    String
   statusShort   String
+  statusElapsed Int?
+  statusExtra   Int?
+  leagueId      Int
   leagueName    String
+  leagueCountry String
+  leagueLogo    String
   leagueSeason  Int
+  round         String
+  homeTeamId    Int
   homeTeamName  String
+  homeTeamLogo  String
+  homeTeamWinner Boolean?
+  awayTeamId    Int
   awayTeamName  String
+  awayTeamLogo  String
+  awayTeamWinner Boolean?
   goalsHome     Int?
   goalsAway     Int?
+  halftimeHome  Int?
+  halftimeAway  Int?
+  fulltimeHome  Int?
+  fulltimeAway  Int?
+  extratimeHome Int?
+  extratimeAway Int?
+  penaltyHome   Int?
+  penaltyAway   Int?
   bets          Bet[]
 }
 
@@ -53,13 +85,19 @@ model Bet {
   roomId      String
   betHome     Int
   betAway     Int
+  winPick     Int?
   points      Int?
   bonusPoints Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   user        User     @relation(fields: [userId], references: [id])
   match       Match    @relation(fields: [matchId], references: [id])
 
   @@unique([userId, matchId, roomId])
+  @@index([userId, roomId])
+  @@index([matchId])
+  @@index([roomId])
 }
 ```
 

@@ -42,6 +42,7 @@ export const BetItem: FC<Props> = ({
 		<li
 			className={cn(styles.row, className)}
 			data-status={status}
+			data-points={result?.points ?? undefined}
 			data-show-result={!!result || undefined}
 		>
 			<div className={styles.header}>

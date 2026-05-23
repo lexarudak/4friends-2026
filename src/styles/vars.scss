@@ -14,8 +14,8 @@
 	--color-neutral-500: #707287;
 	--color-neutral-600: #5a5b6f;
 	--color-neutral-700: #49495b;
-	--color-neutral-800: #3f404d;
-	--color-neutral-900: #2f3032;
+	--color-neutral-800: #2c2c35;
+	--color-neutral-900: #191b1f;
 	--color-neutral-950: #151519;
 	--color-neutral-black: #000;
 	--color-neutral-white: #fff;
@@ -128,6 +128,15 @@
 	--color-match-positive: var(--color-green-700);
 	--color-match-negative: var(--color-red-600);
 	--color-match-square: var(--color-neutral-500);
+
+	// Point highlights (tables/cards with points)
+	// 0 = red, 1 = dark blue, 2 = light blue, 3 = dark green, 4 = light green, 5 = gold
+	--color-points-0: var(--color-red-400);
+	--color-points-1: var(--color-primary-300);
+	--color-points-2: var(--color-primary-200);
+	--color-points-3: var(--color-green-400);
+	--color-points-4: var(--color-green-300);
+	--color-points-5: var(--color-yellow-300);
 
 	// ── Typography ────────────────────────────
 

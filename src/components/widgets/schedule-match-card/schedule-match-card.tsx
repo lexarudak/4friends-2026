@@ -92,7 +92,8 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 
 	const getBetStatus = (points: number) => {
 		if (!hasResult) return "pending";
-		if (points > 3) return "bonus";
+		if (points >= 5) return "bonus-5";
+		if (points === 4) return "bonus-4";
 		if (points === 3) return "exact";
 		if (points === 2) return "win-2";
 		if (points === 1) return "win-1";
