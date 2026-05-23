@@ -47,6 +47,7 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 34  | Grammar          | "use mocks for them"                                         | "Use mocks for them." / "Use mock data for them."                | Natural phrasing for implementation request                 |
 | 35  | Spelling/Grammar | "a reazon"                                                   | "a reason"                                                       | Common spelling typo                                        |
 | 36  | Grammar          | "why no winner for final?"                                   | "Why is there no winner in the final?"                           | Add auxiliary verb and article for natural question form    |
+| 37  | Spelling/Grammar | "reat enpoints"                                              | "real endpoints"                                                 | Common typo pair in technical requests                      |
 
 ## Recent examples
 
@@ -209,6 +210,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "why no winner for final?"
 - Better: "Why is there no winner in the final?"
+
+### Example AG
+
+- Original: "lets remove all mocks and connect reat enpoints"
+- Better: "Let's remove all mocks and connect real endpoints."
 
 ## Reminder cadence
 
