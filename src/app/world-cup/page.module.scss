@@ -6,3 +6,9 @@
 .content {
 	padding-block: var(--space-40);
 }
+
+@media (max-width: 485px) {
+	.content {
+		padding-block: var(--space-24);
+	}
+}

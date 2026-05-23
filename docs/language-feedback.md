@@ -42,6 +42,10 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 29  | Spelling         | "posible" / "hightlight" / "hor"                             | "possible" / "highlight" / "for"                                 | Repeated typo pattern in UI requests                        |
 | 30  | Spelling/Grammar | "shoul" / "collors" / "guidlene"                             | "should" / "colors" / "guideline"                                | Repeated typo pattern in implementation requests            |
 | 31  | Grammar          | "all posible variants"                                       | "all possible variants"                                          | Add article and correct spelling                            |
+| 32  | Grammar          | "for all matches, include final"                             | "for all matches, including the final"                           | More natural phrasing                                       |
+| 33  | Grammar          | "i speak about ..."                                          | "I'm talking about ..."                                          | More natural phrasing in clarification                      |
+| 34  | Grammar          | "use mocks for them"                                         | "Use mocks for them." / "Use mock data for them."                | Natural phrasing for implementation request                 |
+| 35  | Spelling/Grammar | "a reazon"                                                   | "a reason"                                                       | Common spelling typo                                        |
 
 ## Recent examples
 
@@ -179,6 +183,26 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "add mock for all posible variants"
 - Better: "Add a mock for all possible variants."
+
+### Example AB
+
+- Original: "fill FIFA World Cup 2026™ Tournament with mock data. for all matches, include final"
+- Better: "Fill the FIFA World Cup 2026 tournament with mock data for all matches, including the final."
+
+### Example AC
+
+- Original: "i speak about http://localhost:3000/world-cup"
+- Better: "I'm talking about http://localhost:3000/world-cup."
+
+### Example AD
+
+- Original: "use mocks for them"
+- Better: "Use mock data for them."
+
+### Example AE
+
+- Original: "investigate a reazon, and fix it"
+- Better: "Investigate the reason and fix it."
 
 ## Reminder cadence
 

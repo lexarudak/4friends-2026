@@ -1,6 +1,6 @@
 import { PageTitle } from "@/components/shared/page-title";
 import { TournamentBracket } from "@/components/features/tournament-bracket";
-import { WC_GROUPS } from "@/db/world-cup";
+import { WC_GROUPS, WC_KNOCKOUT } from "@/db/world-cup";
 import styles from "./page.module.scss";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default function WorldCupPage() {
 		<div className={styles.page}>
 			<PageTitle label="FIFA World Cup 2026™" title="Tournament" />
 			<div className={styles.content}>
-				<TournamentBracket groups={WC_GROUPS} />
+				<TournamentBracket groups={WC_GROUPS} knockout={WC_KNOCKOUT} />
 			</div>
 		</div>
 	);

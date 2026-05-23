@@ -77,3 +77,23 @@
 	text-align: center;
 	font-family: var(--font-geist-mono);
 }
+
+@media (max-width: 485px) {
+	.header,
+	.row {
+		grid-template-columns: 20px 1fr 24px 40px 24px;
+		gap: var(--space-6);
+		padding-inline: var(--space-8);
+	}
+
+	.title {
+		font-size: var(--font-size-14);
+	}
+
+	.header .stat,
+	.header .pos,
+	.stat,
+	.pos {
+		font-size: var(--font-size-11);
+	}
+}

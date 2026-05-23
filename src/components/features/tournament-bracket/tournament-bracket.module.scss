@@ -48,20 +48,115 @@
 
 .groups {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 	gap: var(--space-32);
 }
 
-.empty {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--space-80) 0;
+.knockoutGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+	gap: var(--space-16);
 }
 
-.emptyText {
+.matchCard {
+	border: 1px solid var(--color-neutral-800);
+	background: var(--color-neutral-900);
+	padding: var(--space-12);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-10);
+}
+
+.matchMeta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-8);
+	padding-bottom: var(--space-8);
+	border-bottom: 1px solid var(--color-neutral-800);
+}
+
+.matchRoundLabel {
+	font-size: var(--font-size-11, 11px);
+	font-weight: var(--font-weight-medium);
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: var(--color-primary-300);
+}
+
+.matchDate {
+	font-size: var(--font-size-12);
+	font-family: var(--font-geist-mono);
+	color: var(--color-neutral-500);
+}
+
+.matchTeams {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-6);
+}
+
+.matchTeamRow {
+	display: grid;
+	grid-template-columns: auto auto 1fr auto;
+	align-items: center;
+	gap: var(--space-8);
+}
+
+.winnerPointer {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	border: 1px solid var(--color-neutral-700);
+	background: transparent;
+	flex-shrink: 0;
+}
+
+.winnerPointerActive {
+	border-color: var(--color-points-4);
+	background: var(--color-points-4);
+}
+
+.teamFlag {
+	font-size: var(--font-size-18);
+	line-height: 1;
+}
+
+.teamName {
 	font-size: var(--font-size-14);
-	color: var(--color-neutral-600);
-	margin: 0;
-	letter-spacing: 0.02em;
+	color: var(--color-neutral-200);
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.teamScore {
+	font-size: var(--font-size-16);
+	font-weight: 800;
+	font-family: var(--font-geist-mono);
+	color: var(--color-neutral-white);
+}
+
+@media (max-width: 485px) {
+	.root {
+		gap: var(--space-16);
+	}
+
+	.tabs {
+		width: 100%;
+	}
+
+	.tab {
+		padding: var(--space-8) var(--space-10);
+		font-size: var(--font-size-12);
+	}
+
+	.groups {
+		gap: var(--space-16);
+	}
+
+	.knockoutGrid {
+		gap: var(--space-12);
+	}
 }
