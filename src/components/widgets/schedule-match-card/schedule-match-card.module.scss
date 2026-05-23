@@ -100,34 +100,49 @@
 // ── Score row ─────────────────────────────────
 
 .score {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding: var(--space-8) 0;
+	background: color-mix(in srgb, var(--color-neutral-800) 50%, transparent);
+}
+
+.teamRow {
 	display: grid;
-	grid-template-columns: 1fr auto 1fr;
+	grid-template-columns: auto 1fr;
 	align-items: center;
 	gap: var(--space-12);
-	padding: var(--space-12) var(--space-16);
+	padding: var(--space-8) var(--space-16);
+	background: var(--color-neutral-950);
+
+	[data-status="live"] & {
+		background: color-mix(
+			in srgb,
+			var(--color-yellow-500) 4%,
+			var(--color-neutral-950)
+		);
+	}
+	[data-status="finished"] & {
+		background: color-mix(
+			in srgb,
+			var(--color-green-500) 3%,
+			var(--color-neutral-950)
+		);
+	}
 }
 
 .team {
 	min-width: 0;
-
-	&:first-of-type {
-		justify-self: end;
-	}
 }
 
-.result {
+.teamScore {
 	font-size: var(--font-size-18);
 	font-weight: 800;
 	font-family: var(--font-geist-mono);
-	color: var(--color-neutral-300);
+	color: var(--color-neutral-600);
 	white-space: nowrap;
-	text-align: center;
-	min-width: 52px;
-
-	@media (max-width: 450px) {
-		font-size: var(--font-size-16);
-		min-width: 40px;
-	}
+	text-align: right;
+	min-width: 24px;
 
 	[data-status="live"] & {
 		color: var(--color-yellow-400);

@@ -2,6 +2,310 @@ import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
 import type { ScheduleMatch } from "@/components/widgets/schedule-match-card";
 
+const IS_DEV = process.env.NODE_ENV !== "production";
+
+const MOCK_SCHEDULE: ScheduleMatch[] = [
+	// 1. Upcoming group match — no bets, no result
+	{
+		id: "mock-s1",
+		group: "Group A",
+		time: "15:00",
+		date: "11/06/26",
+		home: { name: "Mexico", flag: "🇲🇽" },
+		away: { name: "Canada", flag: "🇨🇦" },
+		status: "upcoming",
+		bets: [],
+	},
+	// 2. Upcoming playoff match — no bets
+	{
+		id: "mock-s2",
+		group: "Round of 16",
+		time: "20:00",
+		date: "28/06/26",
+		home: { name: "Brazil", flag: "🇧🇷" },
+		away: { name: "Argentina", flag: "🇦🇷" },
+		status: "upcoming",
+		bets: [],
+	},
+	// 3. Live group match — current score, minute, 4 bets (various points)
+	{
+		id: "mock-s3",
+		group: "Group B",
+		time: "18:00",
+		date: "14/06/26",
+		home: { name: "Spain", flag: "🇪🇸" },
+		away: { name: "Germany", flag: "🇩🇪" },
+		status: "live",
+		minute: 67,
+		resultHome: 2,
+		resultAway: 1,
+		bets: [
+			{ userId: "u1", name: "Alice", betHome: 2, betAway: 1, points: null },
+			{ userId: "u2", name: "Bob", betHome: 1, betAway: 0, points: null },
+			{ userId: "u3", name: "Charlie", betHome: 3, betAway: 1, points: null },
+			{ userId: "u4", name: "Dave", betHome: 0, betAway: 2, points: null },
+		],
+	},
+	// 4. Live playoff match — with minute and winPick
+	{
+		id: "mock-s4",
+		group: "Quarter-finals",
+		time: "21:00",
+		date: "03/07/26",
+		home: { name: "France", flag: "🇫🇷" },
+		away: { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+		status: "live",
+		minute: 105,
+		resultHome: 1,
+		resultAway: 1,
+		bets: [
+			{
+				userId: "u1",
+				name: "Alice",
+				betHome: 1,
+				betAway: 1,
+				winPick: "home",
+				points: null,
+			},
+			{
+				userId: "u2",
+				name: "Bob",
+				betHome: 2,
+				betAway: 0,
+				winPick: "home",
+				points: null,
+			},
+			{
+				userId: "u3",
+				name: "Charlie",
+				betHome: 0,
+				betAway: 1,
+				winPick: "away",
+				points: null,
+			},
+		],
+	},
+	// 5. Finished group match — exact (3), win-2 (2), win-1 (1), miss (0), many bets
+	{
+		id: "mock-s5",
+		group: "Group C",
+		time: "12:00",
+		date: "15/06/26",
+		home: { name: "Portugal", flag: "🇵🇹" },
+		away: { name: "Morocco", flag: "🇲🇦" },
+		status: "finished",
+		resultHome: 3,
+		resultAway: 1,
+		bets: [
+			{ userId: "u1", name: "Alice", betHome: 3, betAway: 1, points: 3 },
+			{ userId: "u2", name: "Bob", betHome: 2, betAway: 0, points: 2 },
+			{ userId: "u3", name: "Charlie", betHome: 1, betAway: 0, points: 1 },
+			{ userId: "u4", name: "Dave", betHome: 0, betAway: 0, points: 0 },
+			{ userId: "u5", name: "Eve", betHome: 2, betAway: 1, points: 1 },
+			{ userId: "u6", name: "Frank", betHome: 4, betAway: 2, points: 1 },
+			{ userId: "u7", name: "Grace", betHome: 0, betAway: 1, points: 0 },
+		],
+	},
+	// 6. Finished playoff match — with winPick bonus (total > 3)
+	{
+		id: "mock-s6",
+		group: "Semi-finals",
+		time: "20:00",
+		date: "09/07/26",
+		home: { name: "Netherlands", flag: "🇳🇱" },
+		away: { name: "Croatia", flag: "🇭🇷" },
+		status: "finished",
+		resultHome: 2,
+		resultAway: 1,
+		bets: [
+			{
+				userId: "u1",
+				name: "Alice",
+				betHome: 2,
+				betAway: 1,
+				winPick: "home",
+				points: 5,
+			},
+			{
+				userId: "u2",
+				name: "Bob",
+				betHome: 1,
+				betAway: 0,
+				winPick: "home",
+				points: 3,
+			},
+			{
+				userId: "u3",
+				name: "Charlie",
+				betHome: 2,
+				betAway: 1,
+				winPick: "away",
+				points: 3,
+			},
+			{
+				userId: "u4",
+				name: "Dave",
+				betHome: 0,
+				betAway: 1,
+				winPick: "away",
+				points: 0,
+			},
+		],
+	},
+	// 7. Finished R16 — home wins 2-0, testing winPick bonus
+	{
+		id: "mock-s7",
+		group: "Round of 16",
+		time: "20:00",
+		date: "01/07/26",
+		home: { name: "France", flag: "🇫🇷" },
+		away: { name: "Poland", flag: "🇵🇱" },
+		status: "finished",
+		resultHome: 2,
+		resultAway: 0,
+		bets: [
+			{
+				userId: "u1",
+				name: "Alice",
+				betHome: 2,
+				betAway: 0,
+				winPick: "home",
+				points: 5,
+			},
+			{
+				userId: "u2",
+				name: "Bob",
+				betHome: 1,
+				betAway: 0,
+				winPick: "home",
+				points: 4,
+			},
+			{
+				userId: "u3",
+				name: "Charlie",
+				betHome: 0,
+				betAway: 1,
+				winPick: "home",
+				points: 2,
+			},
+			{
+				userId: "u4",
+				name: "Dave",
+				betHome: 2,
+				betAway: 0,
+				winPick: "away",
+				points: 3,
+			},
+			{
+				userId: "u5",
+				name: "Eve",
+				betHome: 1,
+				betAway: 0,
+				winPick: "away",
+				points: 2,
+			},
+		],
+	},
+	// 8. Finished QF — away wins 0-2, testing away winPick bonus
+	{
+		id: "mock-s8",
+		group: "Quarter-finals",
+		time: "21:00",
+		date: "04/07/26",
+		home: { name: "Germany", flag: "🇩🇪" },
+		away: { name: "Spain", flag: "🇪🇸" },
+		status: "finished",
+		resultHome: 0,
+		resultAway: 2,
+		bets: [
+			{
+				userId: "u1",
+				name: "Alice",
+				betHome: 0,
+				betAway: 2,
+				winPick: "away",
+				points: 5,
+			},
+			{
+				userId: "u2",
+				name: "Bob",
+				betHome: 0,
+				betAway: 1,
+				winPick: "away",
+				points: 3,
+			},
+			{
+				userId: "u3",
+				name: "Charlie",
+				betHome: 0,
+				betAway: 1,
+				winPick: "home",
+				points: 1,
+			},
+			{
+				userId: "u4",
+				name: "Dave",
+				betHome: 1,
+				betAway: 0,
+				winPick: "home",
+				points: 0,
+			},
+		],
+	},
+	// 10. Finished match — no bets placed
+	{
+		id: "mock-s10",
+		group: "Group D",
+		time: "18:00",
+		date: "16/06/26",
+		home: { name: "Japan", flag: "🇯🇵" },
+		away: { name: "South Korea", flag: "🇰🇷" },
+		status: "finished",
+		resultHome: 0,
+		resultAway: 0,
+		bets: [],
+	},
+	// 11. Finished draw — no one got win (all miss)
+	{
+		id: "mock-s11",
+		group: "Group E",
+		time: "21:00",
+		date: "17/06/26",
+		home: { name: "USA", flag: "🇺🇸" },
+		away: { name: "Ecuador", flag: "🇪🇨" },
+		status: "finished",
+		resultHome: 1,
+		resultAway: 1,
+		bets: [
+			{ userId: "u1", name: "Alice", betHome: 2, betAway: 0, points: 0 },
+			{ userId: "u2", name: "Bob", betHome: 3, betAway: 1, points: 0 },
+			{ userId: "u3", name: "Charlie", betHome: 1, betAway: 1, points: 3 },
+		],
+	},
+	// 12. Long team names
+	{
+		id: "mock-s12",
+		group: "Group F",
+		time: "15:00",
+		date: "18/06/26",
+		home: { name: "Bosnia and Herzegovina", flag: "🇧🇦" },
+		away: { name: "Democratic Republic of the Congo", flag: "🇨🇩" },
+		status: "finished",
+		resultHome: 2,
+		resultAway: 2,
+		bets: [
+			{
+				userId: "u1",
+				name: "Alice Wonderland-Smith",
+				betHome: 2,
+				betAway: 2,
+				points: 3,
+			},
+			{ userId: "u2", name: "Bob", betHome: 1, betAway: 1, points: 1 },
+		],
+	},
+];
+
 const FALLBACK_FLAG = "🏳️";
 
 const TEAM_FLAG_MAP = new Map(
@@ -105,6 +409,7 @@ function getResult(
 
 export const ScheduleService = {
 	async getScheduleMatches(roomId?: string): Promise<ScheduleMatch[]> {
+		if (IS_DEV) return MOCK_SCHEDULE;
 		try {
 			const rangeStart = new Date(Date.UTC(2026, 5, 11, 0, 0, 0));
 			const rangeEnd = new Date(Date.UTC(2026, 6, 19, 23, 59, 59));

@@ -155,22 +155,22 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 
 			{/* Score row */}
 			<div className={styles.score}>
-				<TeamBadge
-					name={match.home.name}
-					flag={match.home.flag}
-					direction="rtl"
-					className={styles.team}
-				/>
-				<span className={styles.result}>
-					{match.resultHome != null && match.resultAway != null
-						? `${match.resultHome} : ${match.resultAway}`
-						: "- : -"}
-				</span>
-				<TeamBadge
-					name={match.away.name}
-					flag={match.away.flag}
-					className={styles.team}
-				/>
+				<div className={styles.teamRow}>
+					<span className={styles.teamScore}>{match.resultHome ?? "–"}</span>
+					<TeamBadge
+						name={match.home.name}
+						flag={match.home.flag}
+						className={styles.team}
+					/>
+				</div>
+				<div className={styles.teamRow}>
+					<span className={styles.teamScore}>{match.resultAway ?? "–"}</span>
+					<TeamBadge
+						name={match.away.name}
+						flag={match.away.flag}
+						className={styles.team}
+					/>
+				</div>
 			</div>
 
 			{/* Bets table */}
