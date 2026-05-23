@@ -46,6 +46,7 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 33  | Grammar          | "i speak about ..."                                          | "I'm talking about ..."                                          | More natural phrasing in clarification                      |
 | 34  | Grammar          | "use mocks for them"                                         | "Use mocks for them." / "Use mock data for them."                | Natural phrasing for implementation request                 |
 | 35  | Spelling/Grammar | "a reazon"                                                   | "a reason"                                                       | Common spelling typo                                        |
+| 36  | Grammar          | "why no winner for final?"                                   | "Why is there no winner in the final?"                           | Add auxiliary verb and article for natural question form    |
 
 ## Recent examples
 
@@ -203,6 +204,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "investigate a reazon, and fix it"
 - Better: "Investigate the reason and fix it."
+
+### Example AF
+
+- Original: "why no winner for final?"
+- Better: "Why is there no winner in the final?"
 
 ## Reminder cadence
 

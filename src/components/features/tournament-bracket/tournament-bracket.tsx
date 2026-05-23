@@ -23,6 +23,7 @@ type Props = {
 };
 
 function getWinnerSide(match: WcKnockoutMatch): "home" | "away" | null {
+	if (match.winner) return match.winner;
 	if (match.scoreHome === match.scoreAway) return null;
 	return match.scoreHome > match.scoreAway ? "home" : "away";
 }

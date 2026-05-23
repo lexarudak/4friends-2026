@@ -21,6 +21,7 @@ export type WcKnockoutMatch = {
 	away: { name: string; flag: string };
 	scoreHome: number;
 	scoreAway: number;
+	winner?: "home" | "away";
 	date: string;
 	time: string;
 };
@@ -442,6 +443,7 @@ export const WC_KNOCKOUT: Record<WcKnockoutStage, WcKnockoutMatch[]> = {
 			away: { name: "Argentina", flag: "🇦🇷" },
 			scoreHome: 2,
 			scoreAway: 2,
+			winner: "away",
 			date: "19/07/26",
 			time: "19:00",
 		},
