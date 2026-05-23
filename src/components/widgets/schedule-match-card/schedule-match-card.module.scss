@@ -141,8 +141,8 @@
 	font-family: var(--font-geist-mono);
 	color: var(--color-neutral-600);
 	white-space: nowrap;
-	text-align: right;
-	min-width: 24px;
+	text-align: center;
+	min-width: 51px;
 
 	[data-status="live"] & {
 		color: var(--color-yellow-400);

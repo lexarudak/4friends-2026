@@ -252,6 +252,32 @@ const MOCK_SCHEDULE: ScheduleMatch[] = [
 			},
 		],
 	},
+	// 9. Finished QF — home wins 2-1, full range of playoff bets
+	{
+		id: "mock-s9",
+		group: "Quarter-finals",
+		time: "18:00",
+		date: "02/07/26",
+		home: { name: "Italy", flag: "🇮🇹" },
+		away: { name: "Belgium", flag: "🇧🇪" },
+		status: "finished",
+		resultHome: 2,
+		resultAway: 1,
+		bets: [
+			// exact score + correct winner → 3 + 2 = 5
+			{ userId: "u1", name: "Alice", betHome: 2, betAway: 1, winPick: "home", points: 5 },
+			// correct diff + correct winner → 2 + 2 = 4
+			{ userId: "u2", name: "Bob", betHome: 3, betAway: 2, winPick: "home", points: 4 },
+			// correct outcome + correct winner → 1 + 2 = 3
+			{ userId: "u3", name: "Charlie", betHome: 2, betAway: 0, winPick: "home", points: 3 },
+			// draw bet, • left = picked home to win → 0 + 2 = 2
+			{ userId: "u4", name: "Dave", betHome: 1, betAway: 1, winPick: "home", points: 2 },
+			// draw bet, • right = picked away to win → 0 + 0 = 0
+			{ userId: "u5", name: "Eve", betHome: 1, betAway: 1, winPick: "away", points: 0 },
+			// wrong outcome, wrong winner → 0
+			{ userId: "u6", name: "Frank", betHome: 0, betAway: 1, winPick: "away", points: 0 },
+		],
+	},
 	// 10. Finished match — no bets placed
 	{
 		id: "mock-s10",

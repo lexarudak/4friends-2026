@@ -1,6 +1,6 @@
 # Language Feedback Log
 
-Last updated: 2026-05-21
+Last updated: 2026-05-23
 Last reminder shown: 2026-05-08
 
 ## Purpose
@@ -38,6 +38,7 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 25  | Spelling         | "mok data"                                                   | "mock data"                                                      | Common typo in dev context                                  |
 | 26  | Spelling         | "tranket titles"                                             | "truncate titles"                                                | Correct verb for shortening text                            |
 | 27  | Spelling/Wording | "stik with responsive design"                                | "stick to responsive design"                                     | Natural phrasing in UI requests                             |
+| 28  | Spelling         | "exapmle"                                                    | "example"                                                        | Common typo                                                 |
 
 ## Recent examples
 
@@ -155,6 +156,11 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "and tranket titles"
 - Better: "And truncate titles."
+
+### Example X
+
+- Original: "also add an exapmle of playoff match where score is 2:1"
+- Better: "Also add an example of a playoff match where the score is 2:1."
 
 ## Reminder cadence
 
