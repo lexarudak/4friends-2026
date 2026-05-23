@@ -4,7 +4,6 @@ import { auth, signOut, unstable_update } from "@/auth";
 import { RoomService } from "@/services/room.service";
 import { PAGES } from "@/utils/constants";
 import { redirect } from "next/navigation";
-import { DbUnavailableError, UserService } from "@/services/user.service";
 
 export type JoinRoomState = { error: string | null };
 
@@ -19,17 +18,14 @@ export async function joinNewRoom(
 	if (!room) return { error: "This room does not exist" };
 
 	const session = await auth();
-	if (session?.user?.email) {
-		try {
-			await UserService.addUser(session.user.email, {
-				name: session.user.name,
-				current_room: roomName,
-			});
-		} catch (err) {
-			if (err instanceof DbUnavailableError) return { error: err.message };
-			throw err;
-		}
-	}
+	if (!session?.user?.email) return { error: "You are not authorized" };
+
+	const updated = await RoomService.joinRoomAndSetCurrent(
+		session.user.email,
+		session.user.name,
+		roomName
+	);
+	if (!updated) return { error: "Could not join room" };
 
 	await unstable_update({ user: { current_room: roomName } });
 	redirect(PAGES.HOME);
@@ -44,17 +40,17 @@ export const selectRoom = async (
 	_prevState: { error: string } | null
 ): Promise<{ error: string } | never> => {
 	const session = await auth();
-	if (session?.user?.email) {
-		try {
-			await UserService.addUser(session.user.email, {
-				name: session.user.name,
-				current_room: roomId,
-			});
-		} catch (err) {
-			if (err instanceof DbUnavailableError) return { error: err.message };
-			throw err;
-		}
-	}
+	if (!session?.user?.email) return { error: "You are not authorized" };
+
+	const room = await RoomService.getRoomByName(roomId);
+	if (!room) return { error: "This room does not exist" };
+
+	const updated = await RoomService.joinRoomAndSetCurrent(
+		session.user.email,
+		session.user.name,
+		roomId
+	);
+	if (!updated) return { error: "Could not switch room" };
 
 	await unstable_update({ user: { current_room: roomId } });
 	redirect(PAGES.HOME);

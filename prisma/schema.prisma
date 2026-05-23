@@ -8,17 +8,32 @@ datasource db {
 }
 
 model Room {
-  id    String @id @default(cuid())
-  name  String @unique
-  users User[]
+  id              String     @id @default(cuid())
+  name            String     @unique
+  users           UserRoom[]
+  currentForUsers User[]     @relation("CurrentRoom")
 }
 
 model User {
-  id          String  @id
+  id          String     @id
   currentRoom String?
   name        String?
   bets        Bet[]
-  room        Room?   @relation(fields: [currentRoom], references: [name])
+  room        Room?      @relation("CurrentRoom", fields: [currentRoom], references: [name])
+  rooms       UserRoom[]
+}
+
+model UserRoom {
+  id       String   @id @default(cuid())
+  userId   String
+  roomId   String
+  joinedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+  @@index([userId])
+  @@index([roomId])
 }
 
 model Match {

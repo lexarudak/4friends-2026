@@ -48,6 +48,8 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 35  | Spelling/Grammar | "a reazon"                                                   | "a reason"                                                       | Common spelling typo                                        |
 | 36  | Grammar          | "why no winner for final?"                                   | "Why is there no winner in the final?"                           | Add auxiliary verb and article for natural question form    |
 | 37  | Spelling/Grammar | "reat enpoints"                                              | "real endpoints"                                                 | Common typo pair in technical requests                      |
+| 38  | Wording          | "BE end DB"                                                  | "BE and DB"                                                      | Use "and" (not "end") for natural coordination wording      |
+| 39  | Spelling/Grammar | "swith" / "escape from the prev one"                         | "switch" / "leave the previous one"                              | Common typo and clearer phrasing for room behavior          |
 
 ## Recent examples
 
@@ -215,6 +217,16 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "lets remove all mocks and connect reat enpoints"
 - Better: "Let's remove all mocks and connect real endpoints."
+
+### Example AH
+
+- Original: "lets step by step test or BE end DB"
+- Better: "Let's test BE and DB step by step."
+
+### Example AI
+
+- Original: "we should stay in all rooms and just swith the current one"
+- Better: "We should stay in all rooms and just switch the current one."
 
 ## Reminder cadence
 
