@@ -11,24 +11,29 @@ export async function joinNewRoom(
 	_prevState: JoinRoomState,
 	formData: FormData
 ): Promise<JoinRoomState> {
-	const roomName = (formData.get("room_id") as string)?.trim();
-	if (!roomName) return { error: "Please enter a room name" };
+	try {
+		const roomName = (formData.get("room_id") as string)?.trim();
+		if (!roomName) return { error: "Please enter a room name" };
 
-	const room = await RoomService.getRoomByName(roomName);
-	if (!room) return { error: "This room does not exist" };
+		const room = await RoomService.getRoomByName(roomName);
+		if (!room) return { error: "This room does not exist" };
 
-	const session = await auth();
-	if (!session?.user?.email) return { error: "You are not authorized" };
+		const session = await auth();
+		if (!session?.user?.email) return { error: "You are not authorized" };
 
-	const updated = await RoomService.joinRoomAndSetCurrent(
-		session.user.email,
-		session.user.name,
-		roomName
-	);
-	if (!updated) return { error: "Could not join room" };
+		const updated = await RoomService.joinRoomAndSetCurrent(
+			session.user.email,
+			session.user.name,
+			roomName
+		);
+		if (!updated) return { error: "Could not join room" };
 
-	await unstable_update({ user: { current_room: roomName } });
-	redirect(PAGES.HOME);
+		await unstable_update({ user: { current_room: roomName } });
+		redirect(PAGES.HOME);
+	} catch (err) {
+		console.error("[joinNewRoom]", err);
+		return { error: "Could not join room" };
+	}
 }
 
 export async function signOutUser() {
@@ -39,19 +44,24 @@ export const selectRoom = async (
 	roomId: string,
 	_prevState: { error: string } | null
 ): Promise<{ error: string } | never> => {
-	const session = await auth();
-	if (!session?.user?.email) return { error: "You are not authorized" };
+	try {
+		const session = await auth();
+		if (!session?.user?.email) return { error: "You are not authorized" };
 
-	const room = await RoomService.getRoomByName(roomId);
-	if (!room) return { error: "This room does not exist" };
+		const room = await RoomService.getRoomByName(roomId);
+		if (!room) return { error: "This room does not exist" };
 
-	const updated = await RoomService.joinRoomAndSetCurrent(
-		session.user.email,
-		session.user.name,
-		roomId
-	);
-	if (!updated) return { error: "Could not switch room" };
+		const updated = await RoomService.joinRoomAndSetCurrent(
+			session.user.email,
+			session.user.name,
+			roomId
+		);
+		if (!updated) return { error: "Could not switch room" };
 
-	await unstable_update({ user: { current_room: roomId } });
-	redirect(PAGES.HOME);
+		await unstable_update({ user: { current_room: roomId } });
+		redirect(PAGES.HOME);
+	} catch (err) {
+		console.error("[selectRoom]", err);
+		return { error: "Could not switch room" };
+	}
 };
