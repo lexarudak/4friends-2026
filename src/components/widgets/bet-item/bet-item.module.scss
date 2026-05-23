@@ -41,11 +41,11 @@
 		}
 	}
 
-	&[data-status="miss"] {
+	&[data-status="miss"]:not([data-points]) {
 		opacity: 0.6;
 	}
 
-	&[data-status="pending"] {
+	&[data-status="pending"]:not([data-points]) {
 		border-style: dashed;
 		opacity: 0.7;
 	}
@@ -114,6 +114,7 @@
 			var(--color-neutral-900)
 		);
 
+		.bet,
 		.pointsValue {
 			color: var(--points-highlight);
 		}
@@ -163,17 +164,10 @@
 	border-right: 1px solid var(--color-neutral-800);
 	background: var(--color-neutral-900);
 
-	.row[data-status="exact"] & {
+	.row[data-points] & {
 		background: color-mix(
 			in srgb,
-			var(--color-green-950) 60%,
-			var(--color-neutral-900)
-		);
-	}
-	.row[data-status="win"] & {
-		background: color-mix(
-			in srgb,
-			var(--color-yellow-950) 60%,
+			var(--points-highlight) 12%,
 			var(--color-neutral-900)
 		);
 	}
@@ -183,17 +177,10 @@
 	padding: var(--space-4) var(--space-12);
 	background: var(--color-neutral-900);
 
-	.row[data-status="exact"] & {
+	.row[data-points] & {
 		background: color-mix(
 			in srgb,
-			var(--color-green-950) 60%,
-			var(--color-neutral-900)
-		);
-	}
-	.row[data-status="win"] & {
-		background: color-mix(
-			in srgb,
-			var(--color-yellow-950) 60%,
+			var(--points-highlight) 12%,
 			var(--color-neutral-900)
 		);
 	}
@@ -208,17 +195,10 @@
 	border-right: 1px solid var(--color-neutral-800);
 	background: var(--color-neutral-900);
 
-	.row[data-status="exact"] & {
+	.row[data-points] & {
 		background: color-mix(
 			in srgb,
-			var(--color-green-950) 60%,
-			var(--color-neutral-900)
-		);
-	}
-	.row[data-status="win"] & {
-		background: color-mix(
-			in srgb,
-			var(--color-yellow-950) 60%,
+			var(--points-highlight) 8%,
 			var(--color-neutral-900)
 		);
 	}
@@ -249,17 +229,10 @@
 		grid-template-columns: auto auto auto minmax(0, 1fr);
 	}
 
-	.row[data-status="exact"] & {
+	.row[data-points] & {
 		background: color-mix(
 			in srgb,
-			var(--color-green-950) 60%,
-			var(--color-neutral-900)
-		);
-	}
-	.row[data-status="win"] & {
-		background: color-mix(
-			in srgb,
-			var(--color-yellow-950) 60%,
+			var(--points-highlight) 8%,
 			var(--color-neutral-900)
 		);
 	}

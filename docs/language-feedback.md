@@ -40,6 +40,8 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 27  | Spelling/Wording | "stik with responsive design"                                | "stick to responsive design"                                     | Natural phrasing in UI requests                             |
 | 28  | Spelling         | "exapmle"                                                    | "example"                                                        | Common typo                                                 |
 | 29  | Spelling         | "posible" / "hightlight" / "hor"                             | "possible" / "highlight" / "for"                                 | Repeated typo pattern in UI requests                        |
+| 30  | Spelling/Grammar | "shoul" / "collors" / "guidlene"                             | "should" / "colors" / "guideline"                                | Repeated typo pattern in implementation requests            |
+| 31  | Grammar          | "all posible variants"                                       | "all possible variants"                                          | Add article and correct spelling                            |
 
 ## Recent examples
 
@@ -167,6 +169,16 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "for all posible tables lets apply this colors hor hightlight"
 - Better: "For all possible tables, let’s apply these colors for highlight."
+
+### Example Z
+
+- Original: "we shoul fix collors with our new guidlene"
+- Better: "We should fix colors using our new guideline."
+
+### Example AA
+
+- Original: "add mock for all posible variants"
+- Better: "Add a mock for all possible variants."
 
 ## Reminder cadence
 
