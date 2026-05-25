@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import type { TableRow } from "@/types/api";
 import { PAGES } from "@/utils/constants";
 import { ScoreTable } from "@/components/widgets/score-table";
@@ -14,18 +15,30 @@ export const TopTable = () => {
 	const pathname = usePathname();
 	const [rows, setRows] = useState<TableRow[]>([]);
 	const [isFirstLoading, setIsFirstLoading] = useState(true);
+	const [isSigningOut, setIsSigningOut] = useState(false);
 
 	useEffect(() => {
 		let isCancelled = false;
 
 		const load = async () => {
 			try {
+				if (isSigningOut) return;
+
 				const response = await fetch("/api/table", { cache: "no-store" });
 				if (!response.ok) return;
 
 				const data = (await response.json()) as TableResponse;
+				const nextRows = data.rows ?? [];
+				const hasCurrentUser = nextRows.some((row) => row.isCurrentUser);
+
+				if (!hasCurrentUser) {
+					setIsSigningOut(true);
+					await signOut({ redirect: true, redirectTo: PAGES.LOGIN });
+					return;
+				}
+
 				if (!isCancelled) {
-					setRows(data.rows ?? []);
+					setRows(nextRows);
 				}
 			} catch {
 				// keep previous data on transient errors
@@ -41,7 +54,7 @@ export const TopTable = () => {
 		return () => {
 			isCancelled = true;
 		};
-	}, [pathname]);
+	}, [pathname, isSigningOut]);
 
 	const topRows = useMemo(() => rows.slice(0, 3), [rows]);
 

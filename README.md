@@ -39,6 +39,12 @@ This keeps service code identical while isolating data by environment.
 ### Safe DB Commands
 
 ```bash
+# open Prisma Studio for local DB only (guarded)
+npm run prisma
+
+# open Prisma Studio for remote DB intentionally
+npm run prisma:remote
+
 # local development migrations
 npm run db:migrate:dev
 
@@ -52,7 +58,12 @@ npm run seed:matches:local
 npm run seed:wc2026:local
 ```
 
+By default Prisma Studio runs on `http://localhost:5555`.
+You can override the port with `PRISMA_STUDIO_PORT`.
+
 `seed:*:local` commands run a safety guard and stop if `DATABASE_URL` is not local (`localhost`, `127.0.0.1`, `::1`) or if running in production runtime.
+
+`npm run prisma` now has the same local-only safety guard.
 
 If you intentionally need to seed a non-local database, set:
 
