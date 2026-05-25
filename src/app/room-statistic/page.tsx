@@ -13,6 +13,12 @@ export default async function RoomStatisticPage() {
 			? await RoomStatisticService.getSections(roomId, session.user.email)
 			: [];
 
+	console.info("[room-statistic:page] response", {
+		roomId,
+		userId: session?.user?.email ?? null,
+		sectionsCount: sections.length,
+	});
+
 	return (
 		<div className={styles.page}>
 			<PageTitle title="Statistic" label="Room overview" />

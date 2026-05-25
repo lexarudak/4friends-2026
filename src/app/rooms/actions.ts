@@ -7,6 +7,18 @@ import { redirect } from "next/navigation";
 
 export type JoinRoomState = { error: string | null };
 
+function logActionResponse(action: string, response: unknown) {
+	console.info(`[rooms:${action}] response`, response);
+}
+
+function logActionRedirect(action: string, to: string) {
+	console.info(`[rooms:${action}] redirect`, { to });
+}
+
+function logActionError(action: string, error: unknown) {
+	console.error(`[rooms:${action}] error`, error);
+}
+
 function isNextRedirectError(err: unknown): err is { digest: string } {
 	if (!err || typeof err !== "object") return false;
 	const maybe = err as { digest?: unknown };
@@ -21,34 +33,54 @@ export async function joinNewRoom(
 ): Promise<JoinRoomState> {
 	try {
 		const roomName = (formData.get("room_id") as string)?.trim();
-		if (!roomName) return { error: "Please enter a room name" };
+		if (!roomName) {
+			const response = { error: "Please enter a room name" };
+			logActionResponse("join-new-room", response);
+			return response;
+		}
 
 		const room = await RoomService.getRoomByName(roomName);
-		if (!room) return { error: "This room does not exist" };
+		if (!room) {
+			const response = { error: "This room does not exist" };
+			logActionResponse("join-new-room", response);
+			return response;
+		}
 
 		const session = await auth();
-		if (!session?.user?.email) return { error: "You are not authorized" };
+		if (!session?.user?.email) {
+			const response = { error: "You are not authorized" };
+			logActionResponse("join-new-room", response);
+			return response;
+		}
 
 		const updated = await RoomService.joinRoomAndSetCurrent(
 			session.user.email,
 			session.user.name,
 			roomName
 		);
-		if (!updated) return { error: "Could not join room" };
+		if (!updated) {
+			const response = { error: "Could not join room" };
+			logActionResponse("join-new-room", response);
+			return response;
+		}
 
 		await unstable_update({ user: { current_room: roomName } });
+		logActionRedirect("join-new-room", PAGES.HOME);
 		redirect(PAGES.HOME);
 	} catch (err) {
 		if (isNextRedirectError(err)) {
 			throw err;
 		}
 
-		console.error("[joinNewRoom]", err);
-		return { error: "Could not join room" };
+		logActionError("join-new-room", err);
+		const response = { error: "Could not join room" };
+		logActionResponse("join-new-room", response);
+		return response;
 	}
 }
 
 export async function signOutUser() {
+	logActionRedirect("sign-out", PAGES.LOGIN);
 	await signOut({ redirectTo: PAGES.LOGIN });
 }
 
@@ -56,28 +88,45 @@ export const selectRoom = async (
 	roomId: string,
 	_prevState: { error: string } | null
 ): Promise<{ error: string } | never> => {
+	void _prevState;
+
 	try {
 		const session = await auth();
-		if (!session?.user?.email) return { error: "You are not authorized" };
+		if (!session?.user?.email) {
+			const response = { error: "You are not authorized" };
+			logActionResponse("select-room", response);
+			return response;
+		}
 
 		const room = await RoomService.getRoomByName(roomId);
-		if (!room) return { error: "This room does not exist" };
+		if (!room) {
+			const response = { error: "This room does not exist" };
+			logActionResponse("select-room", response);
+			return response;
+		}
 
 		const updated = await RoomService.joinRoomAndSetCurrent(
 			session.user.email,
 			session.user.name,
 			roomId
 		);
-		if (!updated) return { error: "Could not switch room" };
+		if (!updated) {
+			const response = { error: "Could not switch room" };
+			logActionResponse("select-room", response);
+			return response;
+		}
 
 		await unstable_update({ user: { current_room: roomId } });
+		logActionRedirect("select-room", PAGES.HOME);
 		redirect(PAGES.HOME);
 	} catch (err) {
 		if (isNextRedirectError(err)) {
 			throw err;
 		}
 
-		console.error("[selectRoom]", err);
-		return { error: "Could not switch room" };
+		logActionError("select-room", err);
+		const response = { error: "Could not switch room" };
+		logActionResponse("select-room", response);
+		return response;
 	}
 };

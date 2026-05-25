@@ -8,6 +8,10 @@ export async function GET() {
 	const session = await auth();
 
 	if (!session?.user?.email) {
+		console.info("[api:room-statistic] response", {
+			status: 401,
+			error: API_ERROR_CODES.UNAUTHORIZED,
+		});
 		return NextResponse.json(
 			{ error: API_ERROR_CODES.UNAUTHORIZED },
 			{ status: 401 }
@@ -16,6 +20,11 @@ export async function GET() {
 
 	const roomId = await getActiveRoomId();
 	if (!roomId) {
+		console.info("[api:room-statistic] response", {
+			status: 403,
+			error: API_ERROR_CODES.NO_ACTIVE_ROOM,
+			userId: session.user.email,
+		});
 		return NextResponse.json(
 			{ error: API_ERROR_CODES.NO_ACTIVE_ROOM },
 			{ status: 403 }
@@ -26,6 +35,13 @@ export async function GET() {
 		roomId,
 		session.user.email
 	);
+
+	console.info("[api:room-statistic] response", {
+		status: 200,
+		userId: session.user.email,
+		roomId,
+		sectionsCount: sections.length,
+	});
 
 	return NextResponse.json(sections);
 }
