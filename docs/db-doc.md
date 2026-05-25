@@ -1,7 +1,7 @@
 # Database Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-23
+> Last updated: 2026-05-25
 
 ---
 
@@ -15,6 +15,8 @@
 | Client output | `src/generated/prisma/`               |
 | Env var       | `DATABASE_URL` (in `.env`)            |
 
+Local/deploy strategy: same Prisma schema and code, different `DATABASE_URL` per environment.
+
 ---
 
 ## Schema (excerpt)
@@ -23,17 +25,32 @@ Authoritative source: `prisma/schema.prisma`.
 
 ```prisma
 model Room {
-  id    String  @id @default(cuid())
-  name  String  @unique
-  users User[]
+  id              String     @id @default(cuid())
+  name            String     @unique
+  users           UserRoom[]
+  currentForUsers User[]     @relation("CurrentRoom")
 }
 
 model User {
-  id          String  @id          // Google email address
-  name        String?
+  id          String     @id          // Google email address
   currentRoom String?
-  room        Room?   @relation(fields: [currentRoom], references: [name])
+  name        String?
   bets        Bet[]
+  room        Room?      @relation("CurrentRoom", fields: [currentRoom], references: [name])
+  rooms       UserRoom[]
+}
+
+model UserRoom {
+  id       String   @id @default(cuid())
+  userId   String
+  roomId   String
+  joinedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+  @@index([userId])
+  @@index([roomId])
 }
 
 model Match {
@@ -127,13 +144,14 @@ Relations: `room Room?` — optional many-to-one with Room.
 
 ## Migrations
 
-| Migration name                     | Applied | Description         |
-| ---------------------------------- | ------- | ------------------- |
-| `20260501081502_add_user_table`    | ✅      | Added `User` model  |
-| `20260501062538_create_room_table` | ✅      | Added `Room` model  |
-| `20260501100551_add_match_table`   | ✅      | Added `Match` model |
-| `20260501140828_add_bet_table`     | ✅      | Added `Bet` model   |
-| `20260501141552_add_user_name`     | ✅      | Added `User.name`   |
+| Migration name                            | Applied | Description                       |
+| ----------------------------------------- | ------- | --------------------------------- |
+| `20260501081502_add_user_table`           | ✅      | Added `User` model                |
+| `20260501062538_create_room_table`        | ✅      | Added `Room` model                |
+| `20260501100551_add_match_table`          | ✅      | Added `Match` model               |
+| `20260501140828_add_bet_table`            | ✅      | Added `Bet` model                 |
+| `20260501141552_add_user_name`            | ✅      | Added `User.name`                 |
+| `20260523152118_add_user_room_membership` | ✅      | Added `UserRoom` model + backfill |
 
 Location: `prisma/migrations/`
 
@@ -202,7 +220,7 @@ prisma.bet.deleteMany({ where: { userId, roomId } });
 ### Room statistic sections
 
 ```ts
-prisma.user.findMany({ where: { currentRoom: roomId } });
+prisma.userRoom.findMany({ where: { room: { name: roomId } } });
 prisma.bet.groupBy({ by: ["userId"], where: { roomId, ... } });
 ```
 
@@ -239,7 +257,6 @@ prisma.room.findUnique({ where: { name } });
 | Data          | Stub file                  | Planned migration             |
 | ------------- | -------------------------- | ----------------------------- |
 | Bets          | —                          | ✅ migrated to Prisma         |
-| Matches       | `src/db/matches.ts`        | Phase 3.1                     |
 | Scores/table  | `src/db/scores.ts`         | Phase 3.3                     |
 | Standings     | _(not yet implemented)_    | Phase 3.7                     |
 | Live matches  | `src/db/live-matches.ts`   | —                             |

@@ -1,7 +1,7 @@
 # Backend Documentation
 
 > Auto-maintained. Updated whenever the `save` command is run.  
-> Last updated: 2026-05-23
+> Last updated: 2026-05-25
 
 ---
 
@@ -35,7 +35,16 @@
 
 - File: `src/app/api/matches/route.ts`
 - Auth: none
-- Returns: `Match[]` from `MatchService.getMatches()` (in-memory stub)
+- Returns: `Match[]` from `MatchService.getMatches()` (Prisma)
+
+### `GET /api/next-match`
+
+- File: `src/app/api/next-match/route.ts`
+- Auth: none
+- Returns: `{ serverNow, isTournamentFinished, nextMatch }` from `MatchService.getNextMatchTimerPayload()`
+- Notes:
+  - `serverNow` is the backend time source for client timer synchronization.
+  - `nextMatch` is `null` when tournament has no upcoming matches.
 
 ---
 
@@ -155,11 +164,10 @@ Exports `DbUnavailableError` — thrown when DB is unreachable (`P1001`, `ECONNR
 
 ### `MatchService` — `src/services/match.service.ts`
 
-| Method       | Description     | Storage   |
-| ------------ | --------------- | --------- |
-| `getMatches` | Get all matches | In-memory |
-
-⚠️ **Not yet migrated to DB.**
+| Method                     | Description                            | Storage |
+| -------------------------- | -------------------------------------- | ------- |
+| `getMatches`               | Get upcoming match window for bets UI  | Prisma  |
+| `getNextMatchTimerPayload` | Get nearest upcoming match + serverNow | Prisma  |
 
 ### `TableService` — `src/services/table.service.ts`
 
@@ -239,7 +247,6 @@ Room selected (/rooms)
 
 | File                           | Used by                         |
 | ------------------------------ | ------------------------------- |
-| `src/db/matches.ts`            | `MatchService`                  |
 | `src/db/scores.ts`             | `TableService`                  |
 | `src/db/rooms.ts`              | _(orphaned)_                    |
 | `src/db/users.ts`              | _(orphaned)_                    |
