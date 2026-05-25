@@ -7,6 +7,14 @@ import { redirect } from "next/navigation";
 
 export type JoinRoomState = { error: string | null };
 
+function isNextRedirectError(err: unknown): err is { digest: string } {
+	if (!err || typeof err !== "object") return false;
+	const maybe = err as { digest?: unknown };
+	return (
+		typeof maybe.digest === "string" && maybe.digest.startsWith("NEXT_REDIRECT")
+	);
+}
+
 export async function joinNewRoom(
 	_prevState: JoinRoomState,
 	formData: FormData
@@ -31,6 +39,10 @@ export async function joinNewRoom(
 		await unstable_update({ user: { current_room: roomName } });
 		redirect(PAGES.HOME);
 	} catch (err) {
+		if (isNextRedirectError(err)) {
+			throw err;
+		}
+
 		console.error("[joinNewRoom]", err);
 		return { error: "Could not join room" };
 	}
@@ -61,6 +73,10 @@ export const selectRoom = async (
 		await unstable_update({ user: { current_room: roomId } });
 		redirect(PAGES.HOME);
 	} catch (err) {
+		if (isNextRedirectError(err)) {
+			throw err;
+		}
+
 		console.error("[selectRoom]", err);
 		return { error: "Could not switch room" };
 	}

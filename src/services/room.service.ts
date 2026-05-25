@@ -1,9 +1,45 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 
+type UserRoomDelegate = {
+	findMany: (...args: unknown[]) => Promise<
+		Array<{
+			room: { name: string };
+		}>
+	>;
+	upsert: (...args: unknown[]) => Promise<unknown>;
+};
+
+function getUserRoomDelegate(client: unknown): UserRoomDelegate | null {
+	if (!client || typeof client !== "object") return null;
+	const maybe = client as { userRoom?: unknown };
+	if (!maybe.userRoom || typeof maybe.userRoom !== "object") return null;
+
+	const delegate = maybe.userRoom as {
+		findMany?: unknown;
+		upsert?: unknown;
+	};
+
+	if (
+		typeof delegate.findMany !== "function" ||
+		typeof delegate.upsert !== "function"
+	) {
+		return null;
+	}
+
+	return delegate as UserRoomDelegate;
+}
+
 function isUserRoomUnavailable(err: unknown): boolean {
 	if (err instanceof Prisma.PrismaClientKnownRequestError) {
 		return err.code === "P2021";
+	}
+
+	if (
+		err instanceof TypeError &&
+		err.message.includes("Cannot read properties of undefined")
+	) {
+		return true;
 	}
 
 	const msg = err instanceof Error ? err.message : String(err);
@@ -12,8 +48,19 @@ function isUserRoomUnavailable(err: unknown): boolean {
 
 export const RoomService = {
 	async getUserRooms(userId: string): Promise<string[]> {
+		const userRoom = getUserRoomDelegate(prisma);
+		if (!userRoom) {
+			try {
+				const user = await prisma.user.findUnique({ where: { id: userId } });
+				return user?.currentRoom ? [user.currentRoom] : [];
+			} catch (fallbackErr) {
+				console.error("[RoomService.getUserRooms:legacyFallback]", fallbackErr);
+				return [];
+			}
+		}
+
 		try {
-			const memberships = await prisma.userRoom.findMany({
+			const memberships = await userRoom.findMany({
 				where: { userId },
 				include: {
 					room: {
@@ -66,6 +113,37 @@ export const RoomService = {
 		userName: string | null | undefined,
 		roomName: string
 	): Promise<boolean> {
+		const userRoom = getUserRoomDelegate(prisma);
+		if (!userRoom) {
+			try {
+				await prisma.$transaction(async (tx) => {
+					const room = await tx.room.findUnique({ where: { name: roomName } });
+					if (!room) return;
+
+					await tx.user.upsert({
+						where: { id: userId },
+						update: {
+							currentRoom: room.name,
+							name: userName ?? undefined,
+						},
+						create: {
+							id: userId,
+							name: userName ?? null,
+							currentRoom: room.name,
+						},
+					});
+				});
+
+				return true;
+			} catch (fallbackErr) {
+				console.error(
+					"[RoomService.joinRoomAndSetCurrent:legacyFallback]",
+					fallbackErr
+				);
+				return false;
+			}
+		}
+
 		try {
 			return await prisma.$transaction(async (tx) => {
 				const room = await tx.room.findUnique({ where: { name: roomName } });
@@ -84,7 +162,10 @@ export const RoomService = {
 					},
 				});
 
-				await tx.userRoom.upsert({
+				const txUserRoom = getUserRoomDelegate(tx);
+				if (!txUserRoom) throw new Error("UserRoom delegate unavailable");
+
+				await txUserRoom.upsert({
 					where: {
 						userId_roomId: {
 							userId,
