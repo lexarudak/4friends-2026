@@ -9,10 +9,18 @@ export const TableService = {
 		userName: string,
 		topN = 3
 	): Promise<ScoreTableData> {
-		const [roomUsers, totals] = await Promise.all([
-			prisma.user.findMany({
-				where: { currentRoom: roomId },
-				select: { id: true, name: true },
+		const [roomMemberships, totals] = await Promise.all([
+			prisma.userRoom.findMany({
+				where: {
+					room: {
+						name: roomId,
+					},
+				},
+				select: {
+					user: {
+						select: { id: true, name: true },
+					},
+				},
 			}),
 			prisma.bet.groupBy({
 				by: ["userId"],
@@ -20,6 +28,8 @@ export const TableService = {
 				_sum: { points: true, bonusPoints: true },
 			}),
 		]);
+
+		const roomUsers = roomMemberships.map((membership) => membership.user);
 
 		const scoreByUser = new Map(
 			totals.map((row) => [

@@ -43,34 +43,48 @@ async function getSectionsInternal(
 	roomId: string,
 	currentUserId: string
 ): Promise<StatSection[]> {
-	const [roomUsers, totalScoreRaw, exactHitsRaw, predictedWinsRaw, avgRaw] =
-		await Promise.all([
-			prisma.user.findMany({
-				where: { currentRoom: roomId },
-				select: { id: true, name: true },
-			}),
-			prisma.bet.groupBy({
-				by: ["userId"],
-				where: { roomId, points: { not: null } },
-				_sum: { points: true, bonusPoints: true },
-			}),
-			prisma.bet.groupBy({
-				by: ["userId"],
-				where: { roomId, points: 3 },
-				_count: { _all: true },
-			}),
-			prisma.bet.groupBy({
-				by: ["userId"],
-				where: { roomId, points: { gte: 1 } },
-				_count: { _all: true },
-			}),
-			prisma.bet.groupBy({
-				by: ["userId"],
-				where: { roomId, points: { not: null } },
-				_avg: { points: true },
-			}),
-		]);
+	const [
+		roomMemberships,
+		totalScoreRaw,
+		exactHitsRaw,
+		predictedWinsRaw,
+		avgRaw,
+	] = await Promise.all([
+		prisma.userRoom.findMany({
+			where: {
+				room: {
+					name: roomId,
+				},
+			},
+			select: {
+				user: {
+					select: { id: true, name: true },
+				},
+			},
+		}),
+		prisma.bet.groupBy({
+			by: ["userId"],
+			where: { roomId, points: { not: null } },
+			_sum: { points: true, bonusPoints: true },
+		}),
+		prisma.bet.groupBy({
+			by: ["userId"],
+			where: { roomId, points: 3 },
+			_count: { _all: true },
+		}),
+		prisma.bet.groupBy({
+			by: ["userId"],
+			where: { roomId, points: { gte: 1 } },
+			_count: { _all: true },
+		}),
+		prisma.bet.groupBy({
+			by: ["userId"],
+			where: { roomId, points: { not: null } },
+			_avg: { points: true },
+		}),
+	]);
 
+	const roomUsers = roomMemberships.map((membership) => membership.user);
 	const allUserIds = roomUsers.map((u) => u.id);
 	if (allUserIds.length === 0) return [];
 
