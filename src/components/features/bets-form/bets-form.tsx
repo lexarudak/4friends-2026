@@ -1,7 +1,7 @@
 "use client";
 
 import type { FC } from "react";
-import { useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useFormik } from "formik";
 import type { Match, Bet, BetsFormValues } from "@/types/api";
 import type { CardStatus } from "@/components/widgets/match-card";
@@ -52,9 +52,18 @@ function isValidScore(val: string): boolean {
 }
 
 export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
-	const [savedValues, setSavedValues] = useState<BetsFormValues>(() =>
-		buildInitialValues(matches, initialBets)
+	const reinitializedValues = useMemo(
+		() => buildInitialValues(matches, initialBets),
+		[matches, initialBets]
 	);
+
+	const [savedValues, setSavedValues] = useState<BetsFormValues>(
+		() => reinitializedValues
+	);
+
+	useEffect(() => {
+		setSavedValues(reinitializedValues);
+	}, [reinitializedValues]);
 
 	const getMatchStatus = (
 		matchId: string,
@@ -76,7 +85,8 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 	};
 
 	const formik = useFormik<BetsFormValues>({
-		initialValues: buildInitialValues(matches, initialBets),
+		initialValues: reinitializedValues,
+		enableReinitialize: true,
 		validate: (values) => {
 			const betErrors: Record<string, string> = {};
 			for (const match of matches) {

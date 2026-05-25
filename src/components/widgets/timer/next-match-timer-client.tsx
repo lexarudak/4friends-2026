@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useState, type FC, type HTMLAttributes } from "react";
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type FC,
+	type HTMLAttributes,
+} from "react";
 import { useRouter } from "next/navigation";
 import type { NextMatchTimerPayload } from "@/types/api";
 import { Timer } from "./timer";
@@ -16,14 +23,14 @@ export const NextMatchTimerClient: FC<Props> = ({
 }) => {
 	const router = useRouter();
 	const [payload, setPayload] = useState(initialPayload);
-	const [isRefreshing, setIsRefreshing] = useState(false);
+	const isRefreshingRef = useRef(false);
 
 	const isFinished = payload.isTournamentFinished || !payload.nextMatch;
 
 	const refreshNextMatch = useCallback(async () => {
-		if (isFinished || isRefreshing) return;
+		if (isRefreshingRef.current) return;
 
-		setIsRefreshing(true);
+		isRefreshingRef.current = true;
 		try {
 			const response = await fetch("/api/next-match", {
 				method: "GET",
@@ -40,9 +47,34 @@ export const NextMatchTimerClient: FC<Props> = ({
 		} catch (err) {
 			console.error("[NextMatchTimerClient.refreshNextMatch]", err);
 		} finally {
-			setIsRefreshing(false);
+			isRefreshingRef.current = false;
 		}
-	}, [isFinished, isRefreshing, router]);
+	}, [router]);
+
+	useEffect(() => {
+		if (isFinished || !payload.nextMatch) return;
+
+		const serverNowMs = Date.parse(payload.serverNow);
+		const targetMs = Date.parse(payload.nextMatch.targetDateIso);
+		if (Number.isNaN(serverNowMs) || Number.isNaN(targetMs)) return;
+
+		const perfBaseMs = performance.now();
+		const getRemainingMs = () =>
+			targetMs - (serverNowMs + (performance.now() - perfBaseMs));
+
+		const remainingMs = getRemainingMs();
+		if (remainingMs <= 0) {
+			void refreshNextMatch();
+			return;
+		}
+
+		// Keep a tiny buffer so we refresh right after the match start moment.
+		const timeoutId = window.setTimeout(() => {
+			void refreshNextMatch();
+		}, remainingMs + 50);
+
+		return () => window.clearTimeout(timeoutId);
+	}, [isFinished, payload.nextMatch, payload.serverNow, refreshNextMatch]);
 
 	if (!payload.nextMatch || payload.isTournamentFinished) {
 		return (
@@ -61,6 +93,7 @@ export const NextMatchTimerClient: FC<Props> = ({
 
 	return (
 		<Timer
+			key={nextMatch.id}
 			{...props}
 			className={className}
 			targetDate={new Date(nextMatch.targetDateIso)}

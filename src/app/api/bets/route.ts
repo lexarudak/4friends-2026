@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { getActiveRoomId } from "@/lib/active-room";
-import { BetsService } from "@/services/bets.service";
+import { BetsLockedError, BetsService } from "@/services/bets.service";
 import { API_ERROR_CODES } from "@/utils/constants";
 import { NextResponse } from "next/server";
 import type { Bet } from "@/types/api";
@@ -47,9 +47,28 @@ export async function POST(req: Request) {
 		);
 	}
 
-	const body: { bets: Bet[] } = await req.json();
-	await BetsService.saveBets(userId, roomId, body.bets);
-	return NextResponse.json({ ok: true });
+	try {
+		const body: { bets: Bet[] } = await req.json();
+		await BetsService.saveBets(userId, roomId, body.bets);
+		return NextResponse.json({ ok: true });
+	} catch (err) {
+		if (err instanceof BetsLockedError) {
+			return NextResponse.json(
+				{
+					error: API_ERROR_CODES.BETS_LOCKED,
+					message: "This match has already started. Bets are locked.",
+					matchIds: err.matchIds,
+				},
+				{ status: 409 }
+			);
+		}
+
+		console.error("[POST /api/bets]", err);
+		return NextResponse.json(
+			{ error: "INVALID_REQUEST", message: "Could not save bets." },
+			{ status: 400 }
+		);
+	}
 }
 
 export async function DELETE() {

@@ -73,12 +73,6 @@ function toGroupLabel(round: string): string {
 	return round;
 }
 
-function startOfToday(now: Date): Date {
-	const date = new Date(now);
-	date.setHours(0, 0, 0, 0);
-	return date;
-}
-
 export const MatchService = {
 	async getNextMatchTimerPayload(): Promise<NextMatchTimerPayload> {
 		const now = new Date();
@@ -137,7 +131,6 @@ export const MatchService = {
 	async getMatches(): Promise<Match[]> {
 		try {
 			const now = new Date();
-			const dayStart = startOfToday(now);
 
 			const nextMatch = await prisma.match.findFirst({
 				where: {
@@ -156,7 +149,7 @@ export const MatchService = {
 			const rows = await prisma.match.findMany({
 				where: {
 					date: {
-						gte: dayStart,
+						gte: now,
 						lte: endTime,
 					},
 					statusShort: "NS",

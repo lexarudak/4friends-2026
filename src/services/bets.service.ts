@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import type { Bet } from "@/types/api";
 
+export class BetsLockedError extends Error {
+	constructor(public readonly matchIds: number[]) {
+		super("Bets are locked for started matches.");
+		this.name = "BetsLockedError";
+	}
+}
+
 export const BetsService = {
 	async getBets(userId: string, roomId: string): Promise<Bet[]> {
 		try {
@@ -45,15 +52,35 @@ export const BetsService = {
 		);
 
 		const matchIds = [...new Set(validBets.map((b) => Number(b.matchId)))];
+		if (matchIds.length === 0) return;
+
 		const matchRows = await prisma.match.findMany({
 			where: { id: { in: matchIds } },
-			select: { id: true, homeTeamId: true, awayTeamId: true },
+			select: {
+				id: true,
+				date: true,
+				statusShort: true,
+				homeTeamId: true,
+				awayTeamId: true,
+			},
 		});
+
+		const now = new Date();
+		const lockedMatchIds = matchRows
+			.filter((match) => match.date <= now || match.statusShort !== "NS")
+			.map((match) => match.id);
+
+		if (lockedMatchIds.length > 0) {
+			throw new BetsLockedError(lockedMatchIds);
+		}
+
 		const matchById = new Map(matchRows.map((m) => [m.id, m]));
 
-		const ops = validBets.map((b) => {
+		const ops = validBets.flatMap((b) => {
 			const matchId = Number(b.matchId);
 			const match = matchById.get(matchId);
+			if (!match) return [];
+
 			const winPick =
 				b.winPick === "home"
 					? (match?.homeTeamId ?? null)
@@ -61,29 +88,33 @@ export const BetsService = {
 						? (match?.awayTeamId ?? null)
 						: null;
 
-			return prisma.bet.upsert({
-				where: {
-					userId_matchId_roomId: {
+			return [
+				prisma.bet.upsert({
+					where: {
+						userId_matchId_roomId: {
+							userId,
+							matchId,
+							roomId,
+						},
+					},
+					update: {
+						betHome: b.home!,
+						betAway: b.away!,
+						winPick,
+					},
+					create: {
 						userId,
 						matchId,
 						roomId,
+						betHome: b.home!,
+						betAway: b.away!,
+						winPick,
 					},
-				},
-				update: {
-					betHome: b.home!,
-					betAway: b.away!,
-					winPick,
-				},
-				create: {
-					userId,
-					matchId,
-					roomId,
-					betHome: b.home!,
-					betAway: b.away!,
-					winPick,
-				},
-			});
+				}),
+			];
 		});
+
+		if (ops.length === 0) return;
 		await prisma.$transaction(ops);
 	},
 
