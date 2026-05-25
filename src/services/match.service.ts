@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
-import type { Match } from "@/types/api";
+import type { Match, NextMatchTimerPayload } from "@/types/api";
 
 const FALLBACK_FLAG = "🏳️";
 const NEXT_MATCH_WINDOW_HOURS = 24;
@@ -80,6 +80,60 @@ function startOfToday(now: Date): Date {
 }
 
 export const MatchService = {
+	async getNextMatchTimerPayload(): Promise<NextMatchTimerPayload> {
+		const now = new Date();
+
+		try {
+			const nextMatch = await prisma.match.findFirst({
+				where: {
+					date: { gt: now },
+					statusShort: "NS",
+				},
+				orderBy: { date: "asc" },
+				select: {
+					id: true,
+					round: true,
+					date: true,
+					homeTeamName: true,
+					awayTeamName: true,
+				},
+			});
+
+			if (!nextMatch) {
+				return {
+					serverNow: now.toISOString(),
+					isTournamentFinished: true,
+					nextMatch: null,
+				};
+			}
+
+			return {
+				serverNow: now.toISOString(),
+				isTournamentFinished: false,
+				nextMatch: {
+					id: String(nextMatch.id),
+					group: toGroupLabel(nextMatch.round),
+					targetDateIso: nextMatch.date.toISOString(),
+					home: {
+						name: nextMatch.homeTeamName,
+						flag: getTeamFlag(nextMatch.homeTeamName),
+					},
+					away: {
+						name: nextMatch.awayTeamName,
+						flag: getTeamFlag(nextMatch.awayTeamName),
+					},
+				},
+			};
+		} catch (err) {
+			console.error("[MatchService.getNextMatchTimerPayload]", err);
+			return {
+				serverNow: now.toISOString(),
+				isTournamentFinished: true,
+				nextMatch: null,
+			};
+		}
+	},
+
 	async getMatches(): Promise<Match[]> {
 		try {
 			const now = new Date();

@@ -44,6 +44,20 @@ export type Match = {
 	away: Team;
 };
 
+export type NextMatch = {
+	id: string;
+	group: string;
+	targetDateIso: string;
+	home: Team;
+	away: Team;
+};
+
+export type NextMatchTimerPayload = {
+	serverNow: string;
+	isTournamentFinished: boolean;
+	nextMatch: NextMatch | null;
+};
+
 export type Bet = {
 	matchId: string;
 	home: number | null;

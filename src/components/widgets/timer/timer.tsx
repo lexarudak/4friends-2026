@@ -13,6 +13,9 @@ type Props = HTMLAttributes<HTMLDivElement> & {
 	homeFlag?: string;
 	awayTeam?: string;
 	awayFlag?: string;
+	serverNowIso?: string;
+	onReachedZero?: () => void;
+	disableUrgency?: boolean;
 };
 
 type Countdown = {
@@ -24,8 +27,8 @@ type Countdown = {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-const computeCountdown = (targetDate: Date): Countdown => {
-	const diff = Math.max(0, (targetDate?.getTime() ?? 0) - Date.now());
+const computeCountdown = (targetDate: Date, nowMs: number): Countdown => {
+	const diff = Math.max(0, (targetDate?.getTime() ?? 0) - nowMs);
 	const totalSecs = Math.floor(diff / 1000);
 
 	return {
@@ -51,17 +54,57 @@ export const Timer: FC<Props> = ({
 	homeFlag = "",
 	awayTeam,
 	awayFlag = "",
+	serverNowIso,
+	onReachedZero,
+	disableUrgency = false,
 	className,
 	...props
 }) => {
 	const [countdown, setCountdown] = useState<Countdown | null>(null);
+	const [serverClockBase, setServerClockBase] = useState<{
+		serverNowMs: number;
+		perfNowMs: number;
+	} | null>(null);
+	const [isServerClockReady, setIsServerClockReady] = useState(!serverNowIso);
+	const [hasReachedZero, setHasReachedZero] = useState(false);
 
 	useEffect(() => {
-		setCountdown(computeCountdown(targetDate));
-		const tick = () => setCountdown(computeCountdown(targetDate));
+		if (!serverNowIso) {
+			setServerClockBase(null);
+			setIsServerClockReady(true);
+			return;
+		}
+
+		const serverNowMs = Date.parse(serverNowIso);
+		if (Number.isNaN(serverNowMs)) {
+			setServerClockBase(null);
+			setIsServerClockReady(true);
+			return;
+		}
+
+		setServerClockBase({
+			serverNowMs,
+			perfNowMs: performance.now(),
+		});
+		setIsServerClockReady(true);
+	}, [serverNowIso]);
+
+	useEffect(() => {
+		if (!isServerClockReady) return;
+
+		const getNowMs = () => {
+			if (!serverClockBase) return Date.now();
+			return (
+				serverClockBase.serverNowMs +
+				(performance.now() - serverClockBase.perfNowMs)
+			);
+		};
+
+		setCountdown(computeCountdown(targetDate, getNowMs()));
+		const tick = () => setCountdown(computeCountdown(targetDate, getNowMs()));
 		const id = setInterval(tick, 1000);
 		return () => clearInterval(id);
-	}, [targetDate]);
+	}, [targetDate, serverClockBase, isServerClockReady]);
 
 	const totalSecs = countdown
 		? countdown.days * 86400 +
@@ -69,8 +112,28 @@ export const Timer: FC<Props> = ({
 			countdown.mins * 60 +
 			countdown.secs
 		: Infinity;
-	const urgency =
-		totalSecs < 600 ? "red" : totalSecs < 3600 ? "gold" : undefined;
+
+	useEffect(() => {
+		if (!onReachedZero || !Number.isFinite(totalSecs)) return;
+
+		if (totalSecs > 0) {
+			if (hasReachedZero) setHasReachedZero(false);
+			return;
+		}
+
+		if (hasReachedZero) return;
+
+		setHasReachedZero(true);
+		onReachedZero();
+	}, [onReachedZero, totalSecs, hasReachedZero]);
+
+	const urgency = disableUrgency
+		? undefined
+		: totalSecs < 600
+			? "red"
+			: totalSecs < 3600
+				? "gold"
+				: undefined;
 
 	return (
 		<div

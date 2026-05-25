@@ -4,7 +4,7 @@ import "../styles/globals.scss";
 import { Analytics } from "@vercel/analytics/next";
 import { ConditionalLayout } from "@/components/features/conditional-layout";
 import { AppHeader } from "@/components/features/app-header";
-import { Timer } from "@/components/widgets/timer/timer";
+import { NextMatchTimer } from "@/components/widgets/timer";
 import { LiveSection } from "@/components/features/live-section";
 import { TopTable } from "@/components/features/top-table";
 
@@ -36,15 +36,7 @@ export default async function RootLayout({
 					header={header}
 					sidebar={
 						<>
-							<Timer
-								targetDate={new Date("2026-06-11T20:00:00")}
-								message="Next match"
-								subMessage="Group A · Opening"
-								homeTeam="Mexico"
-								homeFlag="🇲🇽"
-								awayTeam="South Africa"
-								awayFlag="🇿🇦"
-							/>
+							<NextMatchTimer />
 							<LiveSection />
 							<TopTable />
 						</>
