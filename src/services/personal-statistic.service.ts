@@ -65,6 +65,10 @@ function extractGroup(round: string): string {
 	return plain?.[1]?.toUpperCase() ?? "-";
 }
 
+function isPlayoffRound(round: string): boolean {
+	return !/group/i.test(round);
+}
+
 function normalizeScoreKey(home: number, away: number): string {
 	const low = Math.min(home, away);
 	const high = Math.max(home, away);
@@ -133,6 +137,14 @@ export const PersonalStatisticService = {
 						? null
 						: (bet.points ?? 0) + (bet.bonusPoints ?? 0);
 
+				const winner = isPlayoffRound(bet.match.round)
+					? bet.match.homeTeamWinner === true
+						? "home"
+						: bet.match.awayTeamWinner === true
+							? "away"
+							: null
+					: null;
+
 				return {
 					id: String(bet.id),
 					group: extractGroup(bet.match.round),
@@ -147,12 +159,7 @@ export const PersonalStatisticService = {
 					time: toTime(bet.match.date),
 					date: toShortDate(bet.match.date),
 					points,
-					winner:
-						bet.match.homeTeamWinner === true
-							? "home"
-							: bet.match.awayTeamWinner === true
-								? "away"
-								: null,
+					winner,
 				};
 			});
 
