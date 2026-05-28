@@ -65,6 +65,22 @@ function extractGroup(round: string): string {
 	return plain?.[1]?.toUpperCase() ?? "-";
 }
 
+function normalizeScoreKey(home: number, away: number): string {
+	const low = Math.min(home, away);
+	const high = Math.max(home, away);
+	return `${low}:${high}`;
+}
+
+function joinTopScoreKeys(
+	entries: Array<[string, { count: number; points: number }]>
+) {
+	return entries.map(([key]) => key).join(" • ");
+}
+
+function joinTopNames(entries: Array<[string, number]>) {
+	return entries.map(([name]) => name).join(" • ");
+}
+
 function buildDefaultStats(): PersonalStat[] {
 	return [
 		{ label: "Total Score", value: 0, size: "lg", variant: "highlight" },
@@ -72,7 +88,18 @@ function buildDefaultStats(): PersonalStat[] {
 		{ label: "Predicted Wins", value: 0 },
 		{ label: "Avg Points per Match", value: 0 },
 		{ label: "Favorite Team", value: "-", variant: "warm", size: "lg" },
-		{ label: "Favorite Score", value: "-", variant: "warm" },
+		{
+			label: "Favorite Score (Most Bets)",
+			value: "-",
+			variant: "warm",
+			size: "lg",
+		},
+		{
+			label: "Favorite Score (Most Points)",
+			value: "-",
+			variant: "warm",
+			size: "lg",
+		},
 		{ label: "Best Day", value: "-", variant: "warm" },
 	];
 }
@@ -158,13 +185,18 @@ export const PersonalStatisticService = {
 				}
 			}
 
-			const favoriteTeamEntry = [...teamPoints.entries()].sort(
-				(a, b) => b[1] - a[1]
-			)[0];
+			const favoriteTeamEntries = [...teamPoints.entries()];
+			const maxTeamPoints =
+				favoriteTeamEntries.length > 0
+					? Math.max(...favoriteTeamEntries.map(([, points]) => points))
+					: 0;
+			const topFavoriteTeams = favoriteTeamEntries
+				.filter(([, points]) => points === maxTeamPoints)
+				.sort((a, b) => a[0].localeCompare(b[0]));
 
 			const scoreStats = new Map<string, { count: number; points: number }>();
 			for (const bet of finished) {
-				const key = `${bet.betHome} : ${bet.betAway}`;
+				const key = normalizeScoreKey(bet.betHome, bet.betAway);
 				const prev = scoreStats.get(key) ?? { count: 0, points: 0 };
 				scoreStats.set(key, {
 					count: prev.count + 1,
@@ -172,10 +204,25 @@ export const PersonalStatisticService = {
 				});
 			}
 
-			const favoriteScoreEntry = [...scoreStats.entries()].sort((a, b) => {
-				if (b[1].count !== a[1].count) return b[1].count - a[1].count;
-				return b[1].points - a[1].points;
-			})[0];
+			const scoreEntries = [...scoreStats.entries()];
+
+			const maxBets = Math.max(...scoreEntries.map(([, value]) => value.count));
+			const favoriteScoreEntries = scoreEntries
+				.filter(([, value]) => value.count === maxBets)
+				.sort((a, b) => {
+					if (b[1].points !== a[1].points) return b[1].points - a[1].points;
+					return a[0].localeCompare(b[0]);
+				});
+
+			const maxPoints = Math.max(
+				...scoreEntries.map(([, value]) => value.points)
+			);
+			const bestPointsScoreEntries = scoreEntries
+				.filter(([, value]) => value.points === maxPoints)
+				.sort((a, b) => {
+					if (b[1].count !== a[1].count) return b[1].count - a[1].count;
+					return a[0].localeCompare(b[0]);
+				});
 
 			const dayPoints = new Map<string, { points: number; date: Date }>();
 			for (const bet of finished) {
@@ -206,18 +253,46 @@ export const PersonalStatisticService = {
 				{ label: "Avg Points per Match", value: avgPoints },
 				{
 					label: "Favorite Team",
-					value: favoriteTeamEntry?.[0] ?? "-",
-					sub: favoriteTeamEntry ? `${favoriteTeamEntry[1]} pts` : undefined,
+					value:
+						topFavoriteTeams.length > 0 ? joinTopNames(topFavoriteTeams) : "-",
+					sub:
+						topFavoriteTeams.length === 1
+							? `${topFavoriteTeams[0][1]} pts`
+							: topFavoriteTeams.length > 1
+								? `${topFavoriteTeams[0][1]} pts each`
+								: undefined,
 					variant: "warm",
 					size: "lg",
 				},
 				{
-					label: "Favorite Score",
-					value: favoriteScoreEntry?.[0] ?? "-",
-					sub: favoriteScoreEntry
-						? `${favoriteScoreEntry[1].points} pts`
-						: undefined,
+					label: "Favorite Score (Most Bets)",
+					value:
+						favoriteScoreEntries.length > 0
+							? joinTopScoreKeys(favoriteScoreEntries)
+							: "-",
+					sub:
+						favoriteScoreEntries.length === 1
+							? `${favoriteScoreEntries[0][1].points} pts • ${favoriteScoreEntries[0][1].count} bets`
+							: favoriteScoreEntries.length > 1
+								? `${favoriteScoreEntries[0][1].count} bets each`
+								: undefined,
 					variant: "warm",
+					size: "lg",
+				},
+				{
+					label: "Favorite Score (Most Points)",
+					value:
+						bestPointsScoreEntries.length > 0
+							? joinTopScoreKeys(bestPointsScoreEntries)
+							: "-",
+					sub:
+						bestPointsScoreEntries.length === 1
+							? `${bestPointsScoreEntries[0][1].points} pts • ${bestPointsScoreEntries[0][1].count} bets`
+							: bestPointsScoreEntries.length > 1
+								? `${bestPointsScoreEntries[0][1].points} pts each`
+								: undefined,
+					variant: "warm",
+					size: "lg",
 				},
 				{
 					label: "Best Day",

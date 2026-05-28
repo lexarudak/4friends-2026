@@ -33,6 +33,10 @@ function parseISODateParam(value: string | null): Date | null {
 	return dt;
 }
 
+function isWithinRange(value: Date, minDate: Date, maxDate: Date): boolean {
+	return value >= minDate && value <= maxDate;
+}
+
 function formatISODateParam(value: Date | undefined): string | null {
 	if (!value) return null;
 	const y = value.getFullYear();
@@ -67,21 +71,55 @@ function rangeFromSearchParams(
 	defaultRange: DateRange,
 	minDate: Date,
 	maxDate: Date
-): DateRange {
+): { range: DateRange; isValid: boolean } {
+	const hasFrom = searchParams.has("from");
+	const hasTo = searchParams.has("to");
+	const hasDateParams = hasFrom || hasTo;
+
 	const fromParam = parseISODateParam(searchParams.get("from"));
 	const toParam = parseISODateParam(searchParams.get("to"));
+	const fromRaw = searchParams.get("from");
+	const toRaw = searchParams.get("to");
 
-	if (!fromParam && !toParam) return defaultRange;
+	if (!hasDateParams) return { range: defaultRange, isValid: true };
 
-	return normalizeRange(
-		{
-			from: fromParam ?? toParam ?? defaultRange.from,
-			to: toParam ?? fromParam ?? defaultRange.to,
-		},
-		defaultRange,
-		minDate,
-		maxDate
-	);
+	if ((hasFrom && !fromParam) || (hasTo && !toParam)) {
+		return { range: defaultRange, isValid: false };
+	}
+
+	if (
+		(fromParam && !isWithinRange(fromParam, minDate, maxDate)) ||
+		(toParam && !isWithinRange(toParam, minDate, maxDate))
+	) {
+		return { range: defaultRange, isValid: false };
+	}
+
+	if (fromRaw && fromParam && formatISODateParam(fromParam) !== fromRaw) {
+		return { range: defaultRange, isValid: false };
+	}
+
+	if (toRaw && toParam && formatISODateParam(toParam) !== toRaw) {
+		return { range: defaultRange, isValid: false };
+	}
+
+	if (!fromParam && !toParam) return { range: defaultRange, isValid: true };
+
+	if (fromParam && toParam && fromParam > toParam) {
+		return { range: defaultRange, isValid: false };
+	}
+
+	return {
+		range: normalizeRange(
+			{
+				from: fromParam ?? toParam ?? defaultRange.from,
+				to: toParam ?? fromParam ?? defaultRange.to,
+			},
+			defaultRange,
+			minDate,
+			maxDate
+		),
+		isValid: true,
+	};
 }
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -117,6 +155,20 @@ export const ScheduleSection = ({ matches }: Props) => {
 		[searchParams, defaultRange, minDate, maxDate]
 	);
 
+	useEffect(() => {
+		const hasDateParams = searchParams.has("from") || searchParams.has("to");
+		if (!hasDateParams || range.isValid) return;
+
+		const nextParams = new URLSearchParams(searchParams.toString());
+		nextParams.delete("from");
+		nextParams.delete("to");
+
+		const query = nextParams.toString();
+		router.replace(query ? `${pathname}?${query}` : pathname, {
+			scroll: false,
+		});
+	}, [range.isValid, searchParams, router, pathname]);
+
 	const updateRangeAndQuery = (next: DateRange) => {
 		const normalized = normalizeRange(next, defaultRange, minDate, maxDate);
 
@@ -137,8 +189,8 @@ export const ScheduleSection = ({ matches }: Props) => {
 	};
 
 	const filtered = useMemo(() => {
-		const from = range.from;
-		const to = range.to ?? range.from;
+		const from = range.range.from;
+		const to = range.range.to ?? range.range.from;
 		return matches.filter((m) => {
 			const d = parseDDMMYY(m.date);
 			if (
@@ -165,7 +217,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 			}
 			return true;
 		});
-	}, [matches, range, debouncedCountry]);
+	}, [matches, range.range, debouncedCountry]);
 
 	const handleClear = () => {
 		updateRangeAndQuery(defaultRange);
@@ -179,7 +231,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 			{/* Filters */}
 			<div className={styles.filters}>
 				<DateRangePicker
-					value={range}
+					value={range.range}
 					onChange={updateRangeAndQuery}
 					fromDate={minDate}
 					toDate={maxDate}
