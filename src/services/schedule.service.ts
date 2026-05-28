@@ -106,7 +106,8 @@ function getResult(
 export const ScheduleService = {
 	async getScheduleMatches(roomId?: string): Promise<ScheduleMatch[]> {
 		try {
-			const rangeStart = new Date(Date.UTC(2026, 5, 11, 0, 0, 0));
+			const rangeStart = new Date();
+			rangeStart.setHours(0, 0, 0, 0);
 			const rangeEnd = new Date(Date.UTC(2026, 6, 19, 23, 59, 59));
 
 			const matches = await prisma.match.findMany({
@@ -185,7 +186,7 @@ export const ScheduleService = {
 
 			return matches.map((match) => {
 				const status = toStatus(match.statusShort);
-				const isStarted = status !== "upcoming";
+				const isStartedByTime = match.date <= new Date();
 				const { resultHome, resultAway } = getResult(
 					status,
 					match.goalsHome,
@@ -211,7 +212,7 @@ export const ScheduleService = {
 					minute: status === "live" ? (match.statusElapsed ?? null) : null,
 					resultHome,
 					resultAway,
-					bets: isStarted ? (betsByMatchId.get(match.id) ?? []) : [],
+					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],
 				};
 			});
 		} catch (err) {
