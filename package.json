@@ -18,10 +18,14 @@
 		"seed:wc2026": "tsx scripts/seed-wc2026-static.ts",
 		"seed:users:local": "tsx scripts/seed-local-test-users.ts",
 		"seed:users:local-2": "tsx scripts/seed-local-2-test-users.ts",
+		"seed:bets:test-users": "tsx scripts/seed-test-player-bets.ts",
+		"seed:results:past": "tsx scripts/seed-past-match-results-and-points.ts",
 		"seed:matches:local": "tsx scripts/guard-local-seed.ts && npm run seed:matches",
 		"seed:wc2026:local": "tsx scripts/guard-local-seed.ts && npm run seed:wc2026",
 		"seed:users:local:safe": "tsx scripts/guard-local-seed.ts && npm run seed:users:local",
-		"seed:users:local-2:safe": "tsx scripts/guard-local-seed.ts && npm run seed:users:local-2"
+		"seed:users:local-2:safe": "tsx scripts/guard-local-seed.ts && npm run seed:users:local-2",
+		"seed:bets:test-users:safe": "tsx scripts/guard-local-seed.ts && npm run seed:bets:test-users",
+		"seed:results:past:safe": "tsx scripts/guard-local-seed.ts && npm run seed:results:past"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",

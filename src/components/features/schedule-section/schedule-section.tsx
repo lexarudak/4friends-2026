@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { DateRange } from "react-day-picker";
 import type { ScheduleMatch } from "@/components/widgets/schedule-match-card";
 import { ScheduleMatchCard } from "@/components/widgets/schedule-match-card";
@@ -18,6 +19,71 @@ function parseDDMMYY(date: string): Date {
 	return new Date(2000 + y, m - 1, d);
 }
 
+function parseISODateParam(value: string | null): Date | null {
+	if (!value) return null;
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+
+	const [y, m, d] = value.split("-").map(Number);
+	const dt = new Date(y, m - 1, d);
+
+	if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) {
+		return null;
+	}
+
+	return dt;
+}
+
+function formatISODateParam(value: Date | undefined): string | null {
+	if (!value) return null;
+	const y = value.getFullYear();
+	const m = String(value.getMonth() + 1).padStart(2, "0");
+	const d = String(value.getDate()).padStart(2, "0");
+	return `${y}-${m}-${d}`;
+}
+
+function clampDate(value: Date, minDate: Date, maxDate: Date): Date {
+	if (value < minDate) return minDate;
+	if (value > maxDate) return maxDate;
+	return value;
+}
+
+function normalizeRange(
+	range: DateRange,
+	defaultRange: DateRange,
+	minDate: Date,
+	maxDate: Date
+): DateRange {
+	const from = range.from
+		? clampDate(range.from, minDate, maxDate)
+		: defaultRange.from;
+	const toRaw = range.to ? clampDate(range.to, minDate, maxDate) : from;
+
+	if (!from || !toRaw) return defaultRange;
+	return from > toRaw ? { from: toRaw, to: from } : { from, to: toRaw };
+}
+
+function rangeFromSearchParams(
+	searchParams: ReadonlyURLSearchParams,
+	defaultRange: DateRange,
+	minDate: Date,
+	maxDate: Date
+): DateRange {
+	const fromParam = parseISODateParam(searchParams.get("from"));
+	const toParam = parseISODateParam(searchParams.get("to"));
+
+	if (!fromParam && !toParam) return defaultRange;
+
+	return normalizeRange(
+		{
+			from: fromParam ?? toParam ?? defaultRange.from,
+			to: toParam ?? fromParam ?? defaultRange.to,
+		},
+		defaultRange,
+		minDate,
+		maxDate
+	);
+}
+
 function useDebounce<T>(value: T, delay: number): T {
 	const [debounced, setDebounced] = useState(value);
 	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -29,17 +95,46 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export const ScheduleSection = ({ matches }: Props) => {
-	const minDate = new Date(2026, 4, 1);
-	const today = new Date();
-	const defaultTo = new Date(today);
-	defaultTo.setDate(defaultTo.getDate() + 2);
-	const maxDate = new Date(2026, 6, 19);
-	const defaultFrom = today < minDate ? minDate : today;
-	const defaultRange: DateRange = { from: defaultFrom, to: defaultTo };
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
-	const [range, setRange] = useState<DateRange>(defaultRange);
+	const minDate = useMemo(() => new Date(2026, 4, 1), []);
+	const maxDate = useMemo(() => new Date(2026, 6, 19), []);
+	const defaultRange = useMemo<DateRange>(() => {
+		const today = new Date();
+		const defaultTo = new Date(today);
+		defaultTo.setDate(defaultTo.getDate() + 2);
+		const defaultFrom = today < minDate ? minDate : today;
+		return { from: defaultFrom, to: defaultTo };
+	}, [minDate]);
+
 	const [countryInput, setCountryInput] = useState("");
 	const debouncedCountry = useDebounce(countryInput.trim().toLowerCase(), 300);
+
+	const range = useMemo(
+		() => rangeFromSearchParams(searchParams, defaultRange, minDate, maxDate),
+		[searchParams, defaultRange, minDate, maxDate]
+	);
+
+	const updateRangeAndQuery = (next: DateRange) => {
+		const normalized = normalizeRange(next, defaultRange, minDate, maxDate);
+
+		const nextFrom = formatISODateParam(normalized.from);
+		const nextTo = formatISODateParam(normalized.to);
+		const nextParams = new URLSearchParams(searchParams.toString());
+
+		if (nextFrom) nextParams.set("from", nextFrom);
+		else nextParams.delete("from");
+
+		if (nextTo) nextParams.set("to", nextTo);
+		else nextParams.delete("to");
+
+		const query = nextParams.toString();
+		router.replace(query ? `${pathname}?${query}` : pathname, {
+			scroll: false,
+		});
+	};
 
 	const filtered = useMemo(() => {
 		const from = range.from;
@@ -73,7 +168,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 	}, [matches, range, debouncedCountry]);
 
 	const handleClear = () => {
-		setRange(defaultRange);
+		updateRangeAndQuery(defaultRange);
 		setCountryInput("");
 	};
 
@@ -85,7 +180,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 			<div className={styles.filters}>
 				<DateRangePicker
 					value={range}
-					onChange={setRange}
+					onChange={updateRangeAndQuery}
 					fromDate={minDate}
 					toDate={maxDate}
 				/>

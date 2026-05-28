@@ -2,6 +2,7 @@ import type { FC } from "react";
 import type { TableRow } from "@/types/api";
 import { cn } from "@/utils/lib";
 import { SectionLabel } from "@/components/shared/section-label";
+import { PreservedQueryLink } from "@/components/shared/preserved-query-link";
 import styles from "./score-table.module.scss";
 
 type Props = {
@@ -82,9 +83,9 @@ export const ScoreTable: FC<Props> = ({
 			</ul>
 
 			{href && (
-				<a href={href} className={styles.link}>
+				<PreservedQueryLink href={href} className={styles.link}>
 					{linkLabel}
-				</a>
+				</PreservedQueryLink>
 			)}
 		</div>
 	);

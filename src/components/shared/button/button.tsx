@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import Link from "next/link";
 import { cn } from "@/utils/lib";
+import { PreservedQueryLink } from "@/components/shared/preserved-query-link";
 import styles from "./button.module.scss";
 
 export type ButtonColor = "neutral" | "green" | "primary" | "yellow" | "red";
@@ -34,10 +35,19 @@ export function Button({
 	);
 
 	if (href !== undefined) {
+		const isInternal = href.startsWith("/");
 		return (
-			<Link href={href} data-color={color} className={cls}>
-				{children}
-			</Link>
+			<>
+				{isInternal ? (
+					<PreservedQueryLink href={href} data-color={color} className={cls}>
+						{children}
+					</PreservedQueryLink>
+				) : (
+					<Link href={href} data-color={color} className={cls}>
+						{children}
+					</Link>
+				)}
+			</>
 		);
 	}
 

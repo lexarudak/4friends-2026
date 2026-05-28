@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { signOutUser } from "@/app/rooms/actions";
 import { NAV_LINKS } from "./header-nav-bar.constants";
+import { PreservedQueryLink } from "@/components/shared/preserved-query-link";
 import styles from "./header-nav-bar.module.scss";
 
 export function NavMenu() {
@@ -17,14 +17,14 @@ export function NavMenu() {
 			<ul className={styles.navLinks}>
 				{NAV_LINKS.map((link) => (
 					<li key={link.href} className={styles.navItem}>
-						<Link
+						<PreservedQueryLink
 							href={link.href}
 							prefetch={false}
 							className={link.icon ? styles.navLinkWithIcon : undefined}
 						>
 							{link.icon && <link.icon className={styles.navIcon} />}
 							{link.label}
-						</Link>
+						</PreservedQueryLink>
 					</li>
 				))}
 				<li className={styles.navItem}>
@@ -62,7 +62,7 @@ export function NavMenu() {
 						<ul className={styles.drawerLinks}>
 							{NAV_LINKS.map((link) => (
 								<li key={link.href} className={styles.drawerItem}>
-									<Link
+									<PreservedQueryLink
 										href={link.href}
 										prefetch={false}
 										className={link.icon ? styles.navLinkWithIcon : undefined}
@@ -70,7 +70,7 @@ export function NavMenu() {
 									>
 										{link.icon && <link.icon className={styles.navIcon} />}
 										{link.label}
-									</Link>
+									</PreservedQueryLink>
 								</li>
 							))}
 							<li className={styles.drawerItem}>
