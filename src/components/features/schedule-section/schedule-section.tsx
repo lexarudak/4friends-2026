@@ -29,11 +29,13 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export const ScheduleSection = ({ matches }: Props) => {
+	const minDate = new Date(2026, 4, 1);
 	const today = new Date();
 	const defaultTo = new Date(today);
 	defaultTo.setDate(defaultTo.getDate() + 2);
 	const maxDate = new Date(2026, 6, 19);
-	const defaultRange: DateRange = { from: today, to: defaultTo };
+	const defaultFrom = today < minDate ? minDate : today;
+	const defaultRange: DateRange = { from: defaultFrom, to: defaultTo };
 
 	const [range, setRange] = useState<DateRange>(defaultRange);
 	const [countryInput, setCountryInput] = useState("");
@@ -84,7 +86,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 				<DateRangePicker
 					value={range}
 					onChange={setRange}
-					fromDate={today}
+					fromDate={minDate}
 					toDate={maxDate}
 				/>
 				<p className={styles.filterHint}>Select date range to show</p>
