@@ -1,6 +1,6 @@
 # Language Feedback Log
 
-Last updated: 2026-05-23
+Last updated: 2026-05-28
 Last reminder shown: 2026-05-08
 
 ## Purpose
@@ -50,6 +50,8 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 | 37  | Spelling/Grammar | "reat enpoints"                                              | "real endpoints"                                                 | Common typo pair in technical requests                      |
 | 38  | Wording          | "BE end DB"                                                  | "BE and DB"                                                      | Use "and" (not "end") for natural coordination wording      |
 | 39  | Spelling/Grammar | "swith" / "escape from the prev one"                         | "switch" / "leave the previous one"                              | Common typo and clearer phrasing for room behavior          |
+| 40  | Wording (RU)     | "кроме моего зарегистрированных"                             | "кроме моего зарегистрированного пользователя"                   | Более естественная и грамматически корректная формулировка  |
+| 41  | Punctuation (RU) | "назови их-как-то иначе"                                     | "назови их как-то иначе"                                         | Между словами нужен пробел, а не дефис                      |
 
 ## Recent examples
 
@@ -217,6 +219,16 @@ Track frequent grammar/wording mistakes from user messages and provide better al
 
 - Original: "lets remove all mocks and connect reat enpoints"
 - Better: "Let's remove all mocks and connect real endpoints."
+
+### Example AH
+
+- Original: "кроме моего зарегистрированных"
+- Better: "кроме моего зарегистрированного пользователя"
+
+### Example AI
+
+- Original: "назови их-как-то иначе"
+- Better: "назови их как-то иначе"
 
 ### Example AH
 

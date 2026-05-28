@@ -16,8 +16,12 @@
 		"db:migrate:deploy": "npx prisma migrate deploy",
 		"seed:matches": "tsx scripts/seed-matches.ts",
 		"seed:wc2026": "tsx scripts/seed-wc2026-static.ts",
+		"seed:users:local": "tsx scripts/seed-local-test-users.ts",
+		"seed:users:local-2": "tsx scripts/seed-local-2-test-users.ts",
 		"seed:matches:local": "tsx scripts/guard-local-seed.ts && npm run seed:matches",
-		"seed:wc2026:local": "tsx scripts/guard-local-seed.ts && npm run seed:wc2026"
+		"seed:wc2026:local": "tsx scripts/guard-local-seed.ts && npm run seed:wc2026",
+		"seed:users:local:safe": "tsx scripts/guard-local-seed.ts && npm run seed:users:local",
+		"seed:users:local-2:safe": "tsx scripts/guard-local-seed.ts && npm run seed:users:local-2"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",
