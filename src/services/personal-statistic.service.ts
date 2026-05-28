@@ -175,9 +175,12 @@ export const PersonalStatisticService = {
 			const predictedWins = finished.filter(
 				(bet) => (bet.points ?? 0) >= 1
 			).length;
-			// Новый расчёт: делим на количество завершённых матчей (points !== null)
+			// Новый расчёт: делим на количество завершённых матчей (goalsHome и goalsAway не null)
 			const allFinishedMatches = await prisma.match.count({
-				where: { points: { not: null } },
+				where: {
+					goalsHome: { not: null },
+					goalsAway: { not: null },
+				},
 			});
 			const avgPoints =
 				allFinishedMatches > 0
