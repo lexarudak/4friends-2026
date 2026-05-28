@@ -91,7 +91,7 @@ function buildDefaultStats(): PersonalStat[] {
 		{ label: "Exact Score Hits", value: 0, size: "lg" },
 		{ label: "Predicted Wins", value: 0 },
 		{ label: "Avg Points per Match", value: 0 },
-		{ label: "Favorite Team", value: "-", variant: "warm", size: "lg" },
+		// { label: "Favorite Team", value: "-", variant: "warm", size: "lg" },
 		{
 			label: "Favorite Score (Most Bets)",
 			value: "-",
@@ -180,26 +180,7 @@ export const PersonalStatisticService = {
 					? Math.round((totalScore / finished.length) * 100) / 100
 					: 0;
 
-			const teamPoints = new Map<string, number>();
-			for (const bet of finished) {
-				const points = (bet.points ?? 0) + (bet.bonusPoints ?? 0);
-				if (bet.betHome > bet.betAway) {
-					const current = teamPoints.get(bet.match.homeTeamName) ?? 0;
-					teamPoints.set(bet.match.homeTeamName, current + points);
-				} else if (bet.betAway > bet.betHome) {
-					const current = teamPoints.get(bet.match.awayTeamName) ?? 0;
-					teamPoints.set(bet.match.awayTeamName, current + points);
-				}
-			}
-
-			const favoriteTeamEntries = [...teamPoints.entries()];
-			const maxTeamPoints =
-				favoriteTeamEntries.length > 0
-					? Math.max(...favoriteTeamEntries.map(([, points]) => points))
-					: 0;
-			const topFavoriteTeams = favoriteTeamEntries
-				.filter(([, points]) => points === maxTeamPoints)
-				.sort((a, b) => a[0].localeCompare(b[0]));
+			// Favorite Team calculation removed
 
 			const scoreStats = new Map<string, { count: number; points: number }>();
 			for (const bet of finished) {
@@ -258,19 +239,7 @@ export const PersonalStatisticService = {
 				{ label: "Exact Score Hits", value: exactHits, size: "lg" },
 				{ label: "Predicted Wins", value: predictedWins },
 				{ label: "Avg Points per Match", value: avgPoints },
-				{
-					label: "Favorite Team",
-					value:
-						topFavoriteTeams.length > 0 ? joinTopNames(topFavoriteTeams) : "-",
-					sub:
-						topFavoriteTeams.length === 1
-							? `${topFavoriteTeams[0][1]} pts`
-							: topFavoriteTeams.length > 1
-								? `${topFavoriteTeams[0][1]} pts each`
-								: undefined,
-					variant: "warm",
-					size: "lg",
-				},
+				// { label: "Favorite Team", ... } removed
 				{
 					label: "Favorite Score (Most Bets)",
 					value:
