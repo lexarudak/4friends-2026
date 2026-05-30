@@ -57,6 +57,9 @@ function toGroupLabel(round: string): string {
 	}
 
 	const lower = round.toLowerCase();
+	if (lower.includes("round of 32") || lower.includes("1/32")) {
+		return "1/32 Final";
+	}
 	if (lower.includes("round of 16") || lower.includes("1/8")) {
 		return "1/8 Final";
 	}

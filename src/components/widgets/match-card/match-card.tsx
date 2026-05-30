@@ -37,12 +37,10 @@ export const MatchCard: FC<Props> = ({
 	status = "default",
 	className,
 }) => {
-	const group = match.group.replace(/^Group\s*/i, "");
-
 	return (
 		<li className={cn(styles.card, className)} data-status={status}>
 			<div className={styles.header}>
-				<span className={styles.group}>Group {group}</span>
+				<span className={styles.group}>{match.group}</span>
 				<span className={styles.meta}>
 					<span className={styles.time}>{match.time}</span>
 					<span className={styles.date}>{match.date}</span>
