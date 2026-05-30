@@ -116,6 +116,50 @@ async function main() {
 	console.log(
 		`✓ Imported ${data.id} (${tournament}): ${data.homeTeamName} ${data.goalsHome ?? "-"}-${data.goalsAway ?? "-"} ${data.awayTeamName} | ${data.round} | ${data.statusShort} ${data.statusElapsed ?? ""}'`
 	);
+
+	// If the match is finished, recalc points for all bets on it.
+	const FINAL = new Set(["FT", "AET", "PEN"]);
+	if (FINAL.has(data.statusShort)) {
+		const actualHome = data.fulltimeHome ?? data.goalsHome;
+		const actualAway = data.fulltimeAway ?? data.goalsAway;
+		if (actualHome != null && actualAway != null) {
+			const isPlayoff = !/group/i.test(data.round);
+			const winnerTeamId =
+				data.homeTeamWinner === true
+					? data.homeTeamId
+					: data.awayTeamWinner === true
+						? data.awayTeamId
+						: null;
+			const bets = await prisma.bet.findMany({
+				where: { matchId: data.id },
+				select: { id: true, betHome: true, betAway: true, winPick: true },
+			});
+			let recalced = 0;
+			for (const bet of bets) {
+				let points = 0;
+				if (bet.betHome === actualHome && bet.betAway === actualAway) points = 3;
+				else if (
+					Math.sign(bet.betHome - bet.betAway) ===
+					Math.sign(actualHome - actualAway)
+				) {
+					points = bet.betHome - bet.betAway === actualHome - actualAway ? 2 : 1;
+				}
+				const bonusPoints =
+					isPlayoff &&
+					bet.winPick != null &&
+					winnerTeamId != null &&
+					bet.winPick === winnerTeamId
+						? 2
+						: 0;
+				await prisma.bet.update({
+					where: { id: bet.id },
+					data: { points, bonusPoints },
+				});
+				recalced++;
+			}
+			console.log(`  → recalculated ${recalced} bets`);
+		}
+	}
 }
 
 main()

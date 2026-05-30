@@ -13,6 +13,8 @@ const TTL_DEFAULT_MS = 5 * 60 * 1000;
 const TTL_LATE_PLAYOFF_MS = 3 * 60 * 1000;
 const PRE_MATCH_WINDOW_MS = 30 * 60 * 1000;
 
+const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+
 function isLateRound(round: string): boolean {
 	return /quarter|semi|final/i.test(round) && !/group/i.test(round);
 }
@@ -144,6 +146,34 @@ async function persistFixtures(
 	return { updated: relevantFixtures.length, finalized };
 }
 
+/**
+ * Matches that were live in our DB but dropped out of the `live=all` response
+ * have finished between syncs. `live=all` never returns finished matches, so
+ * we fetch each by id to capture its final status/score and recalc points.
+ */
+async function finalizeDroppedLiveMatches(
+	liveIds: Set<number>
+): Promise<{ updated: number; finalized: number }> {
+	const staleLive = await prisma.match.findMany({
+		where: {
+			statusShort: { in: LIVE_STATUSES },
+			id: { notIn: [...liveIds] },
+		},
+		select: { id: true },
+	});
+	if (staleLive.length === 0) return { updated: 0, finalized: 0 };
+
+	const fetched: ApiFixture[] = [];
+	for (const m of staleLive) {
+		const quota = await FootballApi.getQuotaStatus();
+		if (!quota.canSync) break;
+		const fx = await FootballApi.fetchFixtureById(m.id);
+		if (fx) fetched.push(fx);
+	}
+
+	return persistFixtures(fetched);
+}
+
 export const FixtureSyncService = {
 	getTtlMs(hasLate: boolean): number {
 		return hasLate ? TTL_LATE_PLAYOFF_MS : TTL_DEFAULT_MS;
@@ -177,12 +207,14 @@ export const FixtureSyncService = {
 
 		try {
 			const fixtures = await FootballApi.fetchLiveFixtures();
-			const { updated, finalized } = await persistFixtures(fixtures);
+			const liveIds = new Set(fixtures.map((f) => f.fixture.id));
+			const live = await persistFixtures(fixtures);
+			const dropped = await finalizeDroppedLiveMatches(liveIds);
 			const after = await FootballApi.getQuotaStatus();
 			return {
 				kind: "synced",
-				updated,
-				finalized,
+				updated: live.updated + dropped.updated,
+				finalized: live.finalized + dropped.finalized,
 				lastSyncAt: after.lastSyncAt ?? new Date(),
 			};
 		} catch (err) {
