@@ -2,6 +2,7 @@ import type { FC, ReactNode } from "react";
 import type { BetItemResultData } from "./bet-item-result";
 import { cn } from "@/utils/lib";
 import styles from "./bet-item.module.scss";
+import { TeamBadge } from "@/components/shared/team-badge/team-badge";
 
 export type BetItemStatus = "pending" | "exact" | "win" | "miss";
 
@@ -104,8 +105,12 @@ export const BetItem: FC<Props> = ({
 								/>
 							)}
 							<span className={styles.bet}>{scoreSlot ?? betHome}</span>
-							<span className={styles.flag}>{homeFlag}</span>
-							<span className={styles.teamName}>{homeTeam}</span>
+							<TeamBadge
+								name={homeTeam}
+								flag={homeFlag}
+								size="s"
+								className={styles.teamBadge}
+							/>
 						</div>
 						<div className={styles.resultRow}>
 							{result.winner != null && (
@@ -134,21 +139,33 @@ export const BetItem: FC<Props> = ({
 								/>
 							)}
 							<span className={styles.bet}>{scoreSlot ?? betAway}</span>
-							<span className={styles.flag}>{awayFlag}</span>
-							<span className={styles.teamName}>{awayTeam}</span>
+							<TeamBadge
+								name={awayTeam}
+								flag={awayFlag}
+								size="s"
+								className={styles.teamBadge}
+							/>
 						</div>
 					</div>
 				) : (
 					<div className={styles.betsCol}>
 						<div className={styles.teamRow}>
 							<span className={styles.bet}>{scoreSlot ?? betHome}</span>
-							<span className={styles.flag}>{homeFlag}</span>
-							<span className={styles.teamName}>{homeTeam}</span>
+							<TeamBadge
+								name={homeTeam}
+								flag={homeFlag}
+								size="s"
+								className={styles.teamBadge}
+							/>
 						</div>
 						<div className={styles.teamRow}>
 							<span className={styles.bet}>{scoreSlot ?? betAway}</span>
-							<span className={styles.flag}>{awayFlag}</span>
-							<span className={styles.teamName}>{awayTeam}</span>
+							<TeamBadge
+								name={awayTeam}
+								flag={awayFlag}
+								size="s"
+								className={styles.teamBadge}
+							/>
 						</div>
 					</div>
 				)}

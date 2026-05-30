@@ -3,6 +3,7 @@ import type { Match } from "@/types/api";
 import { ScoreInput } from "@/components/shared/score-input";
 import { cn } from "@/utils/lib";
 import styles from "./match-card.module.scss";
+import { TeamBadge } from "@/components/shared/team-badge/team-badge";
 
 export type CardStatus = "default" | "dirty" | "saved" | "error";
 
@@ -76,8 +77,12 @@ export const MatchCard: FC<Props> = ({
 									onScoreChange?.("home", e.currentTarget.value);
 								}}
 							/>
-							<span className={styles.flag}>{match.home.flag}</span>
-							<span className={styles.teamName}>{match.home.name}</span>
+							<TeamBadge
+								name={match.home.name}
+								flag={match.home.flag}
+								size="m"
+								className={styles.teamBadge}
+							/>
 						</div>
 						<div className={styles.teamRow}>
 							{isPlayoff && (
@@ -100,8 +105,12 @@ export const MatchCard: FC<Props> = ({
 									onScoreChange?.("away", e.currentTarget.value);
 								}}
 							/>
-							<span className={styles.flag}>{match.away.flag}</span>
-							<span className={styles.teamName}>{match.away.name}</span>
+							<TeamBadge
+								name={match.away.name}
+								flag={match.away.flag}
+								size="m"
+								className={styles.teamBadge}
+							/>
 						</div>
 					</div>
 				</div>

@@ -94,7 +94,7 @@ function parseKnockoutStage(round: string): WcKnockoutStage | null {
 
 function parseFinalLabel(round: string): string {
 	const lower = round.toLowerCase();
-	if (lower.includes("third")) return "Third Place";
+	if (lower.includes("third") || lower.includes("3rd")) return "Third Place";
 	if (lower.includes("final")) return "Final";
 	return round;
 }
@@ -136,7 +136,9 @@ export const WorldCupService = {
 					date: true,
 					statusShort: true,
 					homeTeamName: true,
+					homeTeamLogo: true,
 					awayTeamName: true,
+					awayTeamLogo: true,
 					homeTeamWinner: true,
 					awayTeamWinner: true,
 					goalsHome: true,
@@ -159,7 +161,7 @@ export const WorldCupService = {
 					const teams = groupMap.get(groupName) ?? new Map<string, WcTeam>();
 					const home = teams.get(row.homeTeamName) ?? {
 						name: row.homeTeamName,
-						flag: getTeamFlag(row.homeTeamName),
+						flag: row.homeTeamLogo || getTeamFlag(row.homeTeamName),
 						played: 0,
 						goalsFor: 0,
 						goalsAgainst: 0,
@@ -167,7 +169,7 @@ export const WorldCupService = {
 					};
 					const away = teams.get(row.awayTeamName) ?? {
 						name: row.awayTeamName,
-						flag: getTeamFlag(row.awayTeamName),
+						flag: row.awayTeamLogo || getTeamFlag(row.awayTeamName),
 						played: 0,
 						goalsFor: 0,
 						goalsAgainst: 0,
@@ -211,11 +213,11 @@ export const WorldCupService = {
 					label: stage === "final" ? parseFinalLabel(row.round) : undefined,
 					home: {
 						name: row.homeTeamName,
-						flag: getTeamFlag(row.homeTeamName),
+						flag: row.homeTeamLogo || getTeamFlag(row.homeTeamName),
 					},
 					away: {
 						name: row.awayTeamName,
-						flag: getTeamFlag(row.awayTeamName),
+						flag: row.awayTeamLogo || getTeamFlag(row.awayTeamName),
 					},
 					scoreHome: row.fulltimeHome ?? row.goalsHome ?? 0,
 					scoreAway: row.fulltimeAway ?? row.goalsAway ?? 0,

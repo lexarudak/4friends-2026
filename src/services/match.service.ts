@@ -97,7 +97,9 @@ export const MatchService = {
 						round: true,
 						date: true,
 						homeTeamName: true,
+						homeTeamLogo: true,
 						awayTeamName: true,
+						awayTeamLogo: true,
 					},
 				}),
 				prisma.match.findMany({
@@ -110,7 +112,9 @@ export const MatchService = {
 						statusElapsed: true,
 						statusExtra: true,
 						homeTeamName: true,
+						homeTeamLogo: true,
 						awayTeamName: true,
+						awayTeamLogo: true,
 						goalsHome: true,
 						goalsAway: true,
 					},
@@ -126,12 +130,12 @@ export const MatchService = {
 				statusExtra: row.statusExtra,
 				home: {
 					name: row.homeTeamName,
-					flag: getTeamFlag(row.homeTeamName),
+					flag: row.homeTeamLogo || getTeamFlag(row.homeTeamName),
 					goals: row.goalsHome,
 				},
 				away: {
 					name: row.awayTeamName,
-					flag: getTeamFlag(row.awayTeamName),
+					flag: row.awayTeamLogo || getTeamFlag(row.awayTeamName),
 					goals: row.goalsAway,
 				},
 			}));
@@ -160,11 +164,11 @@ export const MatchService = {
 							targetDateIso: nextMatch.date.toISOString(),
 							home: {
 								name: nextMatch.homeTeamName,
-								flag: getTeamFlag(nextMatch.homeTeamName),
+								flag: nextMatch.homeTeamLogo || getTeamFlag(nextMatch.homeTeamName),
 							},
 							away: {
 								name: nextMatch.awayTeamName,
-								flag: getTeamFlag(nextMatch.awayTeamName),
+								flag: nextMatch.awayTeamLogo || getTeamFlag(nextMatch.awayTeamName),
 							},
 						}
 					: null,
@@ -217,7 +221,9 @@ export const MatchService = {
 					round: true,
 					date: true,
 					homeTeamName: true,
+					homeTeamLogo: true,
 					awayTeamName: true,
+					awayTeamLogo: true,
 				},
 			});
 
@@ -228,11 +234,11 @@ export const MatchService = {
 				date: toShortDate(row.date),
 				home: {
 					name: row.homeTeamName,
-					flag: getTeamFlag(row.homeTeamName),
+					flag: row.homeTeamLogo || getTeamFlag(row.homeTeamName),
 				},
 				away: {
 					name: row.awayTeamName,
-					flag: getTeamFlag(row.awayTeamName),
+					flag: row.awayTeamLogo || getTeamFlag(row.awayTeamName),
 				},
 			}));
 

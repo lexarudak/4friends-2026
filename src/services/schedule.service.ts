@@ -125,7 +125,9 @@ export const ScheduleService = {
 					statusShort: true,
 					statusElapsed: true,
 					homeTeamName: true,
+					homeTeamLogo: true,
 					awayTeamName: true,
+					awayTeamLogo: true,
 					goalsHome: true,
 					goalsAway: true,
 					fulltimeHome: true,
@@ -204,11 +206,11 @@ export const ScheduleService = {
 					date: toShortDate(match.date),
 					home: {
 						name: match.homeTeamName,
-						flag: getTeamFlag(match.homeTeamName),
+						flag: match.homeTeamLogo || getTeamFlag(match.homeTeamName),
 					},
 					away: {
 						name: match.awayTeamName,
-						flag: getTeamFlag(match.awayTeamName),
+						flag: match.awayTeamLogo || getTeamFlag(match.awayTeamName),
 					},
 					status,
 					minute: status === "live" ? (match.statusElapsed ?? null) : null,
