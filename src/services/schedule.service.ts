@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
+import { FootballApi } from "@/lib/football-api";
 import type { ScheduleMatch } from "@/components/widgets/schedule-match-card";
 
 const FALLBACK_FLAG = "🏳️";
@@ -135,6 +136,8 @@ export const ScheduleService = {
 			if (matches.length === 0) return [];
 
 			const matchIds = matches.map((match) => match.id);
+			const quotaStatus = await FootballApi.getQuotaStatus();
+			const lastSyncAtIso = quotaStatus.lastSyncAt?.toISOString() ?? null;
 			const bets = roomId
 				? await prisma.bet.findMany({
 						where: { roomId, matchId: { in: matchIds } },
@@ -209,6 +212,8 @@ export const ScheduleService = {
 					},
 					status,
 					minute: status === "live" ? (match.statusElapsed ?? null) : null,
+					statusShort: status === "live" ? match.statusShort : null,
+					lastSyncAt: status === "live" ? lastSyncAtIso : null,
 					resultHome,
 					resultAway,
 					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],

@@ -25,7 +25,8 @@ export const NextMatchTimerClient: FC<Props> = ({
 	const [payload, setPayload] = useState(initialPayload);
 	const isRefreshingRef = useRef(false);
 
-	const isFinished = payload.isTournamentFinished || !payload.nextMatch;
+	const isFinished =
+		payload.isTournamentFinished && !payload.hasLive && !payload.nextMatch;
 
 	const refreshNextMatch = useCallback(async () => {
 		if (isRefreshingRef.current) return;
@@ -76,7 +77,27 @@ export const NextMatchTimerClient: FC<Props> = ({
 		return () => window.clearTimeout(timeoutId);
 	}, [isFinished, payload.nextMatch, payload.serverNow, refreshNextMatch]);
 
-	if (!payload.nextMatch || payload.isTournamentFinished) {
+	useEffect(() => {
+		if (!payload.hasLive) return;
+		const intervalId = window.setInterval(() => {
+			void refreshNextMatch();
+		}, 30_000);
+		return () => window.clearInterval(intervalId);
+	}, [payload.hasLive, refreshNextMatch]);
+
+	if (!payload.nextMatch) {
+		if (payload.hasLive) {
+			return (
+				<Timer
+					{...props}
+					className={className}
+					targetDate={new Date(payload.serverNow)}
+					message="Match in play"
+					subMessage="Check the live section below"
+					disableUrgency
+				/>
+			);
+		}
 		return (
 			<Timer
 				{...props}

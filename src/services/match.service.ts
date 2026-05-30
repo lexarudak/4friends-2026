@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
-import type { Match, NextMatchTimerPayload } from "@/types/api";
+import { FootballApi } from "@/lib/football-api";
+import type {
+	LiveMatchInfo,
+	Match,
+	NextMatchTimerPayload,
+} from "@/types/api";
+
+const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
 
 const FALLBACK_FLAG = "🏳️";
 export const NEXT_MATCH_WINDOW_HOURS = 48;
@@ -81,45 +88,89 @@ export const MatchService = {
 		const now = new Date();
 
 		try {
-			const nextMatch = await prisma.match.findFirst({
-				where: {
-					date: { gt: now },
-					statusShort: "NS",
-				},
-				orderBy: { date: "asc" },
-				select: {
-					id: true,
-					round: true,
-					date: true,
-					homeTeamName: true,
-					awayTeamName: true,
-				},
-			});
+			const [nextMatch, liveRows, quotaStatus] = await Promise.all([
+				prisma.match.findFirst({
+					where: { date: { gt: now }, statusShort: "NS" },
+					orderBy: { date: "asc" },
+					select: {
+						id: true,
+						round: true,
+						date: true,
+						homeTeamName: true,
+						awayTeamName: true,
+					},
+				}),
+				prisma.match.findMany({
+					where: { statusShort: { in: LIVE_STATUSES } },
+					orderBy: { date: "asc" },
+					select: {
+						id: true,
+						round: true,
+						statusShort: true,
+						statusElapsed: true,
+						statusExtra: true,
+						homeTeamName: true,
+						awayTeamName: true,
+						goalsHome: true,
+						goalsAway: true,
+					},
+				}),
+				FootballApi.getQuotaStatus(),
+			]);
 
-			if (!nextMatch) {
+			const liveMatches: LiveMatchInfo[] = liveRows.map((row) => ({
+				id: String(row.id),
+				round: toGroupLabel(row.round),
+				statusShort: row.statusShort,
+				statusElapsed: row.statusElapsed,
+				statusExtra: row.statusExtra,
+				home: {
+					name: row.homeTeamName,
+					flag: getTeamFlag(row.homeTeamName),
+					goals: row.goalsHome,
+				},
+				away: {
+					name: row.awayTeamName,
+					flag: getTeamFlag(row.awayTeamName),
+					goals: row.goalsAway,
+				},
+			}));
+
+			const hasLive = liveRows.length > 0;
+			const lastSyncAt = quotaStatus.lastSyncAt?.toISOString() ?? null;
+
+			if (!nextMatch && !hasLive) {
 				return {
 					serverNow: now.toISOString(),
 					isTournamentFinished: true,
 					nextMatch: null,
+					hasLive: false,
+					lastSyncAt,
+					liveMatches: [],
 				};
 			}
 
 			return {
 				serverNow: now.toISOString(),
 				isTournamentFinished: false,
-				nextMatch: {
-					id: String(nextMatch.id),
-					group: toGroupLabel(nextMatch.round),
-					targetDateIso: nextMatch.date.toISOString(),
-					home: {
-						name: nextMatch.homeTeamName,
-						flag: getTeamFlag(nextMatch.homeTeamName),
-					},
-					away: {
-						name: nextMatch.awayTeamName,
-						flag: getTeamFlag(nextMatch.awayTeamName),
-					},
-				},
+				nextMatch: nextMatch
+					? {
+							id: String(nextMatch.id),
+							group: toGroupLabel(nextMatch.round),
+							targetDateIso: nextMatch.date.toISOString(),
+							home: {
+								name: nextMatch.homeTeamName,
+								flag: getTeamFlag(nextMatch.homeTeamName),
+							},
+							away: {
+								name: nextMatch.awayTeamName,
+								flag: getTeamFlag(nextMatch.awayTeamName),
+							},
+						}
+					: null,
+				hasLive,
+				lastSyncAt,
+				liveMatches,
 			};
 		} catch (err) {
 			console.error("[MatchService.getNextMatchTimerPayload]", err);
@@ -127,6 +178,9 @@ export const MatchService = {
 				serverNow: now.toISOString(),
 				isTournamentFinished: true,
 				nextMatch: null,
+				hasLive: false,
+				lastSyncAt: null,
+				liveMatches: [],
 			};
 		}
 	},

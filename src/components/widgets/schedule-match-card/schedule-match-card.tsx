@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { TeamBadge } from "@/components/shared/team-badge";
+import { LiveMinute } from "@/components/shared/live-minute";
 import { PaginatedTable } from "@/components/features/paginated-table";
 import styles from "./schedule-match-card.module.scss";
 
@@ -25,6 +26,10 @@ export type ScheduleMatch = {
 	/** "upcoming" | "live" | "finished" */
 	status?: "upcoming" | "live" | "finished";
 	minute?: number | null;
+	/** Live phase code from API (1H/HT/2H/ET/BT/P/INT). Required for client minute rendering. */
+	statusShort?: string | null;
+	/** ISO of the most recent successful API sync — used for client-side minute projection. */
+	lastSyncAt?: string | null;
 	bets?: ScheduleBet[];
 };
 
@@ -145,8 +150,13 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 							? "Finished"
 							: match.time}
 				</span>
-				{status === "live" && match.minute != null && (
-					<span className={styles.minute}>{match.minute}&apos;</span>
+				{status === "live" && (
+					<LiveMinute
+						className={styles.minute}
+						statusShort={match.statusShort ?? "LIVE"}
+						elapsed={match.minute ?? null}
+						lastSyncAt={match.lastSyncAt ?? null}
+					/>
 				)}
 				{status !== "live" && <span className={styles.date}>{match.date}</span>}
 			</div>

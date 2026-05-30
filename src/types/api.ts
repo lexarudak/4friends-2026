@@ -52,10 +52,23 @@ export type NextMatch = {
 	away: Team;
 };
 
+export type LiveMatchInfo = {
+	id: string;
+	round: string;
+	statusShort: string;
+	statusElapsed: number | null;
+	statusExtra: number | null;
+	home: Team & { goals: number | null };
+	away: Team & { goals: number | null };
+};
+
 export type NextMatchTimerPayload = {
 	serverNow: string;
 	isTournamentFinished: boolean;
 	nextMatch: NextMatch | null;
+	hasLive: boolean;
+	lastSyncAt: string | null;
+	liveMatches: LiveMatchInfo[];
 };
 
 export type Bet = {

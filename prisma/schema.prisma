@@ -98,3 +98,17 @@ model Bet {
   @@index([matchId])
   @@index([roomId])
 }
+
+model ApiQuota {
+  date          DateTime  @id @db.Date
+  requestsCount Int       @default(0)
+  lastSyncAt    DateTime?
+  lastError     String?
+  updatedAt     DateTime  @updatedAt
+}
+
+model StandingsCache {
+  id        Int      @id @default(1)
+  payload   Json
+  updatedAt DateTime @updatedAt
+}
