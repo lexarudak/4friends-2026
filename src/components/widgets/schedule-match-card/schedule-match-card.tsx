@@ -166,6 +166,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultHome ?? "–"}</span>
 					<TeamBadge
+						size="s"
 						name={match.home.name}
 						flag={match.home.flag}
 						className={styles.team}
@@ -174,6 +175,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultAway ?? "–"}</span>
 					<TeamBadge
+						size="s"
 						name={match.away.name}
 						flag={match.away.flag}
 						className={styles.team}
