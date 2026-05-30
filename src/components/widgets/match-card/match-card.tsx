@@ -80,7 +80,7 @@ export const MatchCard: FC<Props> = ({
 							<TeamBadge
 								name={match.home.name}
 								flag={match.home.flag}
-								size="m"
+								size="s"
 								className={styles.teamBadge}
 							/>
 						</div>
@@ -108,7 +108,7 @@ export const MatchCard: FC<Props> = ({
 							<TeamBadge
 								name={match.away.name}
 								flag={match.away.flag}
-								size="m"
+								size="s"
 								className={styles.teamBadge}
 							/>
 						</div>
