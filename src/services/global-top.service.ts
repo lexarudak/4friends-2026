@@ -40,12 +40,19 @@ function keepBestByUser(
 
 function withZeroDefaults(
 	userIds: string[],
-	bestByUser: Map<string, BestEntry>
+	bestByUser: Map<string, BestEntry>,
+	fallbackRoomByUser: Map<string, string>
 ): Map<string, BestEntry> {
 	const result = new Map<string, BestEntry>();
 
 	for (const userId of userIds) {
-		result.set(userId, bestByUser.get(userId) ?? { value: 0, roomId: "" });
+		result.set(
+			userId,
+			bestByUser.get(userId) ?? {
+				value: 0,
+				roomId: fallbackRoomByUser.get(userId) ?? "",
+			}
+		);
 	}
 
 	return result;
@@ -146,6 +153,11 @@ export const GlobalTopService = {
 				})
 			);
 
+			// Fallback room: use whichever room gave the user their best Total Score
+			const fallbackRoomByUser = new Map(
+				[...totalBest.entries()].map(([userId, entry]) => [userId, entry.roomId])
+			);
+
 			const nameMap = new Map(
 				users.map((user) => [user.id, user.name ?? user.id.split("@")[0]])
 			);
@@ -154,7 +166,7 @@ export const GlobalTopService = {
 				{
 					title: "Total Score",
 					rows: toRows(
-						withZeroDefaults(allUserIds, totalBest),
+						withZeroDefaults(allUserIds, totalBest, fallbackRoomByUser),
 						nameMap,
 						currentUserId
 					),
@@ -162,7 +174,7 @@ export const GlobalTopService = {
 				{
 					title: "Exact Score Hits",
 					rows: toRows(
-						withZeroDefaults(allUserIds, exactBest),
+						withZeroDefaults(allUserIds, exactBest, fallbackRoomByUser),
 						nameMap,
 						currentUserId
 					),
@@ -170,7 +182,7 @@ export const GlobalTopService = {
 				{
 					title: "Predicted Wins",
 					rows: toRows(
-						withZeroDefaults(allUserIds, predictedBest),
+						withZeroDefaults(allUserIds, predictedBest, fallbackRoomByUser),
 						nameMap,
 						currentUserId
 					),
@@ -178,7 +190,7 @@ export const GlobalTopService = {
 				{
 					title: "Average Points per Match",
 					rows: toRows(
-						withZeroDefaults(allUserIds, avgBest),
+						withZeroDefaults(allUserIds, avgBest, fallbackRoomByUser),
 						nameMap,
 						currentUserId
 					),
