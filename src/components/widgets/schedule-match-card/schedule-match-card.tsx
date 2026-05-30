@@ -36,9 +36,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 	const status = match.status ?? "upcoming";
 	const hasBets = !!match.bets && match.bets.length > 0;
 	const hasResult = match.resultHome != null && match.resultAway != null;
-	const isPlayoffMatch = /round of 16|quarter|semi|third place|final/i.test(
-		match.group
-	);
+	const isPlayoffMatch = !/^group\s+/i.test(match.group);
 
 	const getBasePoints = (bet: ScheduleBet) => {
 		if (!hasResult) return null;

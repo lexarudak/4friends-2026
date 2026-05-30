@@ -5,6 +5,32 @@
 	background: var(--color-neutral-950);
 }
 
+// ── Language toggle ───────────────────────────
+
+.langToggle {
+	position: fixed;
+	top: var(--space-16);
+	right: var(--space-16);
+	z-index: 100;
+	padding: var(--space-6) var(--space-12);
+	background: var(--color-neutral-900);
+	border: 1px solid var(--color-neutral-700);
+	color: var(--color-neutral-300);
+	font-size: var(--font-size-13);
+	font-weight: var(--font-weight-medium);
+	border-radius: var(--radius-s);
+	cursor: pointer;
+	letter-spacing: 0.06em;
+	transition:
+		border-color var(--duration-base),
+		color var(--duration-base);
+
+	&:hover {
+		border-color: var(--color-neutral-500);
+		color: var(--color-neutral-white);
+	}
+}
+
 .inner {
 	@include pageContainer;
 
@@ -123,6 +149,39 @@
 	}
 	&[data-color="red"] {
 		background: var(--color-red-500);
+	}
+}
+
+// ── Subsection label ─────────────────────────
+
+.subTitle {
+	font-size: var(--font-size-13);
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-neutral-500);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	margin: 0;
+}
+
+// ── Stat list ────────────────────────────────
+
+.statList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-8);
+}
+
+.statItem {
+	font-size: var(--font-size-15);
+	color: var(--color-neutral-400);
+	line-height: 1.6;
+
+	strong {
+		color: var(--color-neutral-white);
+		font-weight: var(--font-weight-semibold);
 	}
 }
 
