@@ -18,21 +18,37 @@ function normalizeSSLMode(url: string | undefined): string | undefined {
 	}
 }
 
+// Bound the per-instance connection pool. Serverless spins up many instances;
+// an unbounded pool against a connection-limited role exhausts connections fast.
+const POOL_MAX = Number(process.env.DB_POOL_MAX ?? 3);
+
 function createPrismaClient() {
+	const url = process.env.DATABASE_URL ?? "";
+
+	// Prisma Postgres / Accelerate pooled connection (HTTP) — no TCP connection
+	// limit, the right choice for serverless. Used when DATABASE_URL is the
+	// `prisma+postgres://...?api_key=...` form.
+	if (url.startsWith("prisma://") || url.startsWith("prisma+postgres://")) {
+		return new PrismaClient({ accelerateUrl: url });
+	}
+
+	// Direct Postgres (local dev / direct TCP) via pg adapter, bounded pool.
 	const adapter = new PrismaPg({
-		connectionString: normalizeSSLMode(process.env.DATABASE_URL),
+		connectionString: normalizeSSLMode(url),
+		max: POOL_MAX,
 	});
 	return new PrismaClient({ adapter });
 }
 
 type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 
-declare global {
-	var prisma: ExtendedPrismaClient | undefined;
-}
+const globalForPrisma = globalThis as unknown as {
+	prisma?: ExtendedPrismaClient;
+};
 
-export const prisma = globalThis.prisma ?? createPrismaClient();
+export const prisma: ExtendedPrismaClient =
+	globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") {
-	globalThis.prisma = prisma;
-}
+// Cache the singleton in every environment. In serverless this keeps one
+// client per warm instance instead of one per module evaluation.
+globalForPrisma.prisma = prisma;
