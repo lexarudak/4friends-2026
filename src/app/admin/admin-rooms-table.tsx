@@ -110,14 +110,6 @@ export function AdminRoomsTable() {
 						maxLength={ROOM_NAME_MAX_LENGTH}
 						required
 					/>
-					<select
-						value={newRoomTournament}
-						onChange={(e) => setNewRoomTournament(e.target.value)}
-						className={styles.select}
-					>
-						<option value="wc2026">WC 2026</option>
-						<option value="ucl2526">UCL 25/26</option>
-					</select>
 					<input
 						type="text"
 						value={newRoomPassword}
@@ -126,6 +118,14 @@ export function AdminRoomsTable() {
 						className={styles.input}
 						minLength={5}
 					/>
+					<select
+						value={newRoomTournament}
+						onChange={(e) => setNewRoomTournament(e.target.value)}
+						className={styles.select}
+					>
+						<option value="wc2026">WC 2026</option>
+						<option value="ucl2526">UCL 25/26</option>
+					</select>
 					<Button
 						type="submit"
 						isLoading={isSubmitting}

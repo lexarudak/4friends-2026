@@ -76,6 +76,7 @@
 	background: var(--color-neutral-950);
 	color: var(--color-neutral-white);
 	font-size: var(--font-size-14);
+	min-width: 220px;
 
 	&::placeholder {
 		color: var(--color-neutral-500);
