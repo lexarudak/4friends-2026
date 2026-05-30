@@ -1,10 +1,8 @@
 ---
 name: migration-status
-description: "Current implementation phase, what is done vs pending, and known issues for the 4friends-2026 rewrite"
-metadata: 
-  node_type: memory
+description: Current implementation phase, what is done vs pending, and known issues for the 4friends-2026 rewrite
+metadata:
   type: project
-  originSessionId: aa512491-4986-4ba6-a317-1f5fc9f47079
 ---
 
 This is a ground-up rewrite of a ColdFusion/MySQL Euro 2024 app. Status as of 2026-05-30.
@@ -16,31 +14,40 @@ This is a ground-up rewrite of a ColdFusion/MySQL Euro 2024 app. Status as of 20
 
 | Phase | Status | Notes |
 |---|---|---|
-| Phase 1: Database | ✅ Done | Neon project, Prisma schema, 6 migrations applied |
+| Phase 1: Database | ✅ Done | Neon, Prisma, 8 migrations applied (incl. ApiQuota, StandingsCache) |
 | Phase 2: Auth | ✅ Done | NextAuth v5, Google OAuth, room selection flow |
-| Phase 3: Endpoints | 🔄 Partial | bets, matches, next-match, table, room-statistic live; **standings endpoint pending** |
-| Phase 4: Cron Jobs | ⬜ Not started | See cron plan below |
-| Phase 5: Cleanup | ⬜ Not started | In-memory stubs still present |
+| Phase 3: Endpoints | ✅ Done | bets, matches, next-match, table, room-statistic, admin/quota live |
+| Phase 4: Sync Infrastructure | ✅ Done | FootballApiClient + FixtureSyncService + PointsCalculator |
+| Phase 5: Cron Jobs | ✅ Done | sync-fixtures (02:00 UTC), sync-standings (03:00 UTC) via vercel.json |
+| Phase 6: Cleanup | ⬜ Not started | In-memory stubs still present |
 
-## Planned Cron Jobs (Phase 4)
-- Every **5 min**: sync live fixtures (`GET /fixtures?live=all` from api-football)
-- Every **10 min**: calculate points (`calc-points`)
-- Daily **03:00 UTC**: sync standings (`GET /standings`)
-- Deployed via `vercel.json` cron config
+## Sync Architecture (Phase 4) — implemented
 
-## In-Memory Stubs to Replace (Phase 5)
+**Strategy:** Lazy pull-based. No cron for live sync. API called when user hits `/api/next-match` and cache is stale.
+
+- `src/lib/football-api.ts` — FootballApi client, quota guard (soft 95, hard 99), `ApiQuota` table per UTC day
+- `src/services/fixture-sync.service.ts` — `ensureFresh()`: checks active matches → TTL (5 min group, 3 min QF+) → pg_try_advisory_lock → fetchLiveFixtures → upsert → recalculate points on FT/AET/PEN transition
+- `src/services/points-calculator.ts` — `PointsCalculator.recalculate(matchId)` — pure points calc, triggered on status transition to FT/AET/PEN
+- `/api/next-match?sync=wait` — sync blocks response (used on kickoff). Default: sync in `after()` stale-while-revalidate
+- Client polls `/api/next-match` every 30s when `hasLive=true`, stops when no live
+- `src/utils/live-minute.ts` + `LiveMinute` component — client-side minute projection from `elapsed + minutesSince(lastSyncAt)` with 45+/90+/120+ capping
+
+## Testing Tools
+
+- `npm run seed:live-test -- <N>` — creates match starting in N min, walks full lifecycle (NS→1H→HT→2H→FT) auto with 1-min pauses, seeds bets for 8 test players
+- `npm run simulate:match -- <id> --step <step>` — manual step-by-step simulation
+
+## In-Memory Stubs to Replace (Phase 6)
 - `/src/db/scores.ts`
 - `/src/db/room-statistic.ts`
 - `/src/db/world-cup.ts`
 
-These should migrate to Prisma queries. `TableService` is also partly in-memory.
-
 ## Known Issues / Gotchas
 1. **WC2026 API data gap** — api-football free plan has no WC2026 data yet (as of 2026-04-30). Seed uses manual JSON with placeholder fixture IDs 1–104. Real IDs needed when API publishes (~June 2026). See [[project-constraints]].
-2. **Point recalculation** — moved from legacy read-side-effect to background cron job (Phase 4).
-3. **Two legacy save implementations** — `suggest.cfc::Save` is canonical in old app (has team code validation). Don't reference the non-canonical one.
-4. **UserRoom migration** — `joinRoomAndSetCurrent` in RoomService handles both legacy `currentRoom` field and new UserRoom junction table for backwards compat.
-5. **48 teams vs 24** — WC2026 is larger; pre-fill on room join creates ~104 bets per user vs 51 for Euro2024.
+2. **StandingsCache** — model exists, sync-standings cron wired, but `WorldCupService` still builds group standings from Match table — not yet reading from StandingsCache.
+3. **UserRoom migration** — `joinRoomAndSetCurrent` in RoomService handles both legacy `currentRoom` field and new UserRoom junction table for backwards compat.
+4. **48 teams vs 24** — WC2026 is larger; pre-fill on room join creates ~104 bets per user vs 51 for Euro2024.
+5. **CRON_SECRET** — must be added to Vercel project env vars before deploy, and to `.env.example`.
 
 ## Related Memories
 - [[database-schema]]

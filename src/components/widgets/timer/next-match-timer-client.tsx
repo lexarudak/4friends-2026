@@ -28,29 +28,40 @@ export const NextMatchTimerClient: FC<Props> = ({
 	const isFinished =
 		payload.isTournamentFinished && !payload.hasLive && !payload.nextMatch;
 
-	const refreshNextMatch = useCallback(async () => {
-		if (isRefreshingRef.current) return;
+	const refreshNextMatch = useCallback(
+		async (options: { waitForSync?: boolean } = {}) => {
+			if (isRefreshingRef.current) return;
 
-		isRefreshingRef.current = true;
-		try {
-			const response = await fetch("/api/next-match", {
-				method: "GET",
-				cache: "no-store",
-			});
+			isRefreshingRef.current = true;
+			try {
+				const url = options.waitForSync
+					? "/api/next-match?sync=wait"
+					: "/api/next-match";
+				const response = await fetch(url, {
+					method: "GET",
+					cache: "no-store",
+				});
 
-			if (!response.ok) return;
+				if (!response.ok) return;
 
-			const nextPayload = (await response.json()) as NextMatchTimerPayload;
-			setPayload(nextPayload);
+				const nextPayload = (await response.json()) as NextMatchTimerPayload;
+				setPayload(nextPayload);
 
-			// Refresh server sections so "Next matches" and related blocks stay in sync.
-			router.refresh();
-		} catch (err) {
-			console.error("[NextMatchTimerClient.refreshNextMatch]", err);
-		} finally {
-			isRefreshingRef.current = false;
-		}
-	}, [router]);
+				// Refresh server sections so "Next matches" and related blocks stay in sync.
+				router.refresh();
+			} catch (err) {
+				console.error("[NextMatchTimerClient.refreshNextMatch]", err);
+			} finally {
+				isRefreshingRef.current = false;
+			}
+		},
+		[router]
+	);
+
+	const refreshOnKickoff = useCallback(
+		() => refreshNextMatch({ waitForSync: true }),
+		[refreshNextMatch]
+	);
 
 	useEffect(() => {
 		if (isFinished || !payload.nextMatch) return;
@@ -65,17 +76,17 @@ export const NextMatchTimerClient: FC<Props> = ({
 
 		const remainingMs = getRemainingMs();
 		if (remainingMs <= 0) {
-			void refreshNextMatch();
+			void refreshOnKickoff();
 			return;
 		}
 
 		// Keep a tiny buffer so we refresh right after the match start moment.
 		const timeoutId = window.setTimeout(() => {
-			void refreshNextMatch();
+			void refreshOnKickoff();
 		}, remainingMs + 50);
 
 		return () => window.clearTimeout(timeoutId);
-	}, [isFinished, payload.nextMatch, payload.serverNow, refreshNextMatch]);
+	}, [isFinished, payload.nextMatch, payload.serverNow, refreshOnKickoff]);
 
 	useEffect(() => {
 		if (!payload.hasLive) return;
@@ -125,7 +136,7 @@ export const NextMatchTimerClient: FC<Props> = ({
 			homeFlag={nextMatch.home.flag}
 			awayTeam={nextMatch.away.name}
 			awayFlag={nextMatch.away.flag}
-			onReachedZero={refreshNextMatch}
+			onReachedZero={refreshOnKickoff}
 		/>
 	);
 };
