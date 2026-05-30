@@ -59,28 +59,29 @@ export const GlobalTopService = {
 
 			const allUserIds = users.map((user) => user.id);
 
-			const [totalRaw, exactRaw, predictedRaw, avgRaw] = await Promise.all([
-				prisma.bet.groupBy({
-					by: ["userId", "roomId"],
-					where: { points: { not: null } },
-					_sum: { points: true, bonusPoints: true },
-				}),
-				prisma.bet.groupBy({
-					by: ["userId", "roomId"],
-					where: { points: 3 },
-					_count: { _all: true },
-				}),
-				prisma.bet.groupBy({
-					by: ["userId", "roomId"],
-					where: { points: { gte: 1 } },
-					_count: { _all: true },
-				}),
-				prisma.bet.groupBy({
-					by: ["userId", "roomId"],
-					where: { points: { not: null } },
-					_avg: { points: true },
-				}),
-			]);
+			const [totalRaw, exactRaw, predictedRaw, finishedMatchesRaw] =
+				await Promise.all([
+					prisma.bet.groupBy({
+						by: ["userId", "roomId"],
+						where: { points: { not: null } },
+						_sum: { points: true, bonusPoints: true },
+					}),
+					prisma.bet.groupBy({
+						by: ["userId", "roomId"],
+						where: { points: 3 },
+						_count: { _all: true },
+					}),
+					prisma.bet.groupBy({
+						by: ["userId", "roomId"],
+						where: { points: { gte: 1 } },
+						_count: { _all: true },
+					}),
+					prisma.bet.findMany({
+						where: { points: { not: null } },
+						select: { matchId: true, roomId: true },
+						distinct: ["matchId", "roomId"],
+					}),
+				]);
 
 			const totalBest = keepBestByUser(
 				totalRaw.map((row) => ({
@@ -106,12 +107,30 @@ export const GlobalTopService = {
 				}))
 			);
 
+			const finishedMatchCountByRoom = new Map<string, number>();
+			for (const row of finishedMatchesRaw) {
+				finishedMatchCountByRoom.set(
+					row.roomId,
+					(finishedMatchCountByRoom.get(row.roomId) ?? 0) + 1
+				);
+			}
+
 			const avgBest = keepBestByUser(
-				avgRaw.map((row) => ({
-					userId: row.userId,
-					roomId: row.roomId,
-					value: Math.round((row._avg.points ?? 0) * 100) / 100,
-				}))
+				totalRaw.map((row) => {
+					const finishedCount = finishedMatchCountByRoom.get(row.roomId) ?? 0;
+					return {
+						userId: row.userId,
+						roomId: row.roomId,
+						value:
+							finishedCount > 0
+								? Math.round(
+										(((row._sum.points ?? 0) + (row._sum.bonusPoints ?? 0)) /
+											finishedCount) *
+											100
+									) / 100
+								: 0,
+					};
+				})
 			);
 
 			const nameMap = new Map(
