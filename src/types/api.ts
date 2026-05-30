@@ -14,6 +14,8 @@ export type ApiErrorWithMessage = ApiError & {
 export type RoomItem = {
 	id: string;
 	name: string;
+	tournament?: string;
+	password?: string | null;
 };
 
 export type UserResponse = {
@@ -81,6 +83,7 @@ export type Bet = {
 export type TableRow = {
 	position: number;
 	name: string;
+	sub?: string;
 	score: number;
 	isCurrentUser?: boolean;
 	tag?: string;

@@ -17,8 +17,15 @@ export function JoinRoomForm() {
 				<input
 					name="room_id"
 					type="text"
-					placeholder="Join a new room"
+					placeholder="Room name"
 					className={cn(styles.input, { [styles.inputError]: !!state.error })}
+					autoComplete="off"
+				/>
+				<input
+					name="password"
+					type="text"
+					placeholder="Password"
+					className={styles.input}
 					autoComplete="off"
 				/>
 				<Button color="neutral" isLoading={isPending}>

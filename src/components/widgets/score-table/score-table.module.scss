@@ -165,6 +165,12 @@
 	text-overflow: ellipsis;
 }
 
+.nameSub {
+	font-size: var(--font-size-12);
+	font-weight: var(--font-weight-regular);
+	color: var(--color-neutral-600);
+}
+
 .score {
 	font-family: var(--font-geist-mono);
 	font-size: var(--font-size-14);

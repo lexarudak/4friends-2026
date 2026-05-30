@@ -20,6 +20,7 @@ export function AdminRoomsTable() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [newRoomName, setNewRoomName] = useState("");
 	const [newRoomTournament, setNewRoomTournament] = useState("wc2026");
+	const [newRoomPassword, setNewRoomPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [createError, setCreateError] = useState<string | null>(null);
 
@@ -70,6 +71,7 @@ export function AdminRoomsTable() {
 					body: JSON.stringify({
 						name: normalizedName,
 						tournament: newRoomTournament,
+						password: newRoomPassword.trim() || undefined,
 					}),
 				},
 				"Could not create room"
@@ -77,6 +79,7 @@ export function AdminRoomsTable() {
 
 			setNewRoomName("");
 			setNewRoomTournament("wc2026");
+			setNewRoomPassword("");
 			await loadRooms();
 		} catch (requestError) {
 			setCreateError(
@@ -115,6 +118,14 @@ export function AdminRoomsTable() {
 						<option value="wc2026">WC 2026</option>
 						<option value="ucl2526">UCL 25/26</option>
 					</select>
+					<input
+						type="text"
+						value={newRoomPassword}
+						onChange={(e) => setNewRoomPassword(e.target.value)}
+						placeholder="Password (optional)"
+						className={styles.input}
+						minLength={5}
+					/>
 					<Button
 						type="submit"
 						isLoading={isSubmitting}

@@ -2,19 +2,22 @@ import { prisma } from "@/lib/prisma";
 import type { StatSection, TableRow } from "@/types/api";
 import { getCompetitionPosition } from "@/utils/ranking";
 
+type BestEntry = { value: number; roomId: string };
+
 function toRows(
-	bestByUser: Map<string, number>,
+	bestByUser: Map<string, BestEntry>,
 	nameMap: Map<string, string>,
 	currentUserId?: string
 ): TableRow[] {
 	const sorted = [...bestByUser.entries()]
-		.map(([userId, value]) => ({ userId, value }))
+		.map(([userId, entry]) => ({ userId, ...entry }))
 		.sort((a, b) => b.value - a.value);
 	const sortedValues = sorted.map((entry) => entry.value);
 
 	return sorted.map((entry, index) => ({
 		position: getCompetitionPosition(sortedValues, index),
 		name: nameMap.get(entry.userId) ?? entry.userId,
+		sub: entry.roomId || undefined,
 		score: entry.value,
 		isCurrentUser: entry.userId === currentUserId,
 	}));
@@ -22,13 +25,13 @@ function toRows(
 
 function keepBestByUser(
 	rows: { userId: string; roomId: string; value: number }[]
-): Map<string, number> {
-	const result = new Map<string, number>();
+): Map<string, BestEntry> {
+	const result = new Map<string, BestEntry>();
 
 	for (const row of rows) {
 		const existing = result.get(row.userId);
-		if (existing === undefined || row.value > existing) {
-			result.set(row.userId, row.value);
+		if (existing === undefined || row.value > existing.value) {
+			result.set(row.userId, { value: row.value, roomId: row.roomId });
 		}
 	}
 
@@ -37,12 +40,12 @@ function keepBestByUser(
 
 function withZeroDefaults(
 	userIds: string[],
-	bestByUser: Map<string, number>
-): Map<string, number> {
-	const result = new Map<string, number>();
+	bestByUser: Map<string, BestEntry>
+): Map<string, BestEntry> {
+	const result = new Map<string, BestEntry>();
 
 	for (const userId of userIds) {
-		result.set(userId, bestByUser.get(userId) ?? 0);
+		result.set(userId, bestByUser.get(userId) ?? { value: 0, roomId: "" });
 	}
 
 	return result;

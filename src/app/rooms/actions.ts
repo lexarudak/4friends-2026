@@ -46,6 +46,15 @@ export async function joinNewRoom(
 			return response;
 		}
 
+		if (room.password) {
+			const entered = ((formData.get("password") as string) ?? "").trim();
+			if (entered !== room.password) {
+				const response = { error: "Incorrect password" };
+				logActionResponse("join-new-room", response);
+				return response;
+			}
+		}
+
 		const session = await auth();
 		if (!session?.user?.email) {
 			const response = { error: "You are not authorized" };

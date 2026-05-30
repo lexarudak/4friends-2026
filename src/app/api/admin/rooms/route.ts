@@ -20,7 +20,8 @@ export async function GET() {
 		rooms.map((room) => ({
 			id: room.id,
 			name: room.name,
-			tournament: (room as { tournament?: string }).tournament ?? "wc2026",
+			tournament: room.tournament,
+			password: room.password ?? null,
 		}))
 	);
 }
@@ -36,12 +37,23 @@ export async function POST(request: NextRequest) {
 		const payload = (await request.json()) as {
 			name?: unknown;
 			tournament?: unknown;
+			password?: unknown;
 		};
 		const name = normalizeRoomName(payload?.name);
 		const tournament =
 			typeof payload.tournament === "string" && payload.tournament.trim()
 				? payload.tournament.trim()
 				: "wc2026";
+
+		const rawPassword =
+			typeof payload.password === "string" ? payload.password.trim() : "";
+		if (rawPassword && rawPassword.length <= 4) {
+			return NextResponse.json(
+				{ error: "INVALID_PASSWORD", message: "Password must be longer than 4 characters." },
+				{ status: 400 }
+			);
+		}
+		const password = rawPassword || undefined;
 
 		if (!isRoomNameLengthValid(name)) {
 			return NextResponse.json(
@@ -65,10 +77,15 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const room = await RoomService.createRoom(name, tournament);
+		const room = await RoomService.createRoom(name, tournament, password);
 
 		return NextResponse.json(
-			{ id: room.id, name: room.name, tournament: room.tournament },
+			{
+				id: room.id,
+				name: room.name,
+				tournament: room.tournament,
+				password: room.password ?? null,
+			},
 			{ status: 201 }
 		);
 	} catch (err) {
