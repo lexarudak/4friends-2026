@@ -6,3 +6,4 @@
 - [Frontend Structure](frontend_structure.md) — Component hierarchy (features/widgets/shared), SCSS design tokens, data-fetching patterns
 - [Migration Status](migration_status.md) — Phase tracker (DB✅ Auth✅ Endpoints🔄 Cron⬜ Cleanup⬜), known issues, in-memory stubs to replace
 - [Project Constraints](project_constraints.md) — api-football 100 req/day limit, WC2026 data gap (placeholder IDs 1–104), tournament scale (48 teams/104 matches)
+- [Tournaments & DB Connection](tournaments_and_db.md) — multi-tournament isolation (Room/Match.tournament), Accelerate connection setup, import-fixture script

@@ -27,6 +27,12 @@ const REGULATION_END = 90;
 const FIRST_HALF_END = 45;
 const ET_END = 120;
 
+// Cap how far the client may project forward from the last sync. The server
+// re-syncs every few minutes, so the displayed minute is never more than this
+// stale — and this prevents over-projecting across breaks (HT/BT) where the
+// match clock is paused but wall-clock keeps running.
+const MAX_PROJECTION_MIN = 2;
+
 /**
  * Compute display string for current live minute based on:
  * - statusShort (what kind of phase the match is in)
@@ -56,7 +62,10 @@ export function computeLiveMinute(
 
 	const minutesSinceSync =
 		lastSyncAtMs != null
-			? Math.max(0, Math.floor((nowMs - lastSyncAtMs) / 60_000))
+			? Math.min(
+					MAX_PROJECTION_MIN,
+					Math.max(0, Math.floor((nowMs - lastSyncAtMs) / 60_000))
+				)
 			: 0;
 	const projected = elapsed + minutesSinceSync;
 
