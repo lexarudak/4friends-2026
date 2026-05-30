@@ -112,7 +112,14 @@ async function persistFixtures(
 	});
 	const prevStatusById = new Map(before.map((m) => [m.id, m.statusShort]));
 
-	const updateOps = fixtures.map((fixture) =>
+	// Only update matches that exist in our DB (handles multi-tournament live=all)
+	const knownIds = new Set(before.map((m) => m.id));
+	const relevantFixtures = fixtures.filter((f) =>
+		knownIds.has(f.fixture.id)
+	);
+	if (relevantFixtures.length === 0) return { updated: 0, finalized: 0 };
+
+	const updateOps = relevantFixtures.map((fixture) =>
 		prisma.match.update({
 			where: { id: fixture.fixture.id },
 			data: applyFixture(fixture),
@@ -121,7 +128,7 @@ async function persistFixtures(
 	await prisma.$transaction(updateOps);
 
 	let finalized = 0;
-	for (const fixture of fixtures) {
+	for (const fixture of relevantFixtures) {
 		const newStatus = fixture.fixture.status.short;
 		const prevStatus = prevStatusById.get(fixture.fixture.id);
 		if (
@@ -134,7 +141,7 @@ async function persistFixtures(
 		}
 	}
 
-	return { updated: fixtures.length, finalized };
+	return { updated: relevantFixtures.length, finalized };
 }
 
 export const FixtureSyncService = {

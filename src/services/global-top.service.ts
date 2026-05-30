@@ -49,8 +49,18 @@ function withZeroDefaults(
 }
 
 export const GlobalTopService = {
-	async getSections(currentUserId?: string): Promise<StatSection[]> {
+	async getSections(
+		tournament: string,
+		currentUserId?: string
+	): Promise<StatSection[]> {
 		try {
+			const tournamentRooms = await prisma.room.findMany({
+				where: { tournament },
+				select: { name: true },
+			});
+			const roomIds = tournamentRooms.map((r) => r.name);
+			if (roomIds.length === 0) return [];
+
 			const users = await prisma.user.findMany({
 				select: { id: true, name: true },
 			});
@@ -63,21 +73,21 @@ export const GlobalTopService = {
 				await Promise.all([
 					prisma.bet.groupBy({
 						by: ["userId", "roomId"],
-						where: { points: { not: null } },
+						where: { roomId: { in: roomIds }, points: { not: null } },
 						_sum: { points: true, bonusPoints: true },
 					}),
 					prisma.bet.groupBy({
 						by: ["userId", "roomId"],
-						where: { points: 3 },
+						where: { roomId: { in: roomIds }, points: 3 },
 						_count: { _all: true },
 					}),
 					prisma.bet.groupBy({
 						by: ["userId", "roomId"],
-						where: { points: { gte: 1 } },
+						where: { roomId: { in: roomIds }, points: { gte: 1 } },
 						_count: { _all: true },
 					}),
 					prisma.bet.findMany({
-						where: { points: { not: null } },
+						where: { roomId: { in: roomIds }, points: { not: null } },
 						select: { matchId: true, roomId: true },
 						distinct: ["matchId", "roomId"],
 					}),

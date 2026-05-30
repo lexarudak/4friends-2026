@@ -219,7 +219,7 @@ export const RoomService = {
 		}
 	},
 
-	async createRoom(name: string) {
-		return prisma.room.create({ data: { name } });
+	async createRoom(name: string, tournament = "wc2026") {
+		return prisma.room.create({ data: { name, tournament } });
 	},
 };

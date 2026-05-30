@@ -19,6 +19,7 @@ export function AdminRoomsTable() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [newRoomName, setNewRoomName] = useState("");
+	const [newRoomTournament, setNewRoomTournament] = useState("wc2026");
 	const [error, setError] = useState<string | null>(null);
 	const [createError, setCreateError] = useState<string | null>(null);
 
@@ -66,12 +67,16 @@ export function AdminRoomsTable() {
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ name: normalizedName }),
+					body: JSON.stringify({
+						name: normalizedName,
+						tournament: newRoomTournament,
+					}),
 				},
 				"Could not create room"
 			);
 
 			setNewRoomName("");
+			setNewRoomTournament("wc2026");
 			await loadRooms();
 		} catch (requestError) {
 			setCreateError(
@@ -102,6 +107,14 @@ export function AdminRoomsTable() {
 						maxLength={ROOM_NAME_MAX_LENGTH}
 						required
 					/>
+					<select
+						value={newRoomTournament}
+						onChange={(e) => setNewRoomTournament(e.target.value)}
+						className={styles.select}
+					>
+						<option value="wc2026">WC 2026</option>
+						<option value="ucl2526">UCL 25/26</option>
+					</select>
 					<Button
 						type="submit"
 						isLoading={isSubmitting}

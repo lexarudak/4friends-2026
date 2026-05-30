@@ -27,7 +27,8 @@
 		"seed:bets:test-users:safe": "tsx scripts/guard-local-seed.ts && npm run seed:bets:test-users",
 		"seed:results:past:safe": "tsx scripts/guard-local-seed.ts && npm run seed:results:past",
 		"simulate:match": "tsx scripts/simulate-match.ts",
-		"seed:live-test": "tsx scripts/seed-live-test-match.ts"
+		"seed:live-test": "tsx scripts/seed-live-test-match.ts",
+		"seed:ucl-final": "tsx scripts/seed-ucl-final.ts"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",

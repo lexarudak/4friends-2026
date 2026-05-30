@@ -168,10 +168,10 @@ export const FootballApi = {
 	HARD_CAP,
 
 	async fetchLiveFixtures(): Promise<ApiFixture[]> {
+		// No league filter — returns all live matches globally.
+		// persistFixtures in FixtureSyncService filters to only matches in our DB.
 		const data = await request<ApiFixtureResponse>("/fixtures", {
 			live: "all",
-			league: WC_LEAGUE_ID,
-			season: WC_SEASON,
 		});
 		return data.response;
 	},

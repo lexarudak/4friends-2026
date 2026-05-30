@@ -20,6 +20,7 @@ export async function GET() {
 		rooms.map((room) => ({
 			id: room.id,
 			name: room.name,
+			tournament: (room as { tournament?: string }).tournament ?? "wc2026",
 		}))
 	);
 }
@@ -32,8 +33,15 @@ export async function POST(request: NextRequest) {
 	}
 
 	try {
-		const payload = (await request.json()) as { name?: unknown };
+		const payload = (await request.json()) as {
+			name?: unknown;
+			tournament?: unknown;
+		};
 		const name = normalizeRoomName(payload?.name);
+		const tournament =
+			typeof payload.tournament === "string" && payload.tournament.trim()
+				? payload.tournament.trim()
+				: "wc2026";
 
 		if (!isRoomNameLengthValid(name)) {
 			return NextResponse.json(
@@ -57,9 +65,12 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const room = await RoomService.createRoom(name);
+		const room = await RoomService.createRoom(name, tournament);
 
-		return NextResponse.json({ id: room.id, name: room.name }, { status: 201 });
+		return NextResponse.json(
+			{ id: room.id, name: room.name, tournament: room.tournament },
+			{ status: 201 }
+		);
 	} catch (err) {
 		console.error("[POST /api/admin/rooms]", err);
 		return NextResponse.json(
