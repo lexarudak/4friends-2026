@@ -19,9 +19,10 @@ export type WcKnockoutMatch = {
 	label?: string;
 	home: { name: string; flag: string };
 	away: { name: string; flag: string };
-	scoreHome: number;
-	scoreAway: number;
+	scoreHome: number | null;
+	scoreAway: number | null;
 	winner?: "home" | "away";
+	status?: "upcoming" | "live" | "finished";
 	date: string;
 	time: string;
 };

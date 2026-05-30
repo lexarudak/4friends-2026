@@ -202,6 +202,10 @@ export const WorldCupService = {
 				const stage = parseKnockoutStage(row.round);
 				if (!stage) continue;
 
+				const finished = isFinishedStatus(row.statusShort);
+				const isLive = LIVE_STATUSES.has(row.statusShort);
+				const hasScore = finished || isLive;
+
 				knockout[stage].push({
 					id: String(row.id),
 					label: stage === "final" ? parseFinalLabel(row.round) : undefined,
@@ -213,14 +217,22 @@ export const WorldCupService = {
 						name: row.awayTeamName,
 						flag: row.awayTeamLogo || getTeamFlag(row.awayTeamName),
 					},
-					scoreHome: row.fulltimeHome ?? row.goalsHome ?? 0,
-					scoreAway: row.fulltimeAway ?? row.goalsAway ?? 0,
-					winner:
-						row.homeTeamWinner === true
+					// Only show a score once the match has started; only show a
+					// winner once it is actually finished.
+					scoreHome: hasScore
+						? (row.fulltimeHome ?? row.goalsHome ?? 0)
+						: null,
+					scoreAway: hasScore
+						? (row.fulltimeAway ?? row.goalsAway ?? 0)
+						: null,
+					winner: finished
+						? row.homeTeamWinner === true
 							? "home"
 							: row.awayTeamWinner === true
 								? "away"
-								: undefined,
+								: undefined
+						: undefined,
+					status: finished ? "finished" : isLive ? "live" : "upcoming",
 					date: toShortDate(row.date),
 					time: toTime(row.date),
 				});

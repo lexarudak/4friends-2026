@@ -24,8 +24,16 @@ type Props = {
 };
 
 function getWinnerSide(match: WcKnockoutMatch): "home" | "away" | null {
+	// Never imply a winner for matches that aren't finished.
+	if (match.status && match.status !== "finished") return null;
 	if (match.winner) return match.winner;
-	if (match.scoreHome === match.scoreAway) return null;
+	if (
+		match.scoreHome == null ||
+		match.scoreAway == null ||
+		match.scoreHome === match.scoreAway
+	) {
+		return null;
+	}
 	return match.scoreHome > match.scoreAway ? "home" : "away";
 }
 
@@ -84,7 +92,7 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 											size="s"
 											className={styles.teamBadge}
 										/>
-										<span className={styles.teamScore}>{match.scoreHome}</span>
+										<span className={styles.teamScore}>{match.scoreHome ?? "–"}</span>
 									</div>
 									<div className={styles.matchTeamRow}>
 										<span
@@ -99,7 +107,7 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 											size="s"
 											className={styles.teamBadge}
 										/>
-										<span className={styles.teamScore}>{match.scoreAway}</span>
+										<span className={styles.teamScore}>{match.scoreAway ?? "–"}</span>
 									</div>
 								</div>
 							</article>
