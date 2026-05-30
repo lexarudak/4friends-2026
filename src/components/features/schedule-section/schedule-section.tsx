@@ -2,6 +2,8 @@
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+type ReadonlyURLSearchParams = ReturnType<typeof useSearchParams>;
 import type { DateRange } from "react-day-picker";
 import type { ScheduleMatch } from "@/components/widgets/schedule-match-card";
 import { ScheduleMatchCard } from "@/components/widgets/schedule-match-card";

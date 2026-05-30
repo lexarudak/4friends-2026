@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useMemo, type ComponentProps } from "react";
 import { useSearchParams } from "next/navigation";
 
+type ReadonlyURLSearchParams = ReturnType<typeof useSearchParams>;
+
 type LinkProps = ComponentProps<typeof Link>;
 
 const PRESERVED_QUERY_KEYS = ["from", "to"] as const;
