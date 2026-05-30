@@ -3,7 +3,7 @@ import { WC_GROUPS } from "@/db/world-cup";
 import type { Match, NextMatchTimerPayload } from "@/types/api";
 
 const FALLBACK_FLAG = "🏳️";
-const NEXT_MATCH_WINDOW_HOURS = 24;
+export const NEXT_MATCH_WINDOW_HOURS = 48;
 
 const TEAM_FLAG_MAP = new Map(
 	WC_GROUPS.flatMap((group) =>
@@ -152,7 +152,7 @@ export const MatchService = {
 			const rows = await prisma.match.findMany({
 				where: {
 					date: {
-						gte: now,
+						gte: nextMatch.date,
 						lte: endTime,
 					},
 					statusShort: "NS",

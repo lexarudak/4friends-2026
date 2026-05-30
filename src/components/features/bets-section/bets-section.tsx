@@ -24,7 +24,11 @@ export async function BetsSection({ className }: Props) {
 	return (
 		<section className={cn(styles.container, className)}>
 			<h2 className={styles.title}>Next matches</h2>
-			<BetsForm matches={matches} initialBets={initialBets} />
+			{matches.length === 0 ? (
+				<p className={styles.empty}>No upcoming matches. Check back later.</p>
+			) : (
+				<BetsForm matches={matches} initialBets={initialBets} />
+			)}
 		</section>
 	);
 }

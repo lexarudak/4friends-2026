@@ -6,6 +6,12 @@
 	padding-block: var(--space-40);
 }
 
+.empty {
+	font-size: var(--font-size-body-md);
+	color: var(--color-neutral-500);
+	margin: 0;
+}
+
 .title {
 	align-self: flex-start;
 	display: flex;
