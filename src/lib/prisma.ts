@@ -6,11 +6,10 @@ function normalizeSSLMode(url: string | undefined): string | undefined {
 	try {
 		const u = new URL(url);
 		const sslmode = u.searchParams.get("sslmode");
-		if (
-			sslmode === "require" ||
-			sslmode === "prefer" ||
-			sslmode === "verify-ca"
-		) {
+		// Only upgrade verify-ca → verify-full.
+		// Keep "require" as-is: pg driver maps it to ssl without cert verification,
+		// which is what Prisma Postgres (db.prisma.io) expects on Vercel.
+		if (sslmode === "verify-ca") {
 			u.searchParams.set("sslmode", "verify-full");
 		}
 		return u.toString();
