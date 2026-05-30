@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { WcGroup, WcKnockoutMatch, WcKnockoutStage } from "@/db/world-cup";
 import { GroupStanding } from "@/components/widgets/group-standing";
+import { TeamBadge } from "@/components/shared/team-badge";
 import { cn } from "@/utils/lib";
 import styles from "./tournament-bracket.module.scss";
 
@@ -77,8 +78,12 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 												winnerSide === "home" && styles.winnerPointerActive
 											)}
 										/>
-										<span className={styles.teamFlag}>{match.home.flag}</span>
-										<span className={styles.teamName}>{match.home.name}</span>
+										<TeamBadge
+											name={match.home.name}
+											flag={match.home.flag}
+											size="s"
+											className={styles.teamBadge}
+										/>
 										<span className={styles.teamScore}>{match.scoreHome}</span>
 									</div>
 									<div className={styles.matchTeamRow}>
@@ -88,8 +93,12 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 												winnerSide === "away" && styles.winnerPointerActive
 											)}
 										/>
-										<span className={styles.teamFlag}>{match.away.flag}</span>
-										<span className={styles.teamName}>{match.away.name}</span>
+										<TeamBadge
+											name={match.away.name}
+											flag={match.away.flag}
+											size="s"
+											className={styles.teamBadge}
+										/>
 										<span className={styles.teamScore}>{match.scoreAway}</span>
 									</div>
 								</div>

@@ -1,11 +1,13 @@
 import { ScheduleService } from "@/services/schedule.service";
-import { getActiveRoomId } from "@/lib/active-room";
+import { getActiveRoomId, getActiveRoomTournament } from "@/lib/active-room";
 import { ScheduleMatchCard } from "@/components/widgets/schedule-match-card";
 import styles from "./live-section.module.scss";
 
 export async function LiveSection() {
 	const roomId = await getActiveRoomId();
+	const tournament = await getActiveRoomTournament();
 	const allMatches = await ScheduleService.getScheduleMatches(
+		tournament,
 		roomId ?? undefined
 	);
 	const matches = allMatches.filter((m) => m.status === "live");

@@ -71,13 +71,47 @@ export const GlobalTopService = {
 			const roomIds = tournamentRooms.map((r) => r.name);
 			if (roomIds.length === 0) return [];
 
-			const users = await prisma.user.findMany({
-				select: { id: true, name: true },
-			});
+			// Participants of this tournament = UserRoom members PLUS anyone who
+			// has placed a bet in one of its rooms (bets don't require a
+			// membership row to exist, e.g. seeded data).
+			const [memberships, betParticipants] = await Promise.all([
+				prisma.userRoom.findMany({
+					where: { room: { tournament } },
+					select: {
+						userId: true,
+						joinedAt: true,
+						user: { select: { name: true } },
+						room: { select: { name: true } },
+					},
+					orderBy: { joinedAt: "asc" },
+				}),
+				prisma.bet.findMany({
+					where: { roomId: { in: roomIds } },
+					select: { userId: true, roomId: true, user: { select: { name: true } } },
+					distinct: ["userId", "roomId"],
+				}),
+			]);
 
-			if (users.length === 0) return [];
+			const nameMap = new Map<string, string>();
+			// Fallback room = first room the user is associated with in this tournament.
+			const membershipRoomByUser = new Map<string, string>();
 
-			const allUserIds = users.map((user) => user.id);
+			const register = (userId: string, roomName: string, name: string | null) => {
+				if (!membershipRoomByUser.has(userId)) {
+					membershipRoomByUser.set(userId, roomName);
+				}
+				if (!nameMap.has(userId)) {
+					nameMap.set(userId, name ?? userId.split("@")[0]);
+				}
+			};
+
+			for (const m of memberships) register(m.userId, m.room.name, m.user.name);
+			for (const b of betParticipants) {
+				register(b.userId, b.roomId, b.user.name);
+			}
+
+			const allUserIds = [...membershipRoomByUser.keys()];
+			if (allUserIds.length === 0) return [];
 
 			const [totalRaw, exactRaw, predictedRaw, finishedMatchesRaw] =
 				await Promise.all([
@@ -153,14 +187,12 @@ export const GlobalTopService = {
 				})
 			);
 
-			// Fallback room: use whichever room gave the user their best Total Score
-			const fallbackRoomByUser = new Map(
-				[...totalBest.entries()].map(([userId, entry]) => [userId, entry.roomId])
-			);
-
-			const nameMap = new Map(
-				users.map((user) => [user.id, user.name ?? user.id.split("@")[0]])
-			);
+			// Fallback room: prefer the room that gave the user their best Total
+			// Score; otherwise fall back to their tournament room membership.
+			const fallbackRoomByUser = new Map(membershipRoomByUser);
+			for (const [userId, entry] of totalBest.entries()) {
+				if (entry.roomId) fallbackRoomByUser.set(userId, entry.roomId);
+			}
 
 			return [
 				{

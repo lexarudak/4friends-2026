@@ -84,13 +84,15 @@ function toGroupLabel(round: string): string {
 }
 
 export const MatchService = {
-	async getNextMatchTimerPayload(): Promise<NextMatchTimerPayload> {
+	async getNextMatchTimerPayload(
+		tournament: string
+	): Promise<NextMatchTimerPayload> {
 		const now = new Date();
 
 		try {
 			const [nextMatch, liveRows, quotaStatus] = await Promise.all([
 				prisma.match.findFirst({
-					where: { date: { gt: now }, statusShort: "NS" },
+					where: { tournament, date: { gt: now }, statusShort: "NS" },
 					orderBy: { date: "asc" },
 					select: {
 						id: true,
@@ -103,7 +105,7 @@ export const MatchService = {
 					},
 				}),
 				prisma.match.findMany({
-					where: { statusShort: { in: LIVE_STATUSES } },
+					where: { tournament, statusShort: { in: LIVE_STATUSES } },
 					orderBy: { date: "asc" },
 					select: {
 						id: true,
@@ -189,12 +191,13 @@ export const MatchService = {
 		}
 	},
 
-	async getMatches(): Promise<Match[]> {
+	async getMatches(tournament: string): Promise<Match[]> {
 		try {
 			const now = new Date();
 
 			const nextMatch = await prisma.match.findFirst({
 				where: {
+					tournament,
 					date: { gte: now },
 					statusShort: "NS",
 				},
@@ -209,6 +212,7 @@ export const MatchService = {
 
 			const rows = await prisma.match.findMany({
 				where: {
+					tournament,
 					date: {
 						gte: nextMatch.date,
 						lte: endTime,

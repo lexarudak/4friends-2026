@@ -36,6 +36,7 @@ const prisma = new PrismaClient({ adapter });
 
 // ─── League constants ────────────────────────────────────────────────────────
 const WC = {
+	tournament: "wc2026",
 	leagueId: 1,
 	leagueName: "FIFA World Cup",
 	leagueCountry: "World",

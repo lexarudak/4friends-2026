@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { getActiveRoomId } from "@/lib/active-room";
+import { getActiveRoomId, getActiveRoomTournament } from "@/lib/active-room";
 import { MatchService } from "@/services/match.service";
 import { BetsService } from "@/services/bets.service";
 import { BetsForm } from "@/components/features/bets-form";
@@ -11,10 +11,11 @@ type Props = {
 };
 
 export async function BetsSection({ className }: Props) {
-	const [session, matches] = await Promise.all([
+	const [session, tournament] = await Promise.all([
 		auth(),
-		MatchService.getMatches(),
+		getActiveRoomTournament(),
 	]);
+	const matches = await MatchService.getMatches(tournament);
 
 	const userId = session?.user?.email;
 	const roomId = await getActiveRoomId();

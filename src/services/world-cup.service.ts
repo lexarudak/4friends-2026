@@ -119,16 +119,10 @@ function compareGroupName(a: string, b: string): number {
 }
 
 export const WorldCupService = {
-	async getTournamentData(): Promise<WorldCupData> {
+	async getTournamentData(tournament: string): Promise<WorldCupData> {
 		try {
 			const rows = await prisma.match.findMany({
-				where: {
-					leagueSeason: 2026,
-					leagueName: {
-						contains: "World Cup",
-						mode: "insensitive",
-					},
-				},
+				where: { tournament },
 				orderBy: { date: "asc" },
 				select: {
 					id: true,

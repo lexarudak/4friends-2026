@@ -1,18 +1,23 @@
 import { PageTitle } from "@/components/shared/page-title";
 import { TournamentBracket } from "@/components/features/tournament-bracket";
 import { WorldCupService } from "@/services/world-cup.service";
+import { getActiveRoomTournament } from "@/lib/active-room";
+import { getTournamentLabel } from "@/lib/tournaments";
 import styles from "./page.module.scss";
 
 export const metadata = {
-	title: "FIFA World Cup 2026™ | 4friends",
+	title: "Tournament | 4friends",
 };
 
 export default async function WorldCupPage() {
-	const { groups, knockout } = await WorldCupService.getTournamentData();
+	const tournament = await getActiveRoomTournament();
+	const { groups, knockout } = await WorldCupService.getTournamentData(
+		tournament
+	);
 
 	return (
 		<div className={styles.page}>
-			<PageTitle label="FIFA World Cup 2026™" title="Tournament" />
+			<PageTitle label={getTournamentLabel(tournament)} title="Tournament" />
 			<div className={styles.content}>
 				<TournamentBracket groups={groups} knockout={knockout} />
 			</div>

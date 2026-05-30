@@ -42,6 +42,7 @@ const ROOMS = ["ucl-room-1", "ucl-room-2"];
 
 const MATCH_DATA = {
 	id: UCL_MATCH_ID,
+	tournament: TOURNAMENT,
 	timezone: "UTC",
 	date: new Date("2025-05-31T19:00:00Z"),
 	timestamp: 1748718000,

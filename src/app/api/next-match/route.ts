@@ -1,6 +1,7 @@
 import { NextResponse, after } from "next/server";
 import { MatchService } from "@/services/match.service";
 import { FixtureSyncService } from "@/services/fixture-sync.service";
+import { getActiveRoomTournament } from "@/lib/active-room";
 
 export async function GET(req: Request) {
 	const url = new URL(req.url);
@@ -26,7 +27,8 @@ export async function GET(req: Request) {
 		});
 	}
 
-	const payload = await MatchService.getNextMatchTimerPayload();
+	const tournament = await getActiveRoomTournament();
+	const payload = await MatchService.getNextMatchTimerPayload(tournament);
 
 	return NextResponse.json(payload, {
 		headers: { "Cache-Control": "no-store" },

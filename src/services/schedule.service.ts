@@ -105,18 +105,13 @@ function getResult(
 }
 
 export const ScheduleService = {
-	async getScheduleMatches(roomId?: string): Promise<ScheduleMatch[]> {
+	async getScheduleMatches(
+		tournament: string,
+		roomId?: string
+	): Promise<ScheduleMatch[]> {
 		try {
-			const rangeStart = new Date(Date.UTC(2026, 4, 1, 0, 0, 0));
-			const rangeEnd = new Date(Date.UTC(2026, 6, 19, 23, 59, 59));
-
 			const matches = await prisma.match.findMany({
-				where: {
-					date: {
-						gte: rangeStart,
-						lte: rangeEnd,
-					},
-				},
+				where: { tournament },
 				orderBy: { date: "asc" },
 				select: {
 					id: true,
