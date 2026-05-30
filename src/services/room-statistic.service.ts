@@ -48,7 +48,7 @@ async function getSectionsInternal(
 		totalScoreRaw,
 		exactHitsRaw,
 		predictedWinsRaw,
-		avgRaw,
+		finishedMatchesRaw,
 	] = await Promise.all([
 		prisma.userRoom.findMany({
 			where: {
@@ -77,10 +77,10 @@ async function getSectionsInternal(
 			where: { roomId, points: { gte: 1 } },
 			_count: { _all: true },
 		}),
-		prisma.bet.groupBy({
-			by: ["userId"],
+		prisma.bet.findMany({
 			where: { roomId, points: { not: null } },
-			_avg: { points: true },
+			select: { matchId: true },
+			distinct: ["matchId"],
 		}),
 	]);
 
@@ -122,10 +122,18 @@ async function getSectionsInternal(
 		allUserIds
 	);
 
+	const finishedMatchCount = finishedMatchesRaw.length;
 	const avgRows = buildRows(
-		avgRaw.map((r) => ({
+		totalScoreRaw.map((r) => ({
 			userId: r.userId,
-			value: Math.round((r._avg.points ?? 0) * 100) / 100,
+			value:
+				finishedMatchCount > 0
+					? Math.round(
+							(((r._sum.points ?? 0) + (r._sum.bonusPoints ?? 0)) /
+								finishedMatchCount) *
+								100
+						) / 100
+					: 0,
 		})),
 		nameMap,
 		currentUserId,
