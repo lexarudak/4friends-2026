@@ -175,16 +175,15 @@ export const PersonalStatisticService = {
 			const predictedWins = finished.filter(
 				(bet) => (bet.points ?? 0) >= 1
 			).length;
-			// Новый расчёт: делим на количество завершённых матчей (goalsHome и goalsAway не null)
-			const allFinishedMatches = await prisma.match.count({
-				where: {
-					goalsHome: { not: null },
-					goalsAway: { not: null },
-				},
+			const finishedMatchesInRoom = await prisma.bet.findMany({
+				where: { roomId, points: { not: null } },
+				select: { matchId: true },
+				distinct: ["matchId"],
 			});
+			const finishedMatchCount = finishedMatchesInRoom.length;
 			const avgPoints =
-				allFinishedMatches > 0
-					? Math.round((totalScore / allFinishedMatches) * 100) / 100
+				finishedMatchCount > 0
+					? Math.round((totalScore / finishedMatchCount) * 100) / 100
 					: 0;
 
 			// Favorite Team calculation removed
