@@ -1,12 +1,19 @@
 import { NextResponse, after } from "next/server";
 import { MatchService } from "@/services/match.service";
-import { FixtureSyncService } from "@/services/fixture-sync.service";
+import {
+	FixtureSyncService,
+	isPremiumWindow,
+} from "@/services/fixture-sync.service";
 import { getActiveRoomTournament } from "@/lib/active-room";
 
-// CDN cache window for polled live data. Many viewers polling every 30s collapse
-// into ~one origin hit per window per tournament, keeping DB requests flat
-// regardless of audience size.
-const CACHE_HEADER = "public, s-maxage=30, stale-while-revalidate=60";
+// CDN cache window for polled live data. Many viewers polling collapse into
+// ~one origin hit per window per tournament, keeping DB requests flat
+// regardless of audience size. Kept in step with the API sync cadence:
+// 30s while the 1-min premium sync is active, 60s once it drops to 5-min.
+function cacheHeader(): string {
+	const s = isPremiumWindow() ? 30 : 60;
+	return `public, s-maxage=${s}, stale-while-revalidate=${s * 2}`;
+}
 
 export async function GET(req: Request) {
 	const url = new URL(req.url);
@@ -42,6 +49,6 @@ export async function GET(req: Request) {
 	// Don't cache the kickoff (sync=wait) call, nor the cookie-derived fallback.
 	const cacheable = syncMode !== "wait" && tParam != null;
 	return NextResponse.json(payload, {
-		headers: { "Cache-Control": cacheable ? CACHE_HEADER : "no-store" },
+		headers: { "Cache-Control": cacheable ? cacheHeader() : "no-store" },
 	});
 }
