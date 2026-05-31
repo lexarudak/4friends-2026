@@ -149,6 +149,7 @@ export const MatchService = {
 
 			if (!nextMatch && !hasLive) {
 				return {
+					tournament,
 					serverNow: now.toISOString(),
 					isTournamentFinished: true,
 					nextMatch: null,
@@ -159,6 +160,7 @@ export const MatchService = {
 			}
 
 			return {
+				tournament,
 				serverNow: now.toISOString(),
 				isTournamentFinished: false,
 				nextMatch: nextMatch
@@ -183,6 +185,7 @@ export const MatchService = {
 		} catch (err) {
 			console.error("[MatchService.getNextMatchTimerPayload]", err);
 			return {
+				tournament,
 				serverNow: now.toISOString(),
 				isTournamentFinished: true,
 				nextMatch: null,

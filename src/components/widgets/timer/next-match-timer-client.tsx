@@ -16,6 +16,14 @@ type Props = HTMLAttributes<HTMLDivElement> & {
 	initialPayload: NextMatchTimerPayload;
 };
 
+/** Signature of the parts that, when changed, warrant re-fetching server sections. */
+function payloadSignature(p: NextMatchTimerPayload): string {
+	const live = p.liveMatches
+		.map((m) => `${m.id}:${m.statusShort}:${m.home.goals}-${m.away.goals}`)
+		.join("|");
+	return `${p.hasLive}#${p.nextMatch?.id ?? "none"}#${live}`;
+}
+
 export const NextMatchTimerClient: FC<Props> = ({
 	initialPayload,
 	className,
@@ -24,6 +32,7 @@ export const NextMatchTimerClient: FC<Props> = ({
 	const router = useRouter();
 	const [payload, setPayload] = useState(initialPayload);
 	const isRefreshingRef = useRef(false);
+	const signatureRef = useRef(payloadSignature(initialPayload));
 
 	const isFinished =
 		payload.isTournamentFinished && !payload.hasLive && !payload.nextMatch;
@@ -34,28 +43,32 @@ export const NextMatchTimerClient: FC<Props> = ({
 
 			isRefreshingRef.current = true;
 			try {
+				const t = encodeURIComponent(payload.tournament);
 				const url = options.waitForSync
-					? "/api/next-match?sync=wait"
-					: "/api/next-match";
-				const response = await fetch(url, {
-					method: "GET",
-					cache: "no-store",
-				});
+					? `/api/next-match?sync=wait&t=${t}`
+					: `/api/next-match?t=${t}`;
+				// Let the CDN edge-cache serve polls (s-maxage); don't force no-store.
+				const response = await fetch(url, { method: "GET" });
 
 				if (!response.ok) return;
 
 				const nextPayload = (await response.json()) as NextMatchTimerPayload;
 				setPayload(nextPayload);
 
-				// Refresh server sections so "Next matches" and related blocks stay in sync.
-				router.refresh();
+				// Only re-fetch server sections (DB-heavy) when something material
+				// changed: live scores/status, the next match, or live on/off.
+				const nextSig = payloadSignature(nextPayload);
+				if (nextSig !== signatureRef.current) {
+					signatureRef.current = nextSig;
+					router.refresh();
+				}
 			} catch (err) {
 				console.error("[NextMatchTimerClient.refreshNextMatch]", err);
 			} finally {
 				isRefreshingRef.current = false;
 			}
 		},
-		[router]
+		[router, payload.tournament]
 	);
 
 	const refreshOnKickoff = useCallback(

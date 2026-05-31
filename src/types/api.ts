@@ -65,6 +65,7 @@ export type LiveMatchInfo = {
 };
 
 export type NextMatchTimerPayload = {
+	tournament: string;
 	serverNow: string;
 	isTournamentFinished: boolean;
 	nextMatch: NextMatch | null;
