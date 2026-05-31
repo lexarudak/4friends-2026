@@ -1,9 +1,5 @@
 import type { RoomItem, TableRow } from "@/types/api";
-
-const TOURNAMENT_LABELS: Record<string, string> = {
-	wc2026: "WC 2026",
-	ucl2526: "UCL 25/26",
-};
+import { getTournamentLabel } from "@/lib/tournaments";
 
 export function mapRoomsToTableRows(rooms: RoomItem[]): TableRow[] {
 	return rooms.map((room, index) => ({
@@ -11,6 +7,6 @@ export function mapRoomsToTableRows(rooms: RoomItem[]): TableRow[] {
 		name: room.name,
 		score: 0,
 		tag: room.password ?? "—",
-		status: TOURNAMENT_LABELS[room.tournament ?? "wc2026"] ?? room.tournament,
+		status: getTournamentLabel(room.tournament ?? "wc2026"),
 	}));
 }

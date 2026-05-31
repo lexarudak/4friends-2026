@@ -116,6 +116,7 @@ export const ScheduleService = {
 				select: {
 					id: true,
 					round: true,
+					groupName: true,
 					date: true,
 					statusShort: true,
 					statusElapsed: true,
@@ -196,7 +197,7 @@ export const ScheduleService = {
 
 				return {
 					id: String(match.id),
-					group: toGroupLabel(match.round),
+					group: match.groupName ?? toGroupLabel(match.round),
 					time: toTime(match.date),
 					date: toShortDate(match.date),
 					home: {

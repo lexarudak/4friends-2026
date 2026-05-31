@@ -41,6 +41,7 @@ model UserRoom {
 model Match {
   id             Int      @id
   tournament     String   @default("wc2026")
+  groupName      String?
   referee        String?
   timezone       String
   date           DateTime

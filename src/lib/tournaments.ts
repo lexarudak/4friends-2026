@@ -24,6 +24,12 @@ export const TOURNAMENTS: Record<string, TournamentConfig> = {
 		leagueId: 2,
 		season: 2025,
 	},
+	belarus1: {
+		slug: "belarus1",
+		label: "Belarus First League",
+		leagueId: 117,
+		season: 2026,
+	},
 };
 
 export const DEFAULT_TOURNAMENT = "wc2026";

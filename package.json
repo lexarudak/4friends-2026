@@ -28,7 +28,9 @@
 		"seed:results:past:safe": "tsx scripts/guard-local-seed.ts && npm run seed:results:past",
 		"simulate:match": "tsx scripts/simulate-match.ts",
 		"seed:live-test": "tsx scripts/seed-live-test-match.ts",
-		"seed:ucl-final": "tsx scripts/seed-ucl-final.ts"
+		"seed:ucl-final": "tsx scripts/seed-ucl-final.ts",
+		"import:fixture": "tsx scripts/import-fixture.ts",
+		"import:tournament": "tsx scripts/import-tournament.ts"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",

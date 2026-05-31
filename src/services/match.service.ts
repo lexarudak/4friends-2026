@@ -97,6 +97,7 @@ export const MatchService = {
 					select: {
 						id: true,
 						round: true,
+						groupName: true,
 						date: true,
 						homeTeamName: true,
 						homeTeamLogo: true,
@@ -110,6 +111,7 @@ export const MatchService = {
 					select: {
 						id: true,
 						round: true,
+						groupName: true,
 						statusShort: true,
 						statusElapsed: true,
 						statusExtra: true,
@@ -126,7 +128,7 @@ export const MatchService = {
 
 			const liveMatches: LiveMatchInfo[] = liveRows.map((row) => ({
 				id: String(row.id),
-				round: toGroupLabel(row.round),
+				round: row.groupName ?? toGroupLabel(row.round),
 				statusShort: row.statusShort,
 				statusElapsed: row.statusElapsed,
 				statusExtra: row.statusExtra,
@@ -162,7 +164,7 @@ export const MatchService = {
 				nextMatch: nextMatch
 					? {
 							id: String(nextMatch.id),
-							group: toGroupLabel(nextMatch.round),
+							group: nextMatch.groupName ?? toGroupLabel(nextMatch.round),
 							targetDateIso: nextMatch.date.toISOString(),
 							home: {
 								name: nextMatch.homeTeamName,
@@ -223,6 +225,7 @@ export const MatchService = {
 				select: {
 					id: true,
 					round: true,
+					groupName: true,
 					date: true,
 					homeTeamName: true,
 					homeTeamLogo: true,
@@ -233,7 +236,7 @@ export const MatchService = {
 
 			const upcomingMatches = rows.map((row) => ({
 				id: String(row.id),
-				group: toGroupLabel(row.round),
+				group: row.groupName ?? toGroupLabel(row.round),
 				time: toTime(row.date),
 				date: toShortDate(row.date),
 				home: {

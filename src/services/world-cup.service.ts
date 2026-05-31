@@ -127,6 +127,7 @@ export const WorldCupService = {
 				select: {
 					id: true,
 					round: true,
+					groupName: true,
 					date: true,
 					statusShort: true,
 					homeTeamName: true,
@@ -150,7 +151,7 @@ export const WorldCupService = {
 			const knockout = buildEmptyKnockout();
 
 			for (const row of rows) {
-				const groupName = parseGroupName(row.round);
+				const groupName = row.groupName ?? parseGroupName(row.round);
 				if (groupName) {
 					const teams = groupMap.get(groupName) ?? new Map<string, WcTeam>();
 					const home = teams.get(row.homeTeamName) ?? {

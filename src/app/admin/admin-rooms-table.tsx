@@ -125,6 +125,7 @@ export function AdminRoomsTable() {
 					>
 						<option value="wc2026">WC 2026</option>
 						<option value="ucl2526">UCL 25/26</option>
+						<option value="belarus1">Belarus First League</option>
 					</select>
 					<Button
 						type="submit"
