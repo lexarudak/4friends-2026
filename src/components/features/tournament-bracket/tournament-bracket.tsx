@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { WcGroup, WcKnockoutMatch, WcKnockoutStage } from "@/db/world-cup";
 import { GroupStanding } from "@/components/widgets/group-standing";
 import { TeamBadge } from "@/components/shared/team-badge";
+import { LocalDateTime } from "@/components/shared/local-datetime";
 import { cn } from "@/utils/lib";
 import styles from "./tournament-bracket.module.scss";
 
@@ -74,7 +75,14 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 										{match.label ?? STAGES.find((s) => s.id === stage)?.label}
 									</span>
 									<span className={styles.matchDate}>
-										{match.date} {match.time}
+										{match.dateIso ? (
+											<LocalDateTime
+												iso={match.dateIso}
+												fallback={`${match.date} ${match.time}`}
+											/>
+										) : (
+											`${match.date} ${match.time}`
+										)}
 									</span>
 								</div>
 

@@ -25,6 +25,8 @@ export type WcKnockoutMatch = {
 	status?: "upcoming" | "live" | "finished";
 	date: string;
 	time: string;
+	/** ISO timestamp — formatted client-side in the user's timezone. */
+	dateIso?: string;
 };
 
 const team = (

@@ -235,6 +235,7 @@ export const WorldCupService = {
 					status: finished ? "finished" : isLive ? "live" : "upcoming",
 					date: toShortDate(row.date),
 					time: toTime(row.date),
+					dateIso: row.date.toISOString(),
 				});
 			}
 
