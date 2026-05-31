@@ -4,6 +4,7 @@ import { ScoreInput } from "@/components/shared/score-input";
 import { cn } from "@/utils/lib";
 import styles from "./match-card.module.scss";
 import { TeamBadge } from "@/components/shared/team-badge/team-badge";
+import { LocalDateTime } from "@/components/shared/local-datetime";
 
 export type CardStatus = "default" | "dirty" | "saved" | "error";
 
@@ -43,8 +44,18 @@ export const MatchCard: FC<Props> = ({
 			<div className={styles.header}>
 				<span className={styles.group}>{match.group}</span>
 				<span className={styles.meta}>
-					<span className={styles.time}>{match.time}</span>
-					<span className={styles.date}>{match.date}</span>
+					<LocalDateTime
+						className={styles.time}
+						iso={match.dateIso}
+						mode="time"
+						fallback={match.time}
+					/>
+					<LocalDateTime
+						className={styles.date}
+						iso={match.dateIso}
+						mode="date"
+						fallback={match.date}
+					/>
 				</span>
 			</div>
 

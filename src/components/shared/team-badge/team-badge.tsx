@@ -10,9 +10,9 @@ type Props = HTMLAttributes<HTMLSpanElement> & {
 };
 
 const FLAG_SIZE: Record<NonNullable<Props["size"]>, number> = {
-	s: 18,
-	m: 24,
-	l: 32,
+	s: 28,
+	m: 42,
+	l: 50,
 };
 
 export const TeamBadge: FC<Props> = ({
@@ -33,7 +33,7 @@ export const TeamBadge: FC<Props> = ({
 			data-direction={direction}
 			data-size={size}
 		>
-			<span className={styles.flag} style={{ width: px * 1.4, height: px }}>
+			<span className={styles.flag} style={{ width: px }}>
 				{isUrl ? (
 					// eslint-disable-next-line @next/next/no-img-element
 					<img src={flag} alt={name} />

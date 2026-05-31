@@ -40,8 +40,9 @@ export type Team = {
 export type Match = {
 	id: string;
 	group: string;
-	time: string; // "HH:MM"
-	date: string; // "DD/MM/YY"
+	time: string; // "HH:MM" (server tz — fallback only)
+	date: string; // "DD/MM/YY" (server tz — fallback only)
+	dateIso: string; // ISO timestamp — format in the user's tz on the client
 	home: Team;
 	away: Team;
 };

@@ -242,6 +242,7 @@ export const MatchService = {
 				group: row.groupName ?? toGroupLabel(row.round),
 				time: toTime(row.date),
 				date: toShortDate(row.date),
+				dateIso: row.date.toISOString(),
 				home: {
 					name: row.homeTeamName,
 					flag: row.homeTeamLogo || getTeamFlag(row.homeTeamName),

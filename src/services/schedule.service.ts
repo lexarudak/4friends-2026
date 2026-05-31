@@ -200,6 +200,7 @@ export const ScheduleService = {
 					group: match.groupName ?? toGroupLabel(match.round),
 					time: toTime(match.date),
 					date: toShortDate(match.date),
+					dateIso: match.date.toISOString(),
 					home: {
 						name: match.homeTeamName,
 						flag: match.homeTeamLogo || getTeamFlag(match.homeTeamName),

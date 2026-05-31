@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import { TeamBadge } from "@/components/shared/team-badge";
 import { LiveMinute } from "@/components/shared/live-minute";
+import { LocalDateTime } from "@/components/shared/local-datetime";
+import { isKnockoutRound } from "@/utils/knockout";
 import { PaginatedTable } from "@/components/features/paginated-table";
 import styles from "./schedule-match-card.module.scss";
 
@@ -18,6 +20,8 @@ export type ScheduleMatch = {
 	group: string;
 	time: string;
 	date: string;
+	/** ISO timestamp — formatted in the user's tz on the client. */
+	dateIso?: string;
 	home: { name: string; flag: string };
 	away: { name: string; flag: string };
 	/** null = not started, number = final or live score */
@@ -41,7 +45,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 	const status = match.status ?? "upcoming";
 	const hasBets = !!match.bets && match.bets.length > 0;
 	const hasResult = match.resultHome != null && match.resultAway != null;
-	const isPlayoffMatch = !/^group\s+/i.test(match.group);
+	const isPlayoffMatch = isKnockoutRound(match.group);
 
 	const getBasePoints = (bet: ScheduleBet) => {
 		if (!hasResult) return null;
@@ -144,11 +148,15 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 			<div className={styles.header}>
 				<span className={styles.group}>{match.group}</span>
 				<span className={styles.statusLabel}>
-					{status === "live"
-						? "In Play"
-						: status === "finished"
-							? "Finished"
-							: match.time}
+					{status === "live" ? (
+						"In Play"
+					) : status === "finished" ? (
+						"Finished"
+					) : match.dateIso ? (
+						<LocalDateTime iso={match.dateIso} mode="time" fallback={match.time} />
+					) : (
+						match.time
+					)}
 				</span>
 				{status === "live" && (
 					<LiveMinute
@@ -158,7 +166,17 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 						lastSyncAt={match.lastSyncAt ?? null}
 					/>
 				)}
-				{status !== "live" && <span className={styles.date}>{match.date}</span>}
+				{status !== "live" &&
+					(match.dateIso ? (
+						<LocalDateTime
+							className={styles.date}
+							iso={match.dateIso}
+							mode="date"
+							fallback={match.date}
+						/>
+					) : (
+						<span className={styles.date}>{match.date}</span>
+					))}
 			</div>
 
 			{/* Score row */}

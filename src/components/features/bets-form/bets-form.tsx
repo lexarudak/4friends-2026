@@ -8,6 +8,7 @@ import type { CardStatus } from "@/components/widgets/match-card";
 import { MatchCard } from "@/components/widgets/match-card";
 import { Button } from "@/components/shared/button";
 import { requestApi } from "@/utils/api-client";
+import { isKnockoutRound } from "@/utils/knockout";
 import styles from "./bets-form.module.scss";
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
 };
 
 function isPlayoffMatch(match: Match): boolean {
-	return !/^group\s+/i.test(match.group);
+	return isKnockoutRound(match.group);
 }
 
 function getAutoWinner(home: string, away: string): "home" | "away" | "" {

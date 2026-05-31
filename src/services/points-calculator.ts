@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { isKnockoutRound } from "@/utils/knockout";
 
 const FINAL_STATUSES = new Set(["FT", "AET", "PEN"]);
 
@@ -7,7 +8,7 @@ export function isFinalStatus(statusShort: string): boolean {
 }
 
 function isPlayoffRound(round: string): boolean {
-	return !/group/i.test(round);
+	return isKnockoutRound(round);
 }
 
 function basePoints(

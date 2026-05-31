@@ -12,8 +12,8 @@ type Stage = "group" | "r32" | "r16" | "qf" | "sf" | "final";
 
 const STAGES: { id: Stage; label: string }[] = [
 	{ id: "group", label: "Group" },
-	{ id: "r32", label: "R32" },
-	{ id: "r16", label: "R16" },
+	{ id: "r32", label: "1/16" },
+	{ id: "r16", label: "1/8" },
 	{ id: "qf", label: "1/4" },
 	{ id: "sf", label: "1/2" },
 	{ id: "final", label: "Final" },
@@ -55,15 +55,22 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 				))}
 			</nav>
 
-			{stage === "group" && (
-				<div className={styles.groups}>
-					{groups.map((group) => (
-						<GroupStanding key={group.name} group={group} />
-					))}
-				</div>
+			{stage === "group" &&
+				(groups.length === 0 ? (
+					<p className={styles.emptyStage}>No matches yet.</p>
+				) : (
+					<div className={styles.groups}>
+						{groups.map((group) => (
+							<GroupStanding key={group.name} group={group} />
+						))}
+					</div>
+				))}
+
+			{stage !== "group" && knockout[stage].length === 0 && (
+				<p className={styles.emptyStage}>No matches yet.</p>
 			)}
 
-			{stage !== "group" && (
+			{stage !== "group" && knockout[stage].length > 0 && (
 				<div className={styles.knockoutGrid}>
 					{knockout[stage].map((match) => {
 						const winnerSide = getWinnerSide(match);

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
+import { isKnockoutRound } from "@/utils/knockout";
 import type { BetHistoryItem, PersonalStat } from "@/types/api";
 
 type PersonalStatisticData = {
@@ -66,7 +67,7 @@ function extractGroup(round: string): string {
 }
 
 function isPlayoffRound(round: string): boolean {
-	return !/group/i.test(round);
+	return isKnockoutRound(round);
 }
 
 function normalizeScoreKey(home: number, away: number): string {
