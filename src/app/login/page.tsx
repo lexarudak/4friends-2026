@@ -3,6 +3,7 @@ import styles from "./page.module.scss";
 import { signInWithGoogle } from "./actions";
 import { GoogleIcon, LogoIcon } from "@/components/icons";
 import { PAGES } from "@/utils/constants";
+import { PrivacyNotice } from "@/components/features/privacy-notice";
 
 export default function LoginPage() {
 	return (
@@ -29,6 +30,7 @@ export default function LoginPage() {
 				<p className={styles.rulesLink}>
 					Or read our <Link href={PAGES.ABOUT}>rules</Link>
 				</p>
+				<PrivacyNotice />
 			</div>
 		</div>
 	);
