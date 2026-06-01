@@ -234,4 +234,13 @@
 	&:hover {
 		color: var(--color-neutral-white);
 	}
+
+	.languageSwitcher {
+		margin-top: 100px;
+		width: 140px;
+
+		button {
+			text-align: center;
+		}
+	}
 }

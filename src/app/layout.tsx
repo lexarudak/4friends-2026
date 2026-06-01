@@ -7,6 +7,9 @@ import { AppHeader } from "@/components/features/app-header";
 import { NextMatchTimer } from "@/components/widgets/timer";
 import { LiveSection } from "@/components/features/live-section";
 import { TopTable } from "@/components/features/top-table";
+import { getLocale } from "@/i18n/locale";
+import { getDictionary } from "@/i18n/dictionary";
+import { I18nProvider } from "@/i18n/provider";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -27,23 +30,27 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const locale = await getLocale();
+	const dict = getDictionary(locale);
 	const header = await AppHeader();
 
 	return (
-		<html lang="en">
+		<html lang={locale}>
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
-				<ConditionalLayout
-					header={header}
-					sidebar={
-						<>
-							<NextMatchTimer />
-							<LiveSection />
-							<TopTable />
-						</>
-					}
-				>
-					{children}
-				</ConditionalLayout>
+				<I18nProvider locale={locale} dict={dict}>
+					<ConditionalLayout
+						header={header}
+						sidebar={
+							<>
+								<NextMatchTimer />
+								<LiveSection />
+								<TopTable />
+							</>
+						}
+					>
+						{children}
+					</ConditionalLayout>
+				</I18nProvider>
 				<Analytics />
 			</body>
 		</html>

@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import type { NextMatchTimerPayload } from "@/types/api";
 import { LIVE_MATCH_FINALIZED_EVENT } from "@/utils/constants";
+import { useI18n } from "@/i18n/provider";
 import { Timer } from "./timer";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
@@ -30,6 +31,7 @@ export const NextMatchTimerClient: FC<Props> = ({
 	className,
 	...props
 }) => {
+	const { t } = useI18n();
 	const router = useRouter();
 	const [payload, setPayload] = useState(initialPayload);
 	const isRefreshingRef = useRef(false);
@@ -131,8 +133,8 @@ export const NextMatchTimerClient: FC<Props> = ({
 					{...props}
 					className={className}
 					targetDate={new Date(payload.serverNow)}
-					message="Match in play"
-					subMessage="Check the live section below"
+					message={t.timer.matchInPlay}
+					subMessage={t.timer.checkLive}
 					disableUrgency
 				/>
 			);
@@ -142,8 +144,8 @@ export const NextMatchTimerClient: FC<Props> = ({
 				{...props}
 				className={className}
 				targetDate={new Date(payload.serverNow)}
-				message="Tournament finished"
-				subMessage="No upcoming matches"
+				message={t.timer.tournamentFinished}
+				subMessage={t.timer.noUpcomingMatches}
 				disableUrgency
 			/>
 		);
@@ -158,7 +160,7 @@ export const NextMatchTimerClient: FC<Props> = ({
 			className={className}
 			targetDate={new Date(nextMatch.targetDateIso)}
 			serverNowIso={payload.serverNow}
-			message="Next match"
+			message={t.timer.nextMatch}
 			subMessage={nextMatch.group}
 			homeTeam={nextMatch.home.name}
 			homeFlag={nextMatch.home.flag}

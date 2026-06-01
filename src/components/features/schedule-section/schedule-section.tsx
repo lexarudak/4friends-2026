@@ -8,6 +8,7 @@ import { ScheduleMatchCard } from "@/components/widgets/schedule-match-card";
 import { DateRangePicker } from "@/components/shared/date-range-picker";
 import { Button } from "@/components/shared/button";
 import { PageTitle } from "@/components/shared/page-title";
+import { useI18n } from "@/i18n/provider";
 import styles from "./schedule-section.module.scss";
 
 type ReadonlyURLSearchParams = ReturnType<typeof useSearchParams>;
@@ -135,6 +136,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export const ScheduleSection = ({ matches }: Props) => {
+	const { t } = useI18n();
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -227,7 +229,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 
 	return (
 		<div className={styles.section}>
-			<PageTitle label="FIFA World Cup 2026" title="Matchdays" />
+			<PageTitle label={t.schedule.label} title={t.schedule.title} />
 
 			{/* Filters */}
 			<div className={styles.filters}>
@@ -237,12 +239,12 @@ export const ScheduleSection = ({ matches }: Props) => {
 					fromDate={minDate}
 					toDate={maxDate}
 				/>
-				<p className={styles.filterHint}>Select date range to show</p>
+				<p className={styles.filterHint}>{t.schedule.selectRange}</p>
 
 				<input
 					className={styles.countryInput}
 					type="text"
-					placeholder="Filter by country…"
+					placeholder={t.schedule.filterByCountry}
 					value={countryInput}
 					onChange={(e) => setCountryInput(e.target.value)}
 				/>
@@ -254,7 +256,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 						size="md"
 						onClick={handleClear}
 					>
-						Clear
+						{t.schedule.clear}
 					</Button>
 				</div>
 			</div>
@@ -262,7 +264,7 @@ export const ScheduleSection = ({ matches }: Props) => {
 			{/* Match list */}
 			<ul className={styles.list}>
 				{filtered.length === 0 ? (
-					<li className={styles.empty}>No matches for selected range</li>
+					<li className={styles.empty}>{t.schedule.noMatches}</li>
 				) : (
 					filtered.map((match) => (
 						<li key={match.id}>

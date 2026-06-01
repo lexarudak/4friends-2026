@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { WC_GROUPS } from "@/db/world-cup";
 import { isKnockoutRound } from "@/utils/knockout";
 import type { BetHistoryItem, PersonalStat } from "@/types/api";
+import enDict from "@/i18n/dictionaries/en";
+
+type StatsLabels = typeof enDict.stats;
+const DEFAULT_LABELS: StatsLabels = enDict.stats;
 
 type PersonalStatisticData = {
 	stats: PersonalStat[];
@@ -86,37 +90,39 @@ function joinTopNames(entries: Array<[string, number]>) {
 	return entries.map(([name]) => name).join(" • ");
 }
 
-function buildDefaultStats(): PersonalStat[] {
+function buildDefaultStats(labels: StatsLabels): PersonalStat[] {
 	return [
-		{ label: "Total Score", value: 0, size: "lg", variant: "highlight" },
-		{ label: "Exact Score Hits", value: 0, size: "lg" },
-		{ label: "Predicted Wins", value: 0 },
-		{ label: "Avg Points per Match", value: 0 },
-		// { label: "Favorite Team", value: "-", variant: "warm", size: "lg" },
+		{ label: labels.totalScore, value: 0, size: "lg", variant: "highlight" },
+		{ label: labels.exactHits, value: 0, size: "lg" },
+		{ label: labels.predictedWins, value: 0 },
+		{ label: labels.avgShort, value: 0 },
 		{
-			label: "Favorite Score (Most Bets)",
+			label: labels.favoriteMostBets,
 			value: "-",
 			variant: "warm",
 			size: "lg",
 		},
 		{
-			label: "Favorite Score (Most Points)",
+			label: labels.favoriteMostPoints,
 			value: "-",
 			variant: "warm",
 			size: "lg",
 		},
-		{ label: "Best Day", value: "-", variant: "warm" },
+		{ label: labels.bestDay, value: "-", variant: "warm" },
 	];
 }
 
-export function getDefaultPersonalStatisticData(): PersonalStatisticData {
-	return { stats: buildDefaultStats(), history: [] };
+export function getDefaultPersonalStatisticData(
+	labels: StatsLabels = DEFAULT_LABELS
+): PersonalStatisticData {
+	return { stats: buildDefaultStats(labels), history: [] };
 }
 
 export const PersonalStatisticService = {
 	async getPersonalStatistic(
 		userId: string,
-		roomId: string
+		roomId: string,
+		labels: StatsLabels = DEFAULT_LABELS
 	): Promise<PersonalStatisticData> {
 		try {
 			const bets = await prisma.bet.findMany({
@@ -125,7 +131,7 @@ export const PersonalStatisticService = {
 			});
 
 			if (bets.length === 0) {
-				return getDefaultPersonalStatisticData();
+				return getDefaultPersonalStatisticData(labels);
 			}
 
 			const sortedBets = [...bets].sort(
@@ -238,49 +244,48 @@ export const PersonalStatisticService = {
 
 			const stats: PersonalStat[] = [
 				{
-					label: "Total Score",
+					label: labels.totalScore,
 					value: totalScore,
 					size: "lg",
 					variant: "highlight",
 				},
-				{ label: "Exact Score Hits", value: exactHits, size: "lg" },
-				{ label: "Predicted Wins", value: predictedWins },
-				{ label: "Avg Points per Match", value: avgPoints },
-				// { label: "Favorite Team", ... } removed
+				{ label: labels.exactHits, value: exactHits, size: "lg" },
+				{ label: labels.predictedWins, value: predictedWins },
+				{ label: labels.avgShort, value: avgPoints },
 				{
-					label: "Favorite Score (Most Bets)",
+					label: labels.favoriteMostBets,
 					value:
 						favoriteScoreEntries.length > 0
 							? joinTopScoreKeys(favoriteScoreEntries)
 							: "-",
 					sub:
 						favoriteScoreEntries.length === 1
-							? `${favoriteScoreEntries[0][1].points} pts • ${favoriteScoreEntries[0][1].count} bets`
+							? `${favoriteScoreEntries[0][1].points} ${labels.pts} • ${favoriteScoreEntries[0][1].count} ${labels.bets}`
 							: favoriteScoreEntries.length > 1
-								? `${favoriteScoreEntries[0][1].count} bets each`
+								? `${favoriteScoreEntries[0][1].count} ${labels.betsEach}`
 								: undefined,
 					variant: "warm",
 					size: "lg",
 				},
 				{
-					label: "Favorite Score (Most Points)",
+					label: labels.favoriteMostPoints,
 					value:
 						bestPointsScoreEntries.length > 0
 							? joinTopScoreKeys(bestPointsScoreEntries)
 							: "-",
 					sub:
 						bestPointsScoreEntries.length === 1
-							? `${bestPointsScoreEntries[0][1].points} pts • ${bestPointsScoreEntries[0][1].count} bets`
+							? `${bestPointsScoreEntries[0][1].points} ${labels.pts} • ${bestPointsScoreEntries[0][1].count} ${labels.bets}`
 							: bestPointsScoreEntries.length > 1
-								? `${bestPointsScoreEntries[0][1].points} pts each`
+								? `${bestPointsScoreEntries[0][1].points} ${labels.ptsEach}`
 								: undefined,
 					variant: "warm",
 					size: "lg",
 				},
 				{
-					label: "Best Day",
+					label: labels.bestDay,
 					value: bestDayEntry ? toDayLabel(bestDayEntry.date) : "-",
-					sub: bestDayEntry ? `${bestDayEntry.points} pts` : undefined,
+					sub: bestDayEntry ? `${bestDayEntry.points} ${labels.pts}` : undefined,
 					variant: "warm",
 				},
 			];

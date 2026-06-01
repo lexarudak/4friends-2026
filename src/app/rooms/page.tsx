@@ -6,9 +6,12 @@ import { RoomItem } from "@/components/widgets/room-item";
 import { CloseButton } from "@/components/shared/close-button";
 import styles from "./page.module.scss";
 import { PAGES } from "@/utils/constants";
+import { getLocale } from "@/i18n/locale";
+import { getDictionary } from "@/i18n/dictionary";
 
 export default async function RoomsPage() {
 	const session = await auth();
+	const t = getDictionary(await getLocale());
 
 	const userId = session?.user?.email;
 	const currentRoom = session?.user?.current_room ?? null;
@@ -29,7 +32,7 @@ export default async function RoomsPage() {
 						/>
 					)}
 
-					<h1 className={styles.title}>Select a room</h1>
+					<h1 className={styles.title}>{t.rooms.selectRoom}</h1>
 				</div>
 				<ul className={styles.list}>
 					{rooms.map((roomId) => (
@@ -40,9 +43,9 @@ export default async function RoomsPage() {
 				</ul>
 				<JoinRoomForm />
 				<form action={signOutUser} className={styles.logoutRow}>
-					<span>or</span>
+					<span>{t.rooms.or}</span>
 					<button type="submit" className={styles.logoutBtn}>
-						Logout
+						{t.rooms.logout}
 					</button>
 				</form>
 			</div>

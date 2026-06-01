@@ -6,12 +6,14 @@ import { signOut } from "next-auth/react";
 import type { TableRow } from "@/types/api";
 import { LIVE_MATCH_FINALIZED_EVENT, PAGES } from "@/utils/constants";
 import { ScoreTable } from "@/components/widgets/score-table";
+import { useI18n } from "@/i18n/provider";
 
 type TableResponse = {
 	rows: TableRow[];
 };
 
 export const TopTable = () => {
+	const { t } = useI18n();
 	const pathname = usePathname();
 	const [rows, setRows] = useState<TableRow[]>([]);
 	const [isFirstLoading, setIsFirstLoading] = useState(true);
@@ -69,22 +71,22 @@ export const TopTable = () => {
 	if (isFirstLoading) {
 		return (
 			<ScoreTable
-				title="Top 3"
+				title={t.home.top3}
 				rows={[]}
 				ghostCount={3}
 				href={PAGES.ROOM_STATISTIC}
-				linkLabel="More statistic"
+				linkLabel={t.home.moreStatistic}
 			/>
 		);
 	}
 
 	return (
 		<ScoreTable
-			title="Top 3"
+			title={t.home.top3}
 			rows={topRows}
 			currentUserRow={currentUserRow}
 			href={PAGES.ROOM_STATISTIC}
-			linkLabel="More statistic"
+			linkLabel={t.home.moreStatistic}
 		/>
 	);
 };

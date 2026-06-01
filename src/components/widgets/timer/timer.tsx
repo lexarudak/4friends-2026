@@ -3,6 +3,7 @@
 import { useState, useEffect, type FC, type HTMLAttributes } from "react";
 import { cn } from "@/utils/lib";
 import { TeamBadge } from "@/components/shared/team-badge";
+import { useI18n } from "@/i18n/provider";
 import styles from "./timer.module.scss";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
@@ -39,12 +40,7 @@ const computeCountdown = (targetDate: Date, nowMs: number): Countdown => {
 	};
 };
 
-const UNITS: { key: keyof Countdown; label: string }[] = [
-	{ key: "days", label: "Days" },
-	{ key: "hours", label: "Hours" },
-	{ key: "mins", label: "mins" },
-	{ key: "secs", label: "secs" },
-];
+const UNIT_KEYS: (keyof Countdown)[] = ["days", "hours", "mins", "secs"];
 
 export const Timer: FC<Props> = ({
 	targetDate,
@@ -60,6 +56,7 @@ export const Timer: FC<Props> = ({
 	className,
 	...props
 }) => {
+	const { t } = useI18n();
 	const [countdown, setCountdown] = useState<Countdown | null>(null);
 	const [serverClockBase, setServerClockBase] = useState<{
 		serverNowMs: number;
@@ -155,10 +152,10 @@ export const Timer: FC<Props> = ({
 				</div>
 			)}
 			<div className={styles.countdown}>
-				{UNITS.map(({ key, label }) => (
+				{UNIT_KEYS.map((key) => (
 					<div key={key} className={styles.unit}>
 						<span className={styles.value}>{pad(countdown?.[key] ?? 0)}</span>
-						<span className={styles.label}>{label}</span>
+						<span className={styles.label}>{t.timer[key]}</span>
 					</div>
 				))}
 			</div>

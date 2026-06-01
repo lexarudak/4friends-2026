@@ -9,6 +9,7 @@ import { MatchCard } from "@/components/widgets/match-card";
 import { Button } from "@/components/shared/button";
 import { requestApi } from "@/utils/api-client";
 import { isKnockoutRound } from "@/utils/knockout";
+import { useI18n } from "@/i18n/provider";
 import styles from "./bets-form.module.scss";
 
 type Props = {
@@ -53,6 +54,7 @@ function isValidScore(val: string): boolean {
 }
 
 export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
+	const { t } = useI18n();
 	const reinitializedValues = useMemo(
 		() => buildInitialValues(matches, initialBets),
 		[matches, initialBets]
@@ -229,7 +231,7 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 				)}
 			</ul>
 
-			<p className={styles.hint}>Make your bets</p>
+			<p className={styles.hint}>{t.home.makeBets}</p>
 
 			<div className={styles.actions}>
 				<Button
@@ -239,10 +241,10 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 					isLoading={formik.isSubmitting}
 					disabled={showErrors && Object.keys(betErrors).length > 0}
 				>
-					Save
+					{t.home.save}
 				</Button>
 				<Button type="button" variant="outline" size="lg" onClick={handleClear}>
-					Clear
+					{t.home.clear}
 				</Button>
 			</div>
 			<p
@@ -251,7 +253,7 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 					(showErrors && Object.keys(betErrors).length > 0) || undefined
 				}
 			>
-				Fix invalid bets before saving
+				{t.home.fixInvalid}
 			</p>
 		</form>
 	);

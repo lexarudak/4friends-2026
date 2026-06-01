@@ -7,21 +7,28 @@ import {
 	getDefaultPersonalStatisticData,
 	PersonalStatisticService,
 } from "@/services/personal-statistic.service";
+import { getLocale } from "@/i18n/locale";
+import { getDictionary } from "@/i18n/dictionary";
 import styles from "./page.module.scss";
 
 export default async function PersonalStatisticPage() {
 	const session = await auth();
 	const userId = session?.user?.email;
 	const roomId = await getActiveRoomId();
-	const userName = session?.user?.name ?? "Player";
+	const t = getDictionary(await getLocale());
+	const userName = session?.user?.name ?? t.stats.player;
 	const data =
 		userId && roomId
-			? await PersonalStatisticService.getPersonalStatistic(userId, roomId)
-			: getDefaultPersonalStatisticData();
+			? await PersonalStatisticService.getPersonalStatistic(
+					userId,
+					roomId,
+					t.stats
+				)
+			: getDefaultPersonalStatisticData(t.stats);
 
 	return (
 		<div className={styles.page}>
-			<PageTitle title={userName} label="Personal statistic" />
+			<PageTitle title={userName} label={t.stats.personalLabel} />
 			<div className={styles.grid}>
 				{data.stats.map((stat) => (
 					<StatCard

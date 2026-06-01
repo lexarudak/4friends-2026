@@ -4,27 +4,30 @@ import { PageTitle } from "@/components/shared/page-title";
 import { CrownIcon } from "@/components/icons";
 import { auth } from "@/auth";
 import { getActiveRoomTournament } from "@/lib/active-room";
-import { getTournamentLabel } from "@/lib/tournaments";
+import { getLocale } from "@/i18n/locale";
+import { getDictionary } from "@/i18n/dictionary";
 import styles from "./page.module.scss";
 
 export default async function GlobalTopPage() {
 	const session = await auth();
 	const userId = session?.user?.email ?? undefined;
 	const tournament = await getActiveRoomTournament();
-	const sections = await GlobalTopService.getSections(tournament, userId);
-	const tournamentLabel = getTournamentLabel(tournament);
+	const t = getDictionary(await getLocale());
+	const sections = await GlobalTopService.getSections(
+		tournament,
+		userId,
+		t.stats
+	);
 
 	return (
 		<div className={styles.page}>
 			<PageTitle
-				title="Global Top"
-				label={tournamentLabel}
+				title={t.stats.globalTopTitle}
+				label={t.stats.rankingAllRooms}
 				icon={<CrownIcon />}
 			/>
 			{sections.length === 0 ? (
-				<p className={styles.empty}>
-					No data yet — users will appear here soon.
-				</p>
+				<p className={styles.empty}>{t.stats.usersSoon}</p>
 			) : (
 				<div className={styles.sections}>
 					{sections.map((section) => (

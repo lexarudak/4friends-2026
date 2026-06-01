@@ -4,9 +4,12 @@ import { useState } from "react";
 import { signOutUser } from "@/app/rooms/actions";
 import { NAV_LINKS } from "./header-nav-bar.constants";
 import { PreservedQueryLink } from "@/components/shared/preserved-query-link";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { useI18n } from "@/i18n/provider";
 import styles from "./header-nav-bar.module.scss";
 
 export function NavMenu() {
+	const { t } = useI18n();
 	const [open, setOpen] = useState(false);
 
 	const close = () => setOpen(false);
@@ -23,14 +26,17 @@ export function NavMenu() {
 							className={link.icon ? styles.navLinkWithIcon : undefined}
 						>
 							{link.icon && <link.icon className={styles.navIcon} />}
-							{link.label}
+							{t.nav[link.key]}
 						</PreservedQueryLink>
 					</li>
 				))}
 				<li className={styles.navItem}>
 					<button onClick={signOutUser} className={styles.navBtn}>
-						Logout
+						{t.nav.logout}
 					</button>
+				</li>
+				<li className={styles.navItem}>
+					<LanguageSwitcher />
 				</li>
 			</ul>
 
@@ -38,7 +44,7 @@ export function NavMenu() {
 			<button
 				className={styles.burger}
 				onClick={() => setOpen(true)}
-				aria-label="Open menu"
+				aria-label={t.nav.openMenu}
 				aria-expanded={open}
 			>
 				<span />
@@ -54,7 +60,7 @@ export function NavMenu() {
 						<button
 							className={styles.drawerClose}
 							onClick={close}
-							aria-label="Close menu"
+							aria-label={t.nav.closeMenu}
 						>
 							<span />
 							<span />
@@ -69,14 +75,17 @@ export function NavMenu() {
 										onClick={close}
 									>
 										{link.icon && <link.icon className={styles.navIcon} />}
-										{link.label}
+										{t.nav[link.key]}
 									</PreservedQueryLink>
 								</li>
 							))}
 							<li className={styles.drawerItem}>
 								<button onClick={signOutUser} className={styles.navBtn}>
-									Logout
+									{t.nav.logout}
 								</button>
+							</li>
+							<li className={styles.drawerItem}>
+								<LanguageSwitcher className={styles.languageSwitcher} />
 							</li>
 						</ul>
 					</nav>

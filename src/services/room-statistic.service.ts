@@ -1,6 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import type { StatSection, TableRow } from "@/types/api";
 import { getCompetitionPosition } from "@/utils/ranking";
+import type { StatLabels } from "@/i18n/dictionary";
+
+const DEFAULT_LABELS: StatLabels = {
+	totalScore: "Total Score",
+	exactHits: "Exact Score Hits",
+	predictedWins: "Predicted Wins",
+	avgPerMatch: "Average Points per Match",
+};
 
 function buildRows(
 	aggregated: { userId: string; value: number }[],
@@ -28,10 +36,11 @@ function buildRows(
 export const RoomStatisticService = {
 	async getSections(
 		roomId: string,
-		currentUserId: string
+		currentUserId: string,
+		labels: StatLabels = DEFAULT_LABELS
 	): Promise<StatSection[]> {
 		try {
-			return await getSectionsInternal(roomId, currentUserId);
+			return await getSectionsInternal(roomId, currentUserId, labels);
 		} catch (err) {
 			console.error("[RoomStatisticService.getSections]", err);
 			return [];
@@ -41,7 +50,8 @@ export const RoomStatisticService = {
 
 async function getSectionsInternal(
 	roomId: string,
-	currentUserId: string
+	currentUserId: string,
+	labels: StatLabels
 ): Promise<StatSection[]> {
 	const [
 		roomMemberships,
@@ -141,9 +151,9 @@ async function getSectionsInternal(
 	);
 
 	return [
-		{ title: "Total Score", rows: totalScoreRows },
-		{ title: "Exact Score Hits", rows: exactHitsRows },
-		{ title: "Predicted Wins", rows: predictedWinsRows },
-		{ title: "Average Points per Match", rows: avgRows },
+		{ title: labels.totalScore, rows: totalScoreRows },
+		{ title: labels.exactHits, rows: exactHitsRows },
+		{ title: labels.predictedWins, rows: predictedWinsRows },
+		{ title: labels.avgPerMatch, rows: avgRows },
 	];
 }

@@ -4,8 +4,12 @@ import { signInWithGoogle } from "./actions";
 import { GoogleIcon, LogoIcon } from "@/components/icons";
 import { PAGES } from "@/utils/constants";
 import { PrivacyNotice } from "@/components/features/privacy-notice";
+import { getLocale } from "@/i18n/locale";
+import { getDictionary } from "@/i18n/dictionary";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+	const t = getDictionary(await getLocale());
+
 	return (
 		<div className={styles.page}>
 			<div className={styles.card}>
@@ -13,22 +17,20 @@ export default function LoginPage() {
 					<LogoIcon />
 				</div>
 
-				<h1 className={styles.title}>Welcome to 4Friends!</h1>
-				<p className={styles.subtitle}>
-					Choose how you&apos;d like to continue
-				</p>
+				<h1 className={styles.title}>{t.login.welcome}</h1>
+				<p className={styles.subtitle}>{t.login.chooseContinue}</p>
 
 				<div className={styles.providers}>
 					<form action={signInWithGoogle}>
 						<button className={styles.btn} type="submit">
 							<GoogleIcon />
-							Continue with Google
+							{t.login.continueGoogle}
 						</button>
 					</form>
 				</div>
 
 				<p className={styles.rulesLink}>
-					Or read our <Link href={PAGES.ABOUT}>rules</Link>
+					<Link href={PAGES.ABOUT}>{t.login.orReadRules}</Link>
 				</p>
 				<PrivacyNotice />
 			</div>

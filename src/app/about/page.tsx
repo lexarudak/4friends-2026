@@ -1,28 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { PageTitle } from "@/components/shared/page-title";
 import { Button } from "@/components/shared/button";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { PAGES } from "@/utils/constants";
+import { useI18n } from "@/i18n/provider";
 import styles from "./page.module.scss";
 
-type Lang = "en" | "ru";
-
 export default function AboutPage() {
-	const [lang, setLang] = useState<Lang>("en");
-	const en = lang === "en";
+	const { locale, t } = useI18n();
+	const en = locale === "en";
 
 	return (
 		<div className={styles.page}>
-			<button
-				className={styles.langToggle}
-				onClick={() => setLang(en ? "ru" : "en")}
-				aria-label="Switch language"
-			>
-				{en ? "RU" : "EN"}
-			</button>
-
 			<div className={styles.inner}>
 				<nav className={styles.nav}>
 					<Button href={PAGES.HOME} variant="outline" color="neutral" size="md">
@@ -36,6 +27,7 @@ export default function AboutPage() {
 					>
 						{en ? "Start" : "Начать"} →
 					</Button>
+					<LanguageSwitcher className={styles.langSwitcher} />
 				</nav>
 
 				<PageTitle
@@ -209,40 +201,40 @@ export default function AboutPage() {
 						</p>
 						<ul className={styles.statList}>
 							<li className={styles.statItem}>
-								<strong>Total Score</strong>
+								<strong>{t.stats.totalScore}</strong>
 								{en
 									? " — sum of all points plus playoff winner bonuses."
 									: " — сумма всех очков плюс бонусы за угаданных победителей плей-офф."}
 							</li>
 							<li className={styles.statItem}>
-								<strong>Exact Score Hits</strong>
+								<strong>{t.stats.exactHits}</strong>
 								{en
 									? " — number of bets that scored exactly 3 points."
 									: " — количество ставок, за которые начислено ровно 3 очка."}
 							</li>
 							<li className={styles.statItem}>
-								<strong>Predicted Wins</strong>
+								<strong>{t.stats.predictedWins}</strong>
 								{en
 									? " — number of finished matches where the bet scored 1 point or more (any non-zero result)."
 									: " — количество завершённых матчей, где ставка принесла 1 или больше очков (любой ненулевой результат)."}
 							</li>
 							<li className={styles.statItem}>
-								<strong>Average Points per Match</strong>
+								<strong>{t.stats.avgPerMatch}</strong>
 								{en ? (
 									<>
 										{" "}
-										— Total Score divided by the number of finished matches in
-										the room. The denominator is the{" "}
+										— {t.stats.totalScore} divided by the number of finished
+										matches in the room. The denominator is the{" "}
 										<strong>same for every player</strong>, so the ranking
-										aligns with Total Score.
+										aligns with {t.stats.totalScore}.
 									</>
 								) : (
 									<>
 										{" "}
-										— Total Score, делённый на количество завершённых матчей в
-										комнате. Знаменатель{" "}
+										— {t.stats.totalScore}, делённый на количество завершённых
+										матчей в комнате. Знаменатель{" "}
 										<strong>одинаков для всех</strong>, поэтому порядок
-										совпадает с Total Score.
+										совпадает с {t.stats.totalScore}.
 									</>
 								)}
 							</li>
@@ -319,14 +311,15 @@ export default function AboutPage() {
 						<p className={styles.sectionText}>
 							{en ? (
 								<>
-									Tables are <strong>not linked</strong> — your Total Score may
-									come from one room while your Exact Score Hits come from
-									another.
+									Tables are <strong>not linked</strong> — your{" "}
+									{t.stats.totalScore} may come from one room while your{" "}
+									{t.stats.exactHits} come from another.
 								</>
 							) : (
 								<>
-									Таблицы <strong>не связаны</strong> между собой — Total Score
-									может быть из одной комнаты, а Exact Score Hits — из другой.
+									Таблицы <strong>не связаны</strong> между собой —{" "}
+									{t.stats.totalScore} может быть из одной комнаты, а{" "}
+									{t.stats.exactHits} — из другой.
 								</>
 							)}
 						</p>

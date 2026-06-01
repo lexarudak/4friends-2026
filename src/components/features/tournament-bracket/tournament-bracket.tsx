@@ -10,6 +10,7 @@ import type {
 import { GroupStanding } from "@/components/widgets/group-standing";
 import { TeamBadge } from "@/components/shared/team-badge";
 import { LocalDateTime } from "@/components/shared/local-datetime";
+import { useI18n } from "@/i18n/provider";
 import { cn } from "@/utils/lib";
 import styles from "./tournament-bracket.module.scss";
 
@@ -49,7 +50,11 @@ export const TournamentBracket = ({
 	thirdPlace = [],
 	knockout,
 }: Props) => {
+	const { t } = useI18n();
 	const [stage, setStage] = useState<Stage>("group");
+
+	const stageLabel = (s: { id: Stage; label: string }) =>
+		s.id === "group" ? t.tournament.group : s.label;
 
 	return (
 		<div className={styles.root}>
@@ -60,14 +65,14 @@ export const TournamentBracket = ({
 						className={cn(styles.tab, stage === s.id && styles.tabActive)}
 						onClick={() => setStage(s.id)}
 					>
-						{s.label}
+						{stageLabel(s)}
 					</button>
 				))}
 			</nav>
 
 			{stage === "group" &&
 				(groups.length === 0 ? (
-					<p className={styles.emptyStage}>No matches yet.</p>
+					<p className={styles.emptyStage}>{t.tournament.noMatchesYet}</p>
 				) : (
 					<>
 						<div className={styles.groups}>
@@ -78,7 +83,7 @@ export const TournamentBracket = ({
 
 						{thirdPlace.length > 0 && (
 							<div className={styles.thirdPlace}>
-								<h3 className={styles.thirdTitle}>Best third-placed teams</h3>
+								<h3 className={styles.thirdTitle}>{t.tournament.bestThirds}</h3>
 								<div className={styles.thirdTable}>
 									<div className={styles.thirdHeader}>
 										<span className={styles.thirdPos}>#</span>
@@ -118,7 +123,7 @@ export const TournamentBracket = ({
 				))}
 
 			{stage !== "group" && knockout[stage].length === 0 && (
-				<p className={styles.emptyStage}>No matches yet.</p>
+				<p className={styles.emptyStage}>{t.tournament.noMatchesYet}</p>
 			)}
 
 			{stage !== "group" && knockout[stage].length > 0 && (

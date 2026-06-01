@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect, type FC } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
+import { enGB, ru } from "date-fns/locale";
 import { cn } from "@/utils/lib";
+import { useI18n } from "@/i18n/provider";
 import styles from "./date-range-picker.module.scss";
 
 type Props = {
@@ -29,6 +31,7 @@ export const DateRangePicker: FC<Props> = ({
 	toDate,
 	className,
 }) => {
+	const { locale } = useI18n();
 	const [open, setOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -61,6 +64,7 @@ export const DateRangePicker: FC<Props> = ({
 				<div className={styles.popover}>
 					<DayPicker
 						mode="range"
+						locale={locale === "ru" ? ru : enGB}
 						selected={value}
 						onSelect={(r) => {
 							if (r) onChange(r);

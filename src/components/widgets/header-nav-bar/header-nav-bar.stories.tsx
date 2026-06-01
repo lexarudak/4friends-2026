@@ -17,7 +17,7 @@ const HeaderNavBarPreview = () => (
 			<ul className={styles.navLinks}>
 				{NAV_LINKS.map((link) => (
 					<li key={link.href} className={styles.navItem}>
-						<Link href={link.href}>{link.label}</Link>
+						<Link href={link.href}>{link.key}</Link>
 					</li>
 				))}
 				<li className={styles.navItem}>

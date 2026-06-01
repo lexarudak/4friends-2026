@@ -1,8 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./header-info-bar.module.scss";
 import { PAGES } from "@/utils/constants";
 import { PageContainer } from "@/components/shared/page-container";
 import { Button } from "@/components/shared/button";
+import { useI18n } from "@/i18n/provider";
 
 interface HeaderInfoBarProps {
 	roomName?: string | null;
@@ -15,13 +18,15 @@ export function HeaderInfoBar({
 	userName,
 	userImage,
 }: HeaderInfoBarProps) {
+	const { t } = useI18n();
+
 	return (
 		<div className={styles.bar}>
 			<PageContainer className={styles.container}>
 				<div className={styles.roomSection}>
 					{roomName ? (
 						<>
-							<span className={styles.roomLabel}>Room</span>
+							<span className={styles.roomLabel}>{t.headerInfoBar.room}</span>
 							<Button
 								href={PAGES.ROOMS}
 								variant="inline"
@@ -32,7 +37,7 @@ export function HeaderInfoBar({
 							</Button>
 						</>
 					) : (
-						<span className={styles.noRoom}>Select a room</span>
+						<span className={styles.noRoom}>{t.headerInfoBar.selectRoom}</span>
 					)}
 				</div>
 				<div className={styles.userSection}>

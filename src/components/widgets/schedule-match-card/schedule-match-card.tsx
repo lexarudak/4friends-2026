@@ -1,9 +1,12 @@
+"use client";
+
 import type { FC } from "react";
 import { TeamBadge } from "@/components/shared/team-badge";
 import { LiveMinute } from "@/components/shared/live-minute";
 import { LocalDateTime } from "@/components/shared/local-datetime";
 import { isKnockoutRound } from "@/utils/knockout";
 import { PaginatedTable } from "@/components/features/paginated-table";
+import { useI18n } from "@/i18n/provider";
 import styles from "./schedule-match-card.module.scss";
 
 export type ScheduleBet = {
@@ -42,6 +45,7 @@ type Props = {
 };
 
 export const ScheduleMatchCard: FC<Props> = ({ match }) => {
+	const { t } = useI18n();
 	const status = match.status ?? "upcoming";
 	const hasBets = !!match.bets && match.bets.length > 0;
 	const hasResult = match.resultHome != null && match.resultAway != null;
@@ -149,9 +153,9 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				<span className={styles.group}>{match.group}</span>
 				<span className={styles.statusLabel}>
 					{status === "live" ? (
-						"In Play"
+						t.schedule.inPlay
 					) : status === "finished" ? (
-						"Finished"
+						t.schedule.finished
 					) : match.dateIso ? (
 						<LocalDateTime iso={match.dateIso} mode="time" fallback={match.time} />
 					) : (

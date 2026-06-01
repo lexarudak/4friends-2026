@@ -1,9 +1,12 @@
+"use client";
+
 import type { FC } from "react";
 import type { BetHistoryItem } from "@/types/api";
 import { cn } from "@/utils/lib";
 import { SectionLabel } from "@/components/shared/section-label";
 import { BetItem } from "@/components/widgets/bet-item";
 import { getBetItemStatus } from "@/utils/bet";
+import { useI18n } from "@/i18n/provider";
 import styles from "./bet-history-list.module.scss";
 
 type Props = {
@@ -12,11 +15,12 @@ type Props = {
 };
 
 export const BetHistoryList: FC<Props> = ({ items, className }) => {
+	const { t } = useI18n();
 	return (
 		<div className={cn(styles.container, className)}>
-			<SectionLabel label="Bets History" />
+			<SectionLabel label={t.betHistory.title} />
 			{items.length === 0 ? (
-				<p className={styles.empty}>No bets yet.</p>
+				<p className={styles.empty}>{t.betHistory.empty}</p>
 			) : (
 				<ul className={styles.list}>
 					{items.map((item) => (

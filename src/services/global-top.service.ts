@@ -1,6 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import type { StatSection, TableRow } from "@/types/api";
 import { getCompetitionPosition } from "@/utils/ranking";
+import type { StatLabels } from "@/i18n/dictionary";
+
+const DEFAULT_LABELS: StatLabels = {
+	totalScore: "Total Score",
+	exactHits: "Exact Score Hits",
+	predictedWins: "Predicted Wins",
+	avgPerMatch: "Average Points per Match",
+};
 
 type BestEntry = { value: number; roomId: string };
 
@@ -61,7 +69,8 @@ function withZeroDefaults(
 export const GlobalTopService = {
 	async getSections(
 		tournament: string,
-		currentUserId?: string
+		currentUserId?: string,
+		labels: StatLabels = DEFAULT_LABELS
 	): Promise<StatSection[]> {
 		try {
 			const tournamentRooms = await prisma.room.findMany({
@@ -196,7 +205,7 @@ export const GlobalTopService = {
 
 			return [
 				{
-					title: "Total Score",
+					title: labels.totalScore,
 					rows: toRows(
 						withZeroDefaults(allUserIds, totalBest, fallbackRoomByUser),
 						nameMap,
@@ -204,7 +213,7 @@ export const GlobalTopService = {
 					),
 				},
 				{
-					title: "Exact Score Hits",
+					title: labels.exactHits,
 					rows: toRows(
 						withZeroDefaults(allUserIds, exactBest, fallbackRoomByUser),
 						nameMap,
@@ -212,7 +221,7 @@ export const GlobalTopService = {
 					),
 				},
 				{
-					title: "Predicted Wins",
+					title: labels.predictedWins,
 					rows: toRows(
 						withZeroDefaults(allUserIds, predictedBest, fallbackRoomByUser),
 						nameMap,
@@ -220,7 +229,7 @@ export const GlobalTopService = {
 					),
 				},
 				{
-					title: "Average Points per Match",
+					title: labels.avgPerMatch,
 					rows: toRows(
 						withZeroDefaults(allUserIds, avgBest, fallbackRoomByUser),
 						nameMap,
