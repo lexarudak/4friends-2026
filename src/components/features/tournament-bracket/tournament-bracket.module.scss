@@ -171,3 +171,72 @@
 		gap: var(--space-12);
 	}
 }
+
+/* ── Best third-placed teams ── */
+
+.thirdPlace {
+	margin-top: var(--space-40);
+}
+
+.thirdTitle {
+	margin: 0 0 var(--space-16);
+	font-size: var(--font-size-16);
+	font-weight: var(--font-weight-bold);
+	color: var(--color-neutral-white);
+}
+
+.thirdTable {
+	border: 1px solid var(--color-neutral-800);
+	max-width: 520px;
+}
+
+.thirdHeader,
+.thirdRow {
+	display: grid;
+	grid-template-columns: 24px 1fr 36px 36px 28px;
+	gap: var(--space-8);
+	align-items: center;
+	padding: var(--space-8) var(--space-12);
+}
+
+.thirdHeader {
+	color: var(--color-neutral-500);
+	font-size: var(--font-size-11);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.thirdRow {
+	border-top: 1px solid var(--color-neutral-800);
+	border-left: 3px solid transparent;
+
+	&[data-qualified] {
+		border-left-color: var(--color-green-500);
+		background: color-mix(in srgb, var(--color-green-500) 6%, transparent);
+	}
+}
+
+.thirdPos {
+	font-family: var(--font-geist-mono);
+	font-size: var(--font-size-12);
+	color: var(--color-neutral-500);
+	text-align: center;
+}
+
+.thirdGroup {
+	font-family: var(--font-geist-mono);
+	font-size: var(--font-size-12);
+	color: var(--color-neutral-400);
+	text-align: center;
+}
+
+.thirdStat {
+	font-family: var(--font-geist-mono);
+	font-size: var(--font-size-13);
+	color: var(--color-neutral-300);
+	text-align: center;
+}
+
+.thirdName {
+	min-width: 0;
+}

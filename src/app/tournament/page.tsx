@@ -12,7 +12,8 @@ export const metadata = {
 export default async function WorldCupPage() {
 	const slug = await getActiveRoomTournament();
 	const tournament = getTournament(slug);
-	const { groups, knockout } = await WorldCupService.getTournamentData(slug);
+	const { groups, thirdPlace, knockout } =
+		await WorldCupService.getTournamentData(slug);
 
 	return (
 		<div className={styles.page}>
@@ -22,7 +23,11 @@ export default async function WorldCupPage() {
 				subtitle={tournament.meta.join("  •  ")}
 			/>
 			<div className={styles.content}>
-				<TournamentBracket groups={groups} knockout={knockout} />
+				<TournamentBracket
+					groups={groups}
+					thirdPlace={thirdPlace}
+					knockout={knockout}
+				/>
 			</div>
 		</div>
 	);

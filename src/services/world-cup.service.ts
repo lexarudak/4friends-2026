@@ -5,10 +5,12 @@ import {
 	type WcKnockoutMatch,
 	type WcKnockoutStage,
 	type WcTeam,
+	type WcThirdPlaceTeam,
 } from "@/db/world-cup";
 
 type WorldCupData = {
 	groups: WcGroup[];
+	thirdPlace: WcThirdPlaceTeam[];
 	knockout: Record<WcKnockoutStage, WcKnockoutMatch[]>;
 };
 
@@ -118,33 +120,114 @@ function compareGroupName(a: string, b: string): number {
 	return a.localeCompare(b);
 }
 
+type StandingsRow = {
+	group?: string;
+	points?: number;
+	description?: string | null;
+	team?: { id?: number; name?: string; logo?: string };
+	all?: { played?: number; goals?: { for?: number; against?: number } };
+};
+
+function isAdvancing(description?: string | null): boolean {
+	return (
+		typeof description === "string" &&
+		/promotion|qualif|round of|final/i.test(description)
+	);
+}
+
+/**
+ * Build group tables + the cross-group third-place ranking from cached official
+ * standings (preferred over computing from match results).
+ */
+function parseStandings(payload: unknown): {
+	groups: WcGroup[];
+	thirdPlace: WcThirdPlaceTeam[];
+} {
+	try {
+		const arr = payload as Array<{
+			league?: { standings?: StandingsRow[][] };
+		}>;
+		const standings = arr?.[0]?.league?.standings ?? [];
+
+		const groups: WcGroup[] = [];
+		const teamToGroup = new Map<number, string>(); // teamId -> "A"
+		let thirdRows: StandingsRow[] | null = null;
+
+		for (const rows of standings) {
+			if (!Array.isArray(rows) || rows.length === 0) continue;
+			const label = rows[0]?.group ?? "";
+			const groupMatch = /^Group\s+([A-Z])$/i.exec(label);
+
+			if (groupMatch) {
+				const letter = groupMatch[1].toUpperCase();
+				const teams: WcTeam[] = rows.map((r) => {
+					if (r.team?.id != null) teamToGroup.set(r.team.id, letter);
+					return {
+						name: r.team?.name ?? "",
+						flag: r.team?.logo || getTeamFlag(r.team?.name ?? ""),
+						played: r.all?.played ?? 0,
+						goalsFor: r.all?.goals?.for ?? 0,
+						goalsAgainst: r.all?.goals?.against ?? 0,
+						points: r.points ?? 0,
+						qualified: isAdvancing(r.description),
+					};
+				});
+				groups.push({ name: `Group ${letter}`, teams });
+			} else if (/third/i.test(label)) {
+				thirdRows = rows;
+			}
+		}
+
+		const thirdPlace: WcThirdPlaceTeam[] = (thirdRows ?? []).map((r) => ({
+			name: r.team?.name ?? "",
+			flag: r.team?.logo || getTeamFlag(r.team?.name ?? ""),
+			played: r.all?.played ?? 0,
+			goalsFor: r.all?.goals?.for ?? 0,
+			goalsAgainst: r.all?.goals?.against ?? 0,
+			points: r.points ?? 0,
+			qualified: isAdvancing(r.description),
+			group: r.team?.id != null ? teamToGroup.get(r.team.id) : undefined,
+		}));
+
+		return {
+			groups: groups.sort((a, b) => compareGroupName(a.name, b.name)),
+			thirdPlace,
+		};
+	} catch {
+		return { groups: [], thirdPlace: [] };
+	}
+}
+
 export const WorldCupService = {
 	async getTournamentData(tournament: string): Promise<WorldCupData> {
 		try {
-			const rows = await prisma.match.findMany({
-				where: { tournament },
-				orderBy: { date: "asc" },
-				select: {
-					id: true,
-					round: true,
-					groupName: true,
-					date: true,
-					statusShort: true,
-					homeTeamName: true,
-					homeTeamLogo: true,
-					awayTeamName: true,
-					awayTeamLogo: true,
-					homeTeamWinner: true,
-					awayTeamWinner: true,
-					goalsHome: true,
-					goalsAway: true,
-					fulltimeHome: true,
-					fulltimeAway: true,
-				},
-			});
+			const [rows, standingsCache] = await Promise.all([
+				prisma.match.findMany({
+					where: { tournament },
+					orderBy: { date: "asc" },
+					select: {
+						id: true,
+						round: true,
+						groupName: true,
+						date: true,
+						statusShort: true,
+						homeTeamName: true,
+						homeTeamLogo: true,
+						awayTeamName: true,
+						awayTeamLogo: true,
+						homeTeamWinner: true,
+						awayTeamWinner: true,
+						goalsHome: true,
+						goalsAway: true,
+						fulltimeHome: true,
+						fulltimeAway: true,
+					},
+				}),
+				prisma.standingsCache.findUnique({ where: { tournament } }),
+			]);
 
 			if (rows.length === 0) {
-				return { groups: [], knockout: buildEmptyKnockout() };
+				return { groups: [], thirdPlace: [], knockout: buildEmptyKnockout() };
 			}
 
 			const groupMap = new Map<string, Map<string, WcTeam>>();
@@ -240,14 +323,29 @@ export const WorldCupService = {
 				});
 			}
 
-			const groups: WcGroup[] = [...groupMap.entries()]
+			const computedGroups: WcGroup[] = [...groupMap.entries()]
 				.sort((a, b) => compareGroupName(a[0], b[0]))
-				.map(([name, teams]) => ({ name, teams: [...teams.values()] }));
+				.map(([name, teams]) => ({
+					name,
+					teams: [...teams.values()].sort(
+						(a, b) =>
+							b.points - a.points ||
+							b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
+							b.goalsFor - a.goalsFor
+					),
+				}));
 
-			return { groups, knockout };
+			// Prefer the official standings (correct order + qualification) when
+			// cached; fall back to the table computed from match results.
+			const parsed = standingsCache
+				? parseStandings(standingsCache.payload)
+				: { groups: [], thirdPlace: [] };
+			const groups = parsed.groups.length > 0 ? parsed.groups : computedGroups;
+
+			return { groups, thirdPlace: parsed.thirdPlace, knockout };
 		} catch (err) {
 			console.error("[WorldCupService.getTournamentData]", err);
-			return { groups: [], knockout: buildEmptyKnockout() };
+			return { groups: [], thirdPlace: [], knockout: buildEmptyKnockout() };
 		}
 	},
 };

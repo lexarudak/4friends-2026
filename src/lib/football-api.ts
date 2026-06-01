@@ -185,10 +185,13 @@ export const FootballApi = {
 		return data.response[0] ?? null;
 	},
 
-	async fetchStandings(): Promise<unknown[]> {
+	async fetchStandings(
+		leagueId: number = WC_LEAGUE_ID,
+		season: number = WC_SEASON
+	): Promise<unknown[]> {
 		const data = await request<ApiStandingsResponse>("/standings", {
-			league: WC_LEAGUE_ID,
-			season: WC_SEASON,
+			league: leagueId,
+			season,
 		});
 		return data.response;
 	},

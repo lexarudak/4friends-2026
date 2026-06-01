@@ -8,13 +8,7 @@ type Props = {
 };
 
 export const GroupStanding: FC<Props> = ({ group }) => {
-	const sorted = [...group.teams].sort(
-		(a, b) =>
-			b.points - a.points ||
-			b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
-			b.goalsFor - a.goalsFor
-	);
-
+	// Teams arrive already ranked (official standings, or service-sorted).
 	return (
 		<div className={styles.root}>
 			<h3 className={styles.title}>{group.name}</h3>
@@ -26,8 +20,13 @@ export const GroupStanding: FC<Props> = ({ group }) => {
 					<span className={styles.stat}>GD</span>
 					<span className={styles.stat}>P</span>
 				</div>
-				{sorted.map((team, i) => (
-					<div key={team.name} className={styles.row} data-rank={i + 1}>
+				{group.teams.map((team, i) => (
+					<div
+						key={team.name}
+						className={styles.row}
+						data-rank={i + 1}
+						data-qualified={team.qualified || undefined}
+					>
 						<span className={styles.pos}>{i + 1}</span>
 						<TeamBadge
 							name={team.name}

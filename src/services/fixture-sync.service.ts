@@ -7,6 +7,11 @@ import {
 	type ApiFixture,
 } from "@/lib/football-api";
 import { isFinalStatus, PointsCalculator } from "@/services/points-calculator";
+import {
+	getTournament,
+	tournamentForLeague,
+	TOURNAMENTS,
+} from "@/lib/tournaments";
 
 const ADVISORY_LOCK_KEY = 4262026;
 const TTL_DEFAULT_MS = 5 * 60 * 1000;
@@ -111,6 +116,23 @@ async function releaseAdvisoryLock(): Promise<void> {
 	await prisma.$queryRawUnsafe(`SELECT pg_advisory_unlock(${ADVISORY_LOCK_KEY})`);
 }
 
+/** Fetch the official standings for one tournament and cache them. */
+async function refreshStandingsFor(tournament: string): Promise<void> {
+	try {
+		const cfg = getTournament(tournament);
+		const response = await FootballApi.fetchStandings(cfg.leagueId, cfg.season);
+		const payload = response as unknown as Prisma.InputJsonValue;
+		await prisma.standingsCache.upsert({
+			where: { tournament },
+			create: { tournament, payload },
+			update: { payload },
+		});
+	} catch (err) {
+		// Standings are display-only — never let a refresh failure break sync.
+		console.error("[refreshStandingsFor]", tournament, err);
+	}
+}
+
 async function persistFixtures(
 	fixtures: ApiFixture[]
 ): Promise<{ updated: number; finalized: number }> {
@@ -139,6 +161,7 @@ async function persistFixtures(
 	await prisma.$transaction(updateOps);
 
 	let finalized = 0;
+	const finalizedTournaments = new Set<string>();
 	for (const fixture of relevantFixtures) {
 		const newStatus = fixture.fixture.status.short;
 		const prevStatus = prevStatusById.get(fixture.fixture.id);
@@ -149,7 +172,15 @@ async function persistFixtures(
 		) {
 			await PointsCalculator.recalculate(fixture.fixture.id);
 			finalized++;
+			const t = tournamentForLeague(fixture.league.id);
+			if (t) finalizedTournaments.add(t);
 		}
+	}
+
+	// A finished match changes the table → refresh official standings once per
+	// affected tournament.
+	for (const tournament of finalizedTournaments) {
+		await refreshStandingsFor(tournament);
 	}
 
 	return { updated: relevantFixtures.length, finalized };
@@ -275,35 +306,24 @@ export const FixtureSyncService = {
 		}
 	},
 
+	/** Daily safety-net refresh of standings for every known tournament. */
 	async syncStandings(): Promise<SyncDecision> {
 		const status = await FootballApi.getQuotaStatus();
 		if (!status.canSync) {
 			return { kind: "quota-exhausted", requestsCount: status.requestsCount };
 		}
 
-		try {
-			const response = await FootballApi.fetchStandings();
-			const payload = response as unknown as Prisma.InputJsonValue;
-			await prisma.standingsCache.upsert({
-				where: { id: 1 },
-				create: { id: 1, payload },
-				update: { payload },
-			});
-			const after = await FootballApi.getQuotaStatus();
-			return {
-				kind: "synced",
-				updated: response.length,
-				finalized: 0,
-				lastSyncAt: after.lastSyncAt ?? new Date(),
-			};
-		} catch (err) {
-			if (err instanceof ApiKeyMissingError) return { kind: "api-key-missing" };
-			if (err instanceof QuotaExceededError) {
-				return { kind: "quota-exhausted", requestsCount: err.count };
-			}
-			const message = err instanceof Error ? err.message : String(err);
-			console.error("[FixtureSyncService.syncStandings]", message);
-			return { kind: "error", message };
+		let refreshed = 0;
+		for (const slug of Object.keys(TOURNAMENTS)) {
+			await refreshStandingsFor(slug);
+			refreshed++;
 		}
+		const after = await FootballApi.getQuotaStatus();
+		return {
+			kind: "synced",
+			updated: refreshed,
+			finalized: 0,
+			lastSyncAt: after.lastSyncAt ?? new Date(),
+		};
 	},
 };

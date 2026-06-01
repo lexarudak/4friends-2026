@@ -114,7 +114,7 @@ model ApiQuota {
 }
 
 model StandingsCache {
-  id        Int      @id @default(1)
-  payload   Json
-  updatedAt DateTime @updatedAt
+  tournament String   @id
+  payload    Json
+  updatedAt  DateTime @updatedAt
 }

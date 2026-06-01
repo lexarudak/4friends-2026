@@ -57,6 +57,12 @@
 	&[data-rank="4"] {
 		border-left: 3px solid transparent;
 	}
+
+	/* Official standings tell us exactly who advances (incl. best thirds). */
+	&[data-qualified] {
+		border-left: 3px solid var(--color-green-500);
+		background: color-mix(in srgb, var(--color-green-500) 6%, transparent);
+	}
 }
 
 .pos {

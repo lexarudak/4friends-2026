@@ -5,11 +5,19 @@ export type WcTeam = {
 	goalsFor: number;
 	goalsAgainst: number;
 	points: number;
+	/** From official standings: team advances from the group. */
+	qualified?: boolean;
 };
 
 export type WcGroup = {
 	name: string;
 	teams: WcTeam[];
+};
+
+/** A third-placed team in the cross-group ranking (which 8 of 12 advance). */
+export type WcThirdPlaceTeam = WcTeam & {
+	/** Source group letter, e.g. "A". */
+	group?: string;
 };
 
 export type WcKnockoutStage = "r32" | "r16" | "qf" | "sf" | "final";

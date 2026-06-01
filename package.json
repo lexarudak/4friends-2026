@@ -30,7 +30,8 @@
 		"seed:live-test": "tsx scripts/seed-live-test-match.ts",
 		"seed:ucl-final": "tsx scripts/seed-ucl-final.ts",
 		"import:fixture": "tsx scripts/import-fixture.ts",
-		"import:tournament": "tsx scripts/import-tournament.ts"
+		"import:tournament": "tsx scripts/import-tournament.ts",
+		"import:standings": "tsx scripts/import-standings.ts"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",

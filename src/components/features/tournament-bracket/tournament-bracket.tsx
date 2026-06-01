@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { WcGroup, WcKnockoutMatch, WcKnockoutStage } from "@/db/world-cup";
+import type {
+	WcGroup,
+	WcKnockoutMatch,
+	WcKnockoutStage,
+	WcThirdPlaceTeam,
+} from "@/db/world-cup";
 import { GroupStanding } from "@/components/widgets/group-standing";
 import { TeamBadge } from "@/components/shared/team-badge";
 import { LocalDateTime } from "@/components/shared/local-datetime";
@@ -21,6 +26,7 @@ const STAGES: { id: Stage; label: string }[] = [
 
 type Props = {
 	groups: WcGroup[];
+	thirdPlace?: WcThirdPlaceTeam[];
 	knockout: Record<WcKnockoutStage, WcKnockoutMatch[]>;
 };
 
@@ -38,7 +44,11 @@ function getWinnerSide(match: WcKnockoutMatch): "home" | "away" | null {
 	return match.scoreHome > match.scoreAway ? "home" : "away";
 }
 
-export const TournamentBracket = ({ groups, knockout }: Props) => {
+export const TournamentBracket = ({
+	groups,
+	thirdPlace = [],
+	knockout,
+}: Props) => {
 	const [stage, setStage] = useState<Stage>("group");
 
 	return (
@@ -59,11 +69,52 @@ export const TournamentBracket = ({ groups, knockout }: Props) => {
 				(groups.length === 0 ? (
 					<p className={styles.emptyStage}>No matches yet.</p>
 				) : (
-					<div className={styles.groups}>
-						{groups.map((group) => (
-							<GroupStanding key={group.name} group={group} />
-						))}
-					</div>
+					<>
+						<div className={styles.groups}>
+							{groups.map((group) => (
+								<GroupStanding key={group.name} group={group} />
+							))}
+						</div>
+
+						{thirdPlace.length > 0 && (
+							<div className={styles.thirdPlace}>
+								<h3 className={styles.thirdTitle}>Best third-placed teams</h3>
+								<div className={styles.thirdTable}>
+									<div className={styles.thirdHeader}>
+										<span className={styles.thirdPos}>#</span>
+										<span />
+										<span className={styles.thirdGroup}>Grp</span>
+										<span className={styles.thirdStat}>GD</span>
+										<span className={styles.thirdStat}>P</span>
+									</div>
+									{thirdPlace.map((team, i) => (
+										<div
+											key={team.name}
+											className={styles.thirdRow}
+											data-qualified={team.qualified || undefined}
+										>
+											<span className={styles.thirdPos}>{i + 1}</span>
+											<TeamBadge
+												name={team.name}
+												flag={team.flag}
+												size="s"
+												className={styles.thirdName}
+											/>
+											<span className={styles.thirdGroup}>
+												{team.group ?? "—"}
+											</span>
+											<span className={styles.thirdStat}>
+												{team.played > 0
+													? team.goalsFor - team.goalsAgainst
+													: "—"}
+											</span>
+											<span className={styles.thirdStat}>{team.points}</span>
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+					</>
 				))}
 
 			{stage !== "group" && knockout[stage].length === 0 && (
