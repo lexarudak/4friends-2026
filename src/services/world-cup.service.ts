@@ -156,26 +156,30 @@ function parseStandings(payload: unknown): {
 		for (const rows of standings) {
 			if (!Array.isArray(rows) || rows.length === 0) continue;
 			const label = rows[0]?.group ?? "";
-			const groupMatch = /^Group\s+([A-Z])$/i.exec(label);
 
-			if (groupMatch) {
-				const letter = groupMatch[1].toUpperCase();
-				const teams: WcTeam[] = rows.map((r) => {
-					if (r.team?.id != null) teamToGroup.set(r.team.id, letter);
-					return {
-						name: r.team?.name ?? "",
-						flag: r.team?.logo || getTeamFlag(r.team?.name ?? ""),
-						played: r.all?.played ?? 0,
-						goalsFor: r.all?.goals?.for ?? 0,
-						goalsAgainst: r.all?.goals?.against ?? 0,
-						points: r.points ?? 0,
-						qualified: isAdvancing(r.description),
-					};
-				});
-				groups.push({ name: `Group ${letter}`, teams });
-			} else if (/third/i.test(label)) {
+			// The cross-group third-place ranking is handled separately.
+			if (/third/i.test(label)) {
 				thirdRows = rows;
+				continue;
 			}
+
+			const groupMatch = /^Group\s+([A-Z])$/i.exec(label);
+			const name = groupMatch ? `Group ${groupMatch[1].toUpperCase()}` : label;
+			const teams: WcTeam[] = rows.map((r) => {
+				if (groupMatch && r.team?.id != null) {
+					teamToGroup.set(r.team.id, groupMatch[1].toUpperCase());
+				}
+				return {
+					name: r.team?.name ?? "",
+					flag: r.team?.logo || getTeamFlag(r.team?.name ?? ""),
+					played: r.all?.played ?? 0,
+					goalsFor: r.all?.goals?.for ?? 0,
+					goalsAgainst: r.all?.goals?.against ?? 0,
+					points: r.points ?? 0,
+					qualified: isAdvancing(r.description),
+				};
+			});
+			groups.push({ name, teams });
 		}
 
 		const thirdPlace: WcThirdPlaceTeam[] = (thirdRows ?? []).map((r) => ({

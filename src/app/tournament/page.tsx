@@ -1,5 +1,6 @@
 import { PageTitle } from "@/components/shared/page-title";
 import { TournamentBracket } from "@/components/features/tournament-bracket";
+import { GroupStanding } from "@/components/widgets/group-standing";
 import { WorldCupService } from "@/services/world-cup.service";
 import { getActiveRoomTournament } from "@/lib/active-room";
 import { getTournament } from "@/lib/tournaments";
@@ -23,11 +24,25 @@ export default async function WorldCupPage() {
 				subtitle={tournament.meta.join("  •  ")}
 			/>
 			<div className={styles.content}>
-				<TournamentBracket
-					groups={groups}
-					thirdPlace={thirdPlace}
-					knockout={knockout}
-				/>
+				{tournament.format === "league" ? (
+					groups.length === 0 ? (
+						<p className={styles.empty}>No standings yet.</p>
+					) : (
+						groups.map((group) => (
+							<GroupStanding
+								key={group.name}
+								group={group}
+								rankColors={false}
+							/>
+						))
+					)
+				) : (
+					<TournamentBracket
+						groups={groups}
+						thirdPlace={thirdPlace}
+						knockout={knockout}
+					/>
+				)}
 			</div>
 		</div>
 	);

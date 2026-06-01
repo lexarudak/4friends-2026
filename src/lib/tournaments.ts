@@ -11,6 +11,8 @@ export type TournamentConfig = {
 	title: string;
 	/** Hero/subtitle lines: dates, size, hosts. */
 	meta: string[];
+	/** "groups" = group tables + knockout bracket; "league" = one standings table. */
+	format: "groups" | "league";
 	leagueId: number;
 	season: number;
 };
@@ -21,6 +23,7 @@ export const TOURNAMENTS: Record<string, TournamentConfig> = {
 		label: "FIFA World Cup 2026",
 		title: "FIFA World Cup 2026™",
 		meta: ["11 June – 19 July 2026", "48 teams", "USA · Canada · Mexico"],
+		format: "groups",
 		leagueId: 1,
 		season: 2026,
 	},
@@ -29,6 +32,7 @@ export const TOURNAMENTS: Record<string, TournamentConfig> = {
 		label: "UEFA Champions League 25/26",
 		title: "UEFA Champions League 25/26",
 		meta: ["Sep 2025 – May 2026", "36 teams", "Europe"],
+		format: "groups",
 		leagueId: 2,
 		season: 2025,
 	},
@@ -36,7 +40,8 @@ export const TOURNAMENTS: Record<string, TournamentConfig> = {
 		slug: "belarus1",
 		label: "Belarus First League",
 		title: "Belarus First League 2026",
-		meta: ["April – November 2026", "16 teams", "Belarus"],
+		meta: ["April – November 2026", "18 teams", "Belarus"],
+		format: "league",
 		leagueId: 117,
 		season: 2026,
 	},

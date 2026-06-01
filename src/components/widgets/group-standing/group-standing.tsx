@@ -5,9 +5,11 @@ import styles from "./group-standing.module.scss";
 
 type Props = {
 	group: WcGroup;
+	/** Color the top ranks (group format). Off for single-league tables. */
+	rankColors?: boolean;
 };
 
-export const GroupStanding: FC<Props> = ({ group }) => {
+export const GroupStanding: FC<Props> = ({ group, rankColors = true }) => {
 	// Teams arrive already ranked (official standings, or service-sorted).
 	return (
 		<div className={styles.root}>
@@ -24,7 +26,7 @@ export const GroupStanding: FC<Props> = ({ group }) => {
 					<div
 						key={team.name}
 						className={styles.row}
-						data-rank={i + 1}
+						data-rank={rankColors ? i + 1 : undefined}
 						data-qualified={team.qualified || undefined}
 					>
 						<span className={styles.pos}>{i + 1}</span>
