@@ -13,10 +13,10 @@ const TTL_DEFAULT_MS = 5 * 60 * 1000;
 const TTL_LATE_PLAYOFF_MS = 3 * 60 * 1000;
 const PRE_MATCH_WINDOW_MS = 30 * 60 * 1000;
 
-// Premium api-football plan window: poll the API once a minute through the end
-// of 2026-06-29 (UTC). Afterwards (plan expires) fall back to the 5/3-min TTL.
+// Premium api-football plan window: poll the API every 2 minutes through the
+// end of 2026-06-29 (UTC). Afterwards (plan expires) fall back to the 5/3-min TTL.
 const PREMIUM_UNTIL_MS = Date.UTC(2026, 5, 30); // 2026-06-30 00:00 UTC == end of Jun 29
-const PREMIUM_TTL_MS = 60 * 1000;
+const PREMIUM_TTL_MS = 2 * 60 * 1000;
 
 export function isPremiumWindow(now: number = Date.now()): boolean {
 	return now < PREMIUM_UNTIL_MS;

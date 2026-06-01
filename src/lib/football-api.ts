@@ -85,20 +85,18 @@ function todayUtcDate(): Date {
 
 async function consumeQuota(): Promise<number> {
 	const date = todayUtcDate();
+	// Single op: increment the daily counter AND stamp lastSyncAt/clear error,
+	// instead of separate snapshot + consume + markSuccess writes.
 	const row = await prisma.apiQuota.upsert({
 		where: { date },
-		create: { date, requestsCount: 1 },
-		update: { requestsCount: { increment: 1 } },
+		create: { date, requestsCount: 1, lastSyncAt: new Date() },
+		update: {
+			requestsCount: { increment: 1 },
+			lastSyncAt: new Date(),
+			lastError: null,
+		},
 	});
 	return row.requestsCount;
-}
-
-async function markSyncSuccess(): Promise<void> {
-	const date = todayUtcDate();
-	await prisma.apiQuota.update({
-		where: { date },
-		data: { lastSyncAt: new Date(), lastError: null },
-	});
 }
 
 async function markSyncError(error: string): Promise<void> {
@@ -110,11 +108,6 @@ async function markSyncError(error: string): Promise<void> {
 	});
 }
 
-async function getQuotaSnapshot(): Promise<number> {
-	const date = todayUtcDate();
-	const row = await prisma.apiQuota.findUnique({ where: { date } });
-	return row?.requestsCount ?? 0;
-}
 
 async function request<T>(
 	path: string,
@@ -123,17 +116,17 @@ async function request<T>(
 	const apiKey = process.env.FOOTBALL_API_KEY;
 	if (!apiKey) throw new ApiKeyMissingError();
 
-	const currentCount = await getQuotaSnapshot();
-	if (currentCount >= HARD_CAP) {
-		throw new QuotaExceededError(currentCount);
-	}
-
 	const url = new URL(`${API_BASE_URL}${path}`);
 	for (const [key, value] of Object.entries(params)) {
 		url.searchParams.set(key, String(value));
 	}
 
+	// One DB op: increment counter + stamp lastSyncAt. If it pushes us over the
+	// hard cap, bail (we over-counted by one — negligible).
 	const newCount = await consumeQuota();
+	if (newCount > HARD_CAP) {
+		throw new QuotaExceededError(newCount);
+	}
 	console.info("[football-api] request", {
 		path,
 		params,
@@ -151,9 +144,7 @@ async function request<T>(
 			throw new Error(`API ${res.status}: ${text.slice(0, 200)}`);
 		}
 
-		const data = (await res.json()) as T;
-		await markSyncSuccess();
-		return data;
+		return (await res.json()) as T;
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
 		await markSyncError(message);
