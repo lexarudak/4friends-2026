@@ -107,11 +107,27 @@ function getResult(
 export const ScheduleService = {
 	async getScheduleMatches(
 		tournament: string,
-		roomId?: string
+		roomId?: string,
+		opts?: { liveOnly?: boolean; from?: Date; to?: Date }
 	): Promise<ScheduleMatch[]> {
 		try {
+			const where: {
+				tournament: string;
+				statusShort?: { in: string[] };
+				date?: { gte?: Date; lte?: Date };
+			} = { tournament };
+
+			if (opts?.liveOnly) {
+				where.statusShort = { in: [...LIVE_STATUSES] };
+			}
+			if (opts?.from || opts?.to) {
+				where.date = {};
+				if (opts.from) where.date.gte = opts.from;
+				if (opts.to) where.date.lte = opts.to;
+			}
+
 			const matches = await prisma.match.findMany({
-				where: { tournament },
+				where,
 				orderBy: { date: "asc" },
 				select: {
 					id: true,

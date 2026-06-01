@@ -6,11 +6,11 @@ import styles from "./live-section.module.scss";
 export async function LiveSection() {
 	const roomId = await getActiveRoomId();
 	const tournament = await getActiveRoomTournament();
-	const allMatches = await ScheduleService.getScheduleMatches(
+	const matches = await ScheduleService.getScheduleMatches(
 		tournament,
-		roomId ?? undefined
+		roomId ?? undefined,
+		{ liveOnly: true }
 	);
-	const matches = allMatches.filter((m) => m.status === "live");
 
 	if (matches.length === 0) return null;
 
