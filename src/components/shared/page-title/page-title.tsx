@@ -4,10 +4,11 @@ import styles from "./page-title.module.scss";
 type Props = {
 	title: string;
 	label?: string;
+	subtitle?: ReactNode;
 	icon?: ReactNode;
 };
 
-export const PageTitle: FC<Props> = ({ title, label, icon }) => {
+export const PageTitle: FC<Props> = ({ title, label, subtitle, icon }) => {
 	return (
 		<div className={styles.root}>
 			{label && <p className={styles.label}>{label}</p>}
@@ -15,6 +16,7 @@ export const PageTitle: FC<Props> = ({ title, label, icon }) => {
 				{icon && <span className={styles.icon}>{icon}</span>}
 				{title}
 			</h1>
+			{subtitle && <p className={styles.subtitle}>{subtitle}</p>}
 		</div>
 	);
 };

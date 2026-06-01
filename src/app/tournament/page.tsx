@@ -2,7 +2,7 @@ import { PageTitle } from "@/components/shared/page-title";
 import { TournamentBracket } from "@/components/features/tournament-bracket";
 import { WorldCupService } from "@/services/world-cup.service";
 import { getActiveRoomTournament } from "@/lib/active-room";
-import { getTournamentLabel } from "@/lib/tournaments";
+import { getTournament } from "@/lib/tournaments";
 import styles from "./page.module.scss";
 
 export const metadata = {
@@ -10,14 +10,17 @@ export const metadata = {
 };
 
 export default async function WorldCupPage() {
-	const tournament = await getActiveRoomTournament();
-	const { groups, knockout } = await WorldCupService.getTournamentData(
-		tournament
-	);
+	const slug = await getActiveRoomTournament();
+	const tournament = getTournament(slug);
+	const { groups, knockout } = await WorldCupService.getTournamentData(slug);
 
 	return (
 		<div className={styles.page}>
-			<PageTitle label={getTournamentLabel(tournament)} title="Tournament" />
+			<PageTitle
+				label="Tournament"
+				title={tournament.title}
+				subtitle={tournament.meta.join("  •  ")}
+			/>
 			<div className={styles.content}>
 				<TournamentBracket groups={groups} knockout={knockout} />
 			</div>

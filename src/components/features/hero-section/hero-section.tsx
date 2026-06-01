@@ -1,13 +1,17 @@
-import type { HTMLAttributes, FC } from "react";
+import type { HTMLAttributes } from "react";
 import { cn } from "@/utils/lib";
 import styles from "./hero-section.module.scss";
 import { Button } from "@/components/shared/button";
 import { SectionLabel } from "@/components/shared/section-label";
 import { PAGES } from "@/utils/constants";
+import { getActiveRoomTournament } from "@/lib/active-room";
+import { getTournament } from "@/lib/tournaments";
 
 type Props = HTMLAttributes<HTMLDivElement>;
 
-export const HeroSection: FC<Props> = ({ className, ...props }) => {
+export const HeroSection = async ({ className, ...props }: Props) => {
+	const tournament = getTournament(await getActiveRoomTournament());
+
 	return (
 		<div className={cn(styles.container, className)}>
 			<section {...props} className={styles.section}>
@@ -16,13 +20,19 @@ export const HeroSection: FC<Props> = ({ className, ...props }) => {
 						label="4friends tournament"
 						className={styles.eyebrow}
 					/>
-					<h1 className={styles.title}>FIFA World Cup 2026™</h1>
+					<h1 className={styles.title}>{tournament.title}</h1>
 					<div className={styles.meta}>
-						<span className={styles.metaItem}>11 June – 19 July 2026</span>
-						<span className={styles.metaItem}>48 teams</span>
-						<span className={styles.metaItem}>USA · Canada · Mexico</span>
+						{tournament.meta.map((item) => (
+							<span key={item} className={styles.metaItem}>
+								{item}
+							</span>
+						))}
 					</div>
-					<Button href={PAGES.WORLD_CUP} color="primary" className={styles.cta}>
+					<Button
+						href={PAGES.TOURNAMENT}
+						color="primary"
+						className={styles.cta}
+					>
 						Discover the tournament
 						<span aria-hidden>→</span>
 					</Button>

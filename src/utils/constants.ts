@@ -8,7 +8,7 @@ export const PAGES = {
 	ROOM_STATISTIC: "/room-statistic",
 	PERSONAL_STATISTIC: "/personal-statistic",
 	GLOBAL_TOP: "/global-top",
-	WORLD_CUP: "/world-cup",
+	TOURNAMENT: "/tournament",
 } as const;
 
 export const COOKIES_KEYS = {

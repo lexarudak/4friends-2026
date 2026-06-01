@@ -35,7 +35,7 @@ export const NAV_LINKS: NavLink[] = [
 		href: PAGES.ABOUT,
 	},
 	{
-		label: "FIFA World Cup 2026™",
-		href: PAGES.WORLD_CUP,
+		label: "Tournament",
+		href: PAGES.TOURNAMENT,
 	},
 ];
