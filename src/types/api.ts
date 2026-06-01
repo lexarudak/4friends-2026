@@ -16,6 +16,7 @@ export type RoomItem = {
 	name: string;
 	tournament?: string;
 	password?: string | null;
+	imageUrl?: string | null;
 };
 
 export type UserResponse = {

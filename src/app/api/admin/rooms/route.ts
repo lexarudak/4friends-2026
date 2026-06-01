@@ -22,6 +22,7 @@ export async function GET() {
 			name: room.name,
 			tournament: room.tournament,
 			password: room.password ?? null,
+			imageUrl: room.imageUrl ?? null,
 		}))
 	);
 }
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
 			name?: unknown;
 			tournament?: unknown;
 			password?: unknown;
+			imageUrl?: unknown;
 		};
 		const name = normalizeRoomName(payload?.name);
 		const tournament =
@@ -54,6 +56,24 @@ export async function POST(request: NextRequest) {
 			);
 		}
 		const password = rawPassword || undefined;
+
+		// Optional room image: a small base64 data URL (resized client-side).
+		let imageUrl: string | undefined;
+		if (typeof payload.imageUrl === "string" && payload.imageUrl) {
+			if (!/^data:image\/(png|jpeg|webp);base64,/.test(payload.imageUrl)) {
+				return NextResponse.json(
+					{ error: "INVALID_IMAGE", message: "Unsupported image format." },
+					{ status: 400 }
+				);
+			}
+			if (payload.imageUrl.length > 300_000) {
+				return NextResponse.json(
+					{ error: "IMAGE_TOO_LARGE", message: "Image is too large." },
+					{ status: 400 }
+				);
+			}
+			imageUrl = payload.imageUrl;
+		}
 
 		if (!isRoomNameLengthValid(name)) {
 			return NextResponse.json(
@@ -77,7 +97,12 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const room = await RoomService.createRoom(name, tournament, password);
+		const room = await RoomService.createRoom(
+			name,
+			tournament,
+			password,
+			imageUrl
+		);
 
 		return NextResponse.json(
 			{
@@ -85,6 +110,7 @@ export async function POST(request: NextRequest) {
 				name: room.name,
 				tournament: room.tournament,
 				password: room.password ?? null,
+				imageUrl: room.imageUrl ?? null,
 			},
 			{ status: 201 }
 		);

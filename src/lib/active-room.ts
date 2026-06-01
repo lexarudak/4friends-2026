@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 // Deduped per request: multiple server components on one page resolve the
-// active room / tournament once instead of repeating auth() + room.findUnique.
+// active room once instead of repeating auth() + room.findUnique.
 export const getActiveRoomId = cache(async (): Promise<string | null> => {
 	const session = await auth();
 	return (
@@ -11,12 +11,23 @@ export const getActiveRoomId = cache(async (): Promise<string | null> => {
 	);
 });
 
+const getActiveRoom = cache(
+	async (): Promise<{ tournament: string; imageUrl: string | null } | null> => {
+		const roomId = await getActiveRoomId();
+		if (!roomId) return null;
+		return prisma.room.findUnique({
+			where: { name: roomId },
+			select: { tournament: true, imageUrl: true },
+		});
+	}
+);
+
 export const getActiveRoomTournament = cache(async (): Promise<string> => {
-	const roomId = await getActiveRoomId();
-	if (!roomId) return "wc2026";
-	const room = await prisma.room.findUnique({
-		where: { name: roomId },
-		select: { tournament: true },
-	});
+	const room = await getActiveRoom();
 	return room?.tournament ?? "wc2026";
+});
+
+export const getActiveRoomImage = cache(async (): Promise<string | null> => {
+	const room = await getActiveRoom();
+	return room?.imageUrl ?? null;
 });

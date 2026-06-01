@@ -5,6 +5,7 @@ import { Button } from "@/components/shared/button";
 import type { RoomItem } from "@/types/api";
 import { requestApi, requestJson } from "@/utils/api-client";
 import { getTournamentLabel } from "@/lib/tournaments";
+import { fileToResizedDataUrl } from "@/utils/image";
 import {
 	getRoomNameLengthErrorMessage,
 	isRoomNameLengthValid,
@@ -20,6 +21,7 @@ export function AdminRoomsTable() {
 	const [newRoomName, setNewRoomName] = useState("");
 	const [newRoomTournament, setNewRoomTournament] = useState("wc2026");
 	const [newRoomPassword, setNewRoomPassword] = useState("");
+	const [newRoomImage, setNewRoomImage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [createError, setCreateError] = useState<string | null>(null);
 
@@ -72,6 +74,20 @@ export function AdminRoomsTable() {
 		}
 	};
 
+	const handleImageChange = async (file: File | undefined) => {
+		if (!file) {
+			setNewRoomImage(null);
+			return;
+		}
+		try {
+			setCreateError(null);
+			setNewRoomImage(await fileToResizedDataUrl(file));
+		} catch {
+			setCreateError("Could not read image");
+			setNewRoomImage(null);
+		}
+	};
+
 	const handleCreateRoom = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
@@ -97,6 +113,7 @@ export function AdminRoomsTable() {
 						name: normalizedName,
 						tournament: newRoomTournament,
 						password: newRoomPassword.trim() || undefined,
+						imageUrl: newRoomImage || undefined,
 					}),
 				},
 				"Could not create room"
@@ -105,6 +122,7 @@ export function AdminRoomsTable() {
 			setNewRoomName("");
 			setNewRoomTournament("wc2026");
 			setNewRoomPassword("");
+			setNewRoomImage(null);
 			await loadRooms();
 		} catch (requestError) {
 			setCreateError(
@@ -159,6 +177,40 @@ export function AdminRoomsTable() {
 						Add room
 					</Button>
 				</div>
+
+				<div className={styles.imageRow}>
+					<label className={styles.imagePicker}>
+						{newRoomImage ? (
+							// eslint-disable-next-line @next/next/no-img-element
+							<img
+								src={newRoomImage}
+								alt="Room logo preview"
+								className={styles.imagePreview}
+							/>
+						) : (
+							<span className={styles.imagePlaceholder}>Logo</span>
+						)}
+						<input
+							type="file"
+							accept="image/png,image/jpeg,image/webp"
+							className={styles.fileInput}
+							onChange={(e) => handleImageChange(e.target.files?.[0])}
+						/>
+					</label>
+					<span className={styles.imageHint}>
+						Optional room logo — replaces the header logo for this room.
+						{newRoomImage && (
+							<button
+								type="button"
+								className={styles.imageRemove}
+								onClick={() => setNewRoomImage(null)}
+							>
+								Remove
+							</button>
+						)}
+					</span>
+				</div>
+
 				{createError && <p className={styles.error}>{createError}</p>}
 			</form>
 

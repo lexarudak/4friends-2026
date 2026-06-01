@@ -4,13 +4,21 @@ import { PAGES } from "@/utils/constants";
 import { PageContainer } from "@/components/shared/page-container";
 import { NavMenu } from "./nav-menu";
 import { PreservedQueryLink } from "@/components/shared/preserved-query-link";
+import { getActiveRoomImage } from "@/lib/active-room";
 
-export function HeaderNavBar() {
+export async function HeaderNavBar() {
+	const roomImage = await getActiveRoomImage();
+
 	return (
 		<nav className={styles.bar}>
 			<PageContainer className={styles.container}>
 				<PreservedQueryLink href={PAGES.HOME} className={styles.logoLink}>
-					<LogoIcon className={styles.logo} />
+					{roomImage ? (
+						// eslint-disable-next-line @next/next/no-img-element
+						<img src={roomImage} alt="" className={styles.logoImage} />
+					) : (
+						<LogoIcon className={styles.logo} />
+					)}
 				</PreservedQueryLink>
 
 				<NavMenu />
