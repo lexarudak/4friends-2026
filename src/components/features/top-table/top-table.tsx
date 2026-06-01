@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { TableRow } from "@/types/api";
-import { PAGES } from "@/utils/constants";
+import { LIVE_MATCH_FINALIZED_EVENT, PAGES } from "@/utils/constants";
 import { ScoreTable } from "@/components/widgets/score-table";
 
 type TableResponse = {
@@ -15,46 +15,48 @@ export const TopTable = () => {
 	const pathname = usePathname();
 	const [rows, setRows] = useState<TableRow[]>([]);
 	const [isFirstLoading, setIsFirstLoading] = useState(true);
-	const [isSigningOut, setIsSigningOut] = useState(false);
+	const isSigningOutRef = useRef(false);
 
-	useEffect(() => {
-		let isCancelled = false;
+	const load = useCallback(async () => {
+		try {
+			if (isSigningOutRef.current) return;
 
-		const load = async () => {
-			try {
-				if (isSigningOut) return;
+			const response = await fetch("/api/table", { cache: "no-store" });
+			if (!response.ok) return;
 
-				const response = await fetch("/api/table", { cache: "no-store" });
-				if (!response.ok) return;
+			const data = (await response.json()) as TableResponse;
+			const nextRows = data.rows ?? [];
+			const hasCurrentUser = nextRows.some((row) => row.isCurrentUser);
 
-				const data = (await response.json()) as TableResponse;
-				const nextRows = data.rows ?? [];
-				const hasCurrentUser = nextRows.some((row) => row.isCurrentUser);
-
-				if (!hasCurrentUser) {
-					setIsSigningOut(true);
-					await signOut({ redirect: true, redirectTo: PAGES.LOGIN });
-					return;
-				}
-
-				if (!isCancelled) {
-					setRows(nextRows);
-				}
-			} catch {
-				// keep previous data on transient errors
-			} finally {
-				if (!isCancelled) {
-					setIsFirstLoading(false);
-				}
+			if (!hasCurrentUser) {
+				isSigningOutRef.current = true;
+				await signOut({ redirect: true, redirectTo: PAGES.LOGIN });
+				return;
 			}
-		};
 
+			setRows(nextRows);
+		} catch {
+			// keep previous data on transient errors
+		} finally {
+			setIsFirstLoading(false);
+		}
+	}, []);
+
+	// Fetch on mount, and again only when a live match finishes (points awarded
+	// — signalled by the live timer).
+	useEffect(() => {
 		void load();
+		const onFinalized = () => void load();
+		window.addEventListener(LIVE_MATCH_FINALIZED_EVENT, onFinalized);
+		return () =>
+			window.removeEventListener(LIVE_MATCH_FINALIZED_EVENT, onFinalized);
+	}, [load]);
 
-		return () => {
-			isCancelled = true;
-		};
-	}, [pathname, isSigningOut]);
+	// The room statistic page is the leaderboard view and already queries it —
+	// keep the sidebar Top 3 in sync when landing there.
+	useEffect(() => {
+		if (pathname === PAGES.ROOM_STATISTIC) void load();
+	}, [pathname, load]);
 
 	const topRows = useMemo(() => rows.slice(0, 3), [rows]);
 

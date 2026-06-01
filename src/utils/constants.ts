@@ -21,3 +21,7 @@ export const API_ERROR_CODES = {
 	UNAUTHORIZED: "UNAUTHORIZED",
 	BETS_LOCKED: "BETS_LOCKED",
 } as const;
+
+// Dispatched on window when a live match leaves the live set (finished →
+// points awarded). The leaderboard listens to it to refetch exactly then.
+export const LIVE_MATCH_FINALIZED_EVENT = "live-match-finalized";

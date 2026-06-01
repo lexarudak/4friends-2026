@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import type { NextMatchTimerPayload } from "@/types/api";
+import { LIVE_MATCH_FINALIZED_EVENT } from "@/utils/constants";
 import { Timer } from "./timer";
 
 type Props = HTMLAttributes<HTMLDivElement> & {
@@ -33,6 +34,9 @@ export const NextMatchTimerClient: FC<Props> = ({
 	const [payload, setPayload] = useState(initialPayload);
 	const isRefreshingRef = useRef(false);
 	const signatureRef = useRef(payloadSignature(initialPayload));
+	const liveIdsRef = useRef(
+		new Set(initialPayload.liveMatches.map((m) => m.id))
+	);
 
 	const isFinished =
 		payload.isTournamentFinished && !payload.hasLive && !payload.nextMatch;
@@ -54,6 +58,17 @@ export const NextMatchTimerClient: FC<Props> = ({
 
 				const nextPayload = (await response.json()) as NextMatchTimerPayload;
 				setPayload(nextPayload);
+
+				// A live match that left the set has finished → points were just
+				// awarded. Signal the leaderboard to refetch exactly then.
+				const newLiveIds = new Set(nextPayload.liveMatches.map((m) => m.id));
+				const someFinished = [...liveIdsRef.current].some(
+					(id) => !newLiveIds.has(id)
+				);
+				liveIdsRef.current = newLiveIds;
+				if (someFinished) {
+					window.dispatchEvent(new CustomEvent(LIVE_MATCH_FINALIZED_EVENT));
+				}
 
 				// Only re-fetch server sections (DB-heavy) when something material
 				// changed: live scores/status, the next match, or live on/off.
