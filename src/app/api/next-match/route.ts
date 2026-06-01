@@ -7,11 +7,12 @@ import {
 import { getActiveRoomTournament } from "@/lib/active-room";
 
 // CDN cache window for polled live data. Many viewers polling collapse into
-// ~one origin hit per window per tournament, keeping DB requests flat
-// regardless of audience size. Kept in step with the API sync cadence:
-// 30s while the 1-min premium sync is active, 60s once it drops to 5-min.
+// ~one origin hit per window per tournament, keeping DB (Prisma) requests flat
+// regardless of audience size. Matched to the API sync cadence so we get ~one
+// origin hit per sync: 60s during the 1-min premium window, 120s afterwards
+// (5-min sync — DB stays cheap while live minute is still client-projected).
 function cacheHeader(): string {
-	const s = isPremiumWindow() ? 30 : 60;
+	const s = isPremiumWindow() ? 60 : 120;
 	return `public, s-maxage=${s}, stale-while-revalidate=${s * 2}`;
 }
 
