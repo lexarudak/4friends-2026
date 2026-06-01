@@ -2,20 +2,19 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/shared/button";
-import { PaginatedTable } from "@/components/features/paginated-table";
-import type { RoomItem, TableRow } from "@/types/api";
-import { requestJson } from "@/utils/api-client";
+import type { RoomItem } from "@/types/api";
+import { requestApi, requestJson } from "@/utils/api-client";
+import { getTournamentLabel } from "@/lib/tournaments";
 import {
 	getRoomNameLengthErrorMessage,
 	isRoomNameLengthValid,
 	ROOM_NAME_MAX_LENGTH,
 	ROOM_NAME_MIN_LENGTH,
 } from "@/utils/room";
-import { mapRoomsToTableRows } from "./admin-rooms-table.helpers";
 import styles from "./page.module.scss";
 
 export function AdminRoomsTable() {
-	const [rows, setRows] = useState<TableRow[]>([]);
+	const [rooms, setRooms] = useState<RoomItem[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [newRoomName, setNewRoomName] = useState("");
@@ -24,18 +23,22 @@ export function AdminRoomsTable() {
 	const [error, setError] = useState<string | null>(null);
 	const [createError, setCreateError] = useState<string | null>(null);
 
+	const [roomToDelete, setRoomToDelete] = useState<RoomItem | null>(null);
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+
 	const loadRooms = useCallback(async () => {
 		try {
 			setIsLoading(true);
 			setError(null);
 
-			const rooms = await requestJson<RoomItem[]>(
+			const data = await requestJson<RoomItem[]>(
 				"/api/admin/rooms",
 				{ cache: "no-store" },
 				"Could not load rooms"
 			);
 
-			setRows(mapRoomsToTableRows(rooms));
+			setRooms(data);
 		} catch {
 			setError("Could not load rooms");
 		} finally {
@@ -46,6 +49,28 @@ export function AdminRoomsTable() {
 	useEffect(() => {
 		void loadRooms();
 	}, [loadRooms]);
+
+	const handleConfirmDelete = async () => {
+		if (!roomToDelete) return;
+		try {
+			setIsDeleting(true);
+			setDeleteError(null);
+
+			const res = await requestApi("/api/admin/rooms", {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ name: roomToDelete.name }),
+			});
+			if (!res.ok) throw new Error("Could not delete room");
+
+			setRoomToDelete(null);
+			await loadRooms();
+		} catch {
+			setDeleteError("Could not delete room");
+		} finally {
+			setIsDeleting(false);
+		}
+	};
 
 	const handleCreateRoom = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -148,18 +173,72 @@ export function AdminRoomsTable() {
 				<p className={`${styles.stateText} ${styles.stateError}`}>{error}</p>
 			)}
 
-			{!isLoading && !error && !rows.length && (
+			{!isLoading && !error && !rooms.length && (
 				<p className={styles.stateText}>No rooms found yet.</p>
 			)}
 
-			{!isLoading && !error && rows.length > 0 && (
-				<PaginatedTable
-					title="Existing rooms"
-					rows={rows}
-					pageSize={8}
-					hideScore
-					hidePosition
-				/>
+			{!isLoading && !error && rooms.length > 0 && (
+				<ul className={styles.roomList}>
+					{rooms.map((room) => (
+						<li key={room.id} className={styles.roomItem}>
+							<span className={styles.roomName}>{room.name}</span>
+							<span className={styles.roomMeta}>
+								{getTournamentLabel(room.tournament ?? "wc2026")}
+							</span>
+							<span className={styles.roomMeta}>{room.password ?? "—"}</span>
+							<button
+								type="button"
+								className={styles.roomDelete}
+								aria-label={`Delete ${room.name}`}
+								onClick={() => {
+									setDeleteError(null);
+									setRoomToDelete(room);
+								}}
+							>
+								✕
+							</button>
+						</li>
+					))}
+				</ul>
+			)}
+
+			{roomToDelete && (
+				<div
+					className={styles.modalOverlay}
+					onClick={() => !isDeleting && setRoomToDelete(null)}
+				>
+					<div
+						className={styles.modal}
+						role="dialog"
+						aria-modal="true"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<p className={styles.modalText}>
+							Delete room &laquo;{roomToDelete.name}&raquo;? This removes the room
+							and all its bets.
+						</p>
+						{deleteError && <p className={styles.error}>{deleteError}</p>}
+						<div className={styles.modalActions}>
+							<Button
+								type="button"
+								color="red"
+								isLoading={isDeleting}
+								onClick={handleConfirmDelete}
+							>
+								Yes, delete
+							</Button>
+							<Button
+								type="button"
+								variant="outline"
+								color="neutral"
+								disabled={isDeleting}
+								onClick={() => setRoomToDelete(null)}
+							>
+								No
+							</Button>
+						</div>
+					</div>
+				</div>
 			)}
 		</div>
 	);

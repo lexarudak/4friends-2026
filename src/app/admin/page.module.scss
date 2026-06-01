@@ -167,3 +167,99 @@
 .stateError {
 	color: var(--color-red-400);
 }
+
+/* ── Room list with delete ── */
+
+.roomList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-8);
+}
+
+.roomItem {
+	display: grid;
+	grid-template-columns: 1fr auto auto auto;
+	align-items: center;
+	gap: var(--space-16);
+	padding: var(--space-10) var(--space-16);
+	background: var(--color-neutral-900);
+	border: 1px solid var(--color-neutral-800);
+}
+
+.roomName {
+	font-size: var(--font-size-14);
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-neutral-white);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.roomMeta {
+	font-size: var(--font-size-12);
+	font-family: var(--font-geist-mono);
+	color: var(--color-neutral-500);
+	white-space: nowrap;
+}
+
+.roomDelete {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-24, 24px);
+	height: var(--size-24, 24px);
+	border: 1px solid var(--color-neutral-700);
+	background: transparent;
+	color: var(--color-neutral-400);
+	font-size: var(--font-size-12);
+	cursor: pointer;
+	transition:
+		border-color var(--duration-base),
+		color var(--duration-base),
+		background var(--duration-base);
+
+	&:hover {
+		border-color: var(--color-red-500);
+		color: var(--color-red-400);
+		background: color-mix(in srgb, var(--color-red-500) 10%, transparent);
+	}
+}
+
+/* ── Confirm modal ── */
+
+.modalOverlay {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--space-16);
+	background: color-mix(in srgb, var(--color-neutral-950) 70%, transparent);
+}
+
+.modal {
+	width: 100%;
+	max-width: 420px;
+	background: var(--color-neutral-900);
+	border: 1px solid var(--color-neutral-700);
+	padding: var(--space-24);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-16);
+}
+
+.modalText {
+	margin: 0;
+	font-size: var(--font-size-15);
+	color: var(--color-neutral-200);
+	line-height: 1.5;
+}
+
+.modalActions {
+	display: flex;
+	gap: var(--space-12);
+}

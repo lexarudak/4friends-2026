@@ -224,4 +224,24 @@ export const RoomService = {
 			data: { name, tournament, password: password ?? null },
 		});
 	},
+
+	/**
+	 * Delete a room and everything tied to it: bets (keyed by room name),
+	 * memberships (UserRoom cascades on room delete), and clear it from any
+	 * user's active room. Returns false if the room doesn't exist.
+	 */
+	async deleteRoom(name: string): Promise<boolean> {
+		const room = await prisma.room.findUnique({ where: { name } });
+		if (!room) return false;
+
+		await prisma.$transaction([
+			prisma.bet.deleteMany({ where: { roomId: name } }),
+			prisma.user.updateMany({
+				where: { currentRoom: name },
+				data: { currentRoom: null },
+			}),
+			prisma.room.delete({ where: { name } }),
+		]);
+		return true;
+	},
 };

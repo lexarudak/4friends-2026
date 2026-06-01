@@ -96,3 +96,39 @@ export async function POST(request: NextRequest) {
 		);
 	}
 }
+
+export async function DELETE(request: NextRequest) {
+	const hasAccess = await hasAdminAccess();
+
+	if (!hasAccess) {
+		return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+	}
+
+	try {
+		const payload = (await request.json()) as { name?: unknown };
+		const name = typeof payload.name === "string" ? payload.name.trim() : "";
+
+		if (!name) {
+			return NextResponse.json(
+				{ error: "INVALID_REQUEST", message: "Room name is required." },
+				{ status: 400 }
+			);
+		}
+
+		const deleted = await RoomService.deleteRoom(name);
+		if (!deleted) {
+			return NextResponse.json(
+				{ error: "ROOM_NOT_FOUND", message: "Room not found." },
+				{ status: 404 }
+			);
+		}
+
+		return NextResponse.json({ ok: true });
+	} catch (err) {
+		console.error("[DELETE /api/admin/rooms]", err);
+		return NextResponse.json(
+			{ error: "INVALID_REQUEST", message: "Could not delete room." },
+			{ status: 400 }
+		);
+	}
+}
