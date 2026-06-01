@@ -27,15 +27,6 @@ export const TOURNAMENTS: Record<string, TournamentConfig> = {
 		leagueId: 1,
 		season: 2026,
 	},
-	ucl2526: {
-		slug: "ucl2526",
-		label: "UEFA Champions League 25/26",
-		title: "UEFA Champions League 25/26",
-		meta: ["Sep 2025 – May 2026", "36 teams", "Europe"],
-		format: "groups",
-		leagueId: 2,
-		season: 2025,
-	},
 	belarus1: {
 		slug: "belarus1",
 		label: "Belarus First League",

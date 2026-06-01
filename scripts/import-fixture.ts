@@ -3,7 +3,7 @@
  * tagged with a given tournament slug. Pulls live/current data.
  *
  * Run: npx tsx scripts/import-fixture.ts <fixtureId> <tournamentSlug>
- * Example: npx tsx scripts/import-fixture.ts 1544371 ucl2526
+ * Example: npx tsx scripts/import-fixture.ts 1489369 wc2026
  *
  * After import, the lazy live-sync (/api/next-match) keeps it updated,
  * because persistFixtures only touches matches already present in the DB.

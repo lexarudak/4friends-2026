@@ -149,7 +149,6 @@ export function AdminRoomsTable() {
 						className={styles.select}
 					>
 						<option value="wc2026">WC 2026</option>
-						<option value="ucl2526">UCL 25/26</option>
 						<option value="belarus1">Belarus First League</option>
 					</select>
 					<Button
@@ -183,9 +182,12 @@ export function AdminRoomsTable() {
 						<li key={room.id} className={styles.roomItem}>
 							<span className={styles.roomName}>{room.name}</span>
 							<span className={styles.roomMeta}>
+								pass: {room.password ?? "—"}
+							</span>
+							<span className={styles.roomMeta}>
 								{getTournamentLabel(room.tournament ?? "wc2026")}
 							</span>
-							<span className={styles.roomMeta}>{room.password ?? "—"}</span>
+
 							<button
 								type="button"
 								className={styles.roomDelete}
@@ -214,8 +216,8 @@ export function AdminRoomsTable() {
 						onClick={(e) => e.stopPropagation()}
 					>
 						<p className={styles.modalText}>
-							Delete room &laquo;{roomToDelete.name}&raquo;? This removes the room
-							and all its bets.
+							Delete room &laquo;{roomToDelete.name}&raquo;? This removes the
+							room and all its bets.
 						</p>
 						{deleteError && <p className={styles.error}>{deleteError}</p>}
 						<div className={styles.modalActions}>
