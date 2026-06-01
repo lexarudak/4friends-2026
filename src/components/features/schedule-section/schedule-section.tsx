@@ -2,8 +2,6 @@
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-type ReadonlyURLSearchParams = ReturnType<typeof useSearchParams>;
 import type { DateRange } from "react-day-picker";
 import type { ScheduleMatch } from "@/components/widgets/schedule-match-card";
 import { ScheduleMatchCard } from "@/components/widgets/schedule-match-card";
@@ -11,6 +9,8 @@ import { DateRangePicker } from "@/components/shared/date-range-picker";
 import { Button } from "@/components/shared/button";
 import { PageTitle } from "@/components/shared/page-title";
 import styles from "./schedule-section.module.scss";
+
+type ReadonlyURLSearchParams = ReturnType<typeof useSearchParams>;
 
 type Props = {
 	matches: ScheduleMatch[];
@@ -143,11 +143,10 @@ export const ScheduleSection = ({ matches }: Props) => {
 	const maxDate = useMemo(() => new Date(2026, 6, 19), []);
 	const defaultRange = useMemo<DateRange>(() => {
 		const today = new Date();
-		const defaultTo = new Date(today);
-		defaultTo.setDate(defaultTo.getDate() + 2);
+		const defaultTo = maxDate;
 		const defaultFrom = today < minDate ? minDate : today;
 		return { from: defaultFrom, to: defaultTo };
-	}, [minDate]);
+	}, [minDate, maxDate]);
 
 	const [countryInput, setCountryInput] = useState("");
 	const debouncedCountry = useDebounce(countryInput.trim().toLowerCase(), 300);
