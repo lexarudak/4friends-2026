@@ -29,6 +29,10 @@ export function AdminRoomsTable() {
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 
+	// Name of the room whose logo is currently being saved (for spinner/disable).
+	const [imageBusyRoom, setImageBusyRoom] = useState<string | null>(null);
+	const [imageRowError, setImageRowError] = useState<string | null>(null);
+
 	const loadRooms = useCallback(async () => {
 		try {
 			setIsLoading(true);
@@ -71,6 +75,41 @@ export function AdminRoomsTable() {
 			setDeleteError("Could not delete room");
 		} finally {
 			setIsDeleting(false);
+		}
+	};
+
+	// Set or clear the logo of an existing room via PATCH.
+	const updateRoomImage = async (room: RoomItem, imageUrl: string | null) => {
+		try {
+			setImageRowError(null);
+			setImageBusyRoom(room.name);
+
+			const res = await requestApi("/api/admin/rooms", {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ name: room.name, imageUrl }),
+			});
+			if (!res.ok) throw new Error("Could not update logo");
+
+			await loadRooms();
+		} catch {
+			setImageRowError(`Could not update logo for "${room.name}"`);
+		} finally {
+			setImageBusyRoom(null);
+		}
+	};
+
+	const handleRoomImageFile = async (
+		room: RoomItem,
+		file: File | undefined
+	) => {
+		if (!file) return;
+		try {
+			setImageRowError(null);
+			const dataUrl = await fileToResizedDataUrl(file);
+			await updateRoomImage(room, dataUrl);
+		} catch {
+			setImageRowError("Could not read image");
 		}
 	};
 
@@ -228,10 +267,39 @@ export function AdminRoomsTable() {
 				<p className={styles.stateText}>No rooms found yet.</p>
 			)}
 
+			{imageRowError && <p className={styles.error}>{imageRowError}</p>}
+
 			{!isLoading && !error && rooms.length > 0 && (
 				<ul className={styles.roomList}>
 					{rooms.map((room) => (
 						<li key={room.id} className={styles.roomItem}>
+							<label
+								className={styles.roomLogo}
+								aria-label={`Change logo for ${room.name}`}
+								data-busy={imageBusyRoom === room.name ? "true" : undefined}
+							>
+								{room.imageUrl ? (
+									// eslint-disable-next-line @next/next/no-img-element
+									<img
+										src={room.imageUrl}
+										alt=""
+										className={styles.roomLogoImage}
+									/>
+								) : (
+									<span className={styles.roomLogoPlaceholder}>+</span>
+								)}
+								<input
+									type="file"
+									accept="image/png,image/jpeg,image/webp"
+									className={styles.fileInput}
+									disabled={imageBusyRoom === room.name}
+									onChange={(e) => {
+										void handleRoomImageFile(room, e.target.files?.[0]);
+										e.target.value = "";
+									}}
+								/>
+							</label>
+
 							<span className={styles.roomName}>{room.name}</span>
 							<span className={styles.roomMeta}>
 								pass: {room.password ?? "—"}
@@ -240,17 +308,30 @@ export function AdminRoomsTable() {
 								{getTournamentLabel(room.tournament ?? "wc2026")}
 							</span>
 
-							<button
-								type="button"
-								className={styles.roomDelete}
-								aria-label={`Delete ${room.name}`}
-								onClick={() => {
-									setDeleteError(null);
-									setRoomToDelete(room);
-								}}
-							>
-								✕
-							</button>
+							<div className={styles.roomActions}>
+								{room.imageUrl && (
+									<button
+										type="button"
+										className={styles.roomLogoClear}
+										disabled={imageBusyRoom === room.name}
+										onClick={() => void updateRoomImage(room, null)}
+									>
+										Remove logo
+									</button>
+								)}
+
+								<button
+									type="button"
+									className={styles.roomDelete}
+									aria-label={`Delete ${room.name}`}
+									onClick={() => {
+										setDeleteError(null);
+										setRoomToDelete(room);
+									}}
+								>
+									✕
+								</button>
+							</div>
 						</li>
 					))}
 				</ul>

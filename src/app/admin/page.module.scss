@@ -180,8 +180,7 @@
 }
 
 .roomItem {
-	display: grid;
-	grid-template-columns: 1fr auto auto auto;
+	display: flex;
 	align-items: center;
 	gap: var(--space-16);
 	padding: var(--space-10) var(--space-16);
@@ -190,12 +189,80 @@
 }
 
 .roomName {
+	flex: 1;
+	min-width: 0;
 	font-size: var(--font-size-14);
 	font-weight: var(--font-weight-semibold);
 	color: var(--color-neutral-white);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+/* ── Per-room logo editor ── */
+
+.roomLogo {
+	position: relative;
+	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	border: 1px solid var(--color-neutral-700);
+	border-radius: 50%;
+	overflow: hidden;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--color-neutral-950);
+	transition: border-color var(--duration-base);
+
+	&:hover {
+		border-color: var(--color-primary-500);
+	}
+
+	&[data-busy="true"] {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}
+
+.roomLogoImage {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.roomLogoPlaceholder {
+	font-size: var(--font-size-18);
+	line-height: 1;
+	color: var(--color-neutral-500);
+}
+
+.roomActions {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-12);
+	flex-shrink: 0;
+}
+
+.roomLogoClear {
+	background: none;
+	border: none;
+	color: var(--color-neutral-400);
+	font-size: var(--font-size-12);
+	cursor: pointer;
+	padding: 0;
+	text-decoration: underline;
+	white-space: nowrap;
+
+	&:hover {
+		color: var(--color-red-400);
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
 }
 
 .roomMeta {

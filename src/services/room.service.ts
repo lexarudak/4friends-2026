@@ -236,6 +236,24 @@ export const RoomService = {
 	},
 
 	/**
+	 * Set or clear a room's logo. Pass `null` to remove the image.
+	 * Returns false if the room doesn't exist.
+	 */
+	async updateRoomImage(
+		name: string,
+		imageUrl: string | null
+	): Promise<boolean> {
+		const room = await prisma.room.findUnique({ where: { name } });
+		if (!room) return false;
+
+		await prisma.room.update({
+			where: { name },
+			data: { imageUrl },
+		});
+		return true;
+	},
+
+	/**
 	 * Delete a room and everything tied to it: bets (keyed by room name),
 	 * memberships (UserRoom cascades on room delete), and clear it from any
 	 * user's active room. Returns false if the room doesn't exist.

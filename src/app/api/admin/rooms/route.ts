@@ -7,6 +7,50 @@ import {
 	normalizeRoomName,
 } from "@/utils/room";
 
+// Validates an optional room-logo data URL. Returns the normalized value
+// (string when provided, null when explicitly cleared, undefined when absent)
+// or a 400 response describing what's wrong.
+function validateImageUrl(
+	raw: unknown
+):
+	| { ok: true; value: string | null | undefined }
+	| { ok: false; response: NextResponse } {
+	if (raw === null) return { ok: true, value: null };
+	if (raw === undefined || raw === "") return { ok: true, value: undefined };
+
+	if (typeof raw !== "string") {
+		return {
+			ok: false,
+			response: NextResponse.json(
+				{ error: "INVALID_IMAGE", message: "Unsupported image format." },
+				{ status: 400 }
+			),
+		};
+	}
+
+	if (!/^data:image\/(png|jpeg|webp);base64,/.test(raw)) {
+		return {
+			ok: false,
+			response: NextResponse.json(
+				{ error: "INVALID_IMAGE", message: "Unsupported image format." },
+				{ status: 400 }
+			),
+		};
+	}
+
+	if (raw.length > 300_000) {
+		return {
+			ok: false,
+			response: NextResponse.json(
+				{ error: "IMAGE_TOO_LARGE", message: "Image is too large." },
+				{ status: 400 }
+			),
+		};
+	}
+
+	return { ok: true, value: raw };
+}
+
 export async function GET() {
 	const hasAccess = await hasAdminAccess();
 
@@ -58,22 +102,9 @@ export async function POST(request: NextRequest) {
 		const password = rawPassword || undefined;
 
 		// Optional room image: a small base64 data URL (resized client-side).
-		let imageUrl: string | undefined;
-		if (typeof payload.imageUrl === "string" && payload.imageUrl) {
-			if (!/^data:image\/(png|jpeg|webp);base64,/.test(payload.imageUrl)) {
-				return NextResponse.json(
-					{ error: "INVALID_IMAGE", message: "Unsupported image format." },
-					{ status: 400 }
-				);
-			}
-			if (payload.imageUrl.length > 300_000) {
-				return NextResponse.json(
-					{ error: "IMAGE_TOO_LARGE", message: "Image is too large." },
-					{ status: 400 }
-				);
-			}
-			imageUrl = payload.imageUrl;
-		}
+		const imageCheck = validateImageUrl(payload.imageUrl);
+		if (!imageCheck.ok) return imageCheck.response;
+		const imageUrl = imageCheck.value ?? undefined;
 
 		if (!isRoomNameLengthValid(name)) {
 			return NextResponse.json(
@@ -118,6 +149,55 @@ export async function POST(request: NextRequest) {
 		console.error("[POST /api/admin/rooms]", err);
 		return NextResponse.json(
 			{ error: "INVALID_REQUEST", message: "Could not create room." },
+			{ status: 400 }
+		);
+	}
+}
+
+export async function PATCH(request: NextRequest) {
+	const hasAccess = await hasAdminAccess();
+
+	if (!hasAccess) {
+		return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+	}
+
+	try {
+		const payload = (await request.json()) as {
+			name?: unknown;
+			imageUrl?: unknown;
+		};
+		const name = typeof payload.name === "string" ? payload.name.trim() : "";
+
+		if (!name) {
+			return NextResponse.json(
+				{ error: "INVALID_REQUEST", message: "Room name is required." },
+				{ status: 400 }
+			);
+		}
+
+		// `null` clears the logo, a data URL sets a new one.
+		const imageCheck = validateImageUrl(payload.imageUrl);
+		if (!imageCheck.ok) return imageCheck.response;
+		if (imageCheck.value === undefined) {
+			return NextResponse.json(
+				{ error: "INVALID_REQUEST", message: "No image provided." },
+				{ status: 400 }
+			);
+		}
+
+		const updated = await RoomService.updateRoomImage(name, imageCheck.value);
+		if (!updated) {
+			return NextResponse.json(
+				{ error: "ROOM_NOT_FOUND", message: "Room not found." },
+				{ status: 404 }
+			);
+		}
+
+		return NextResponse.json({ ok: true, imageUrl: imageCheck.value });
+	} catch (err) {
+		console.error("[PATCH /api/admin/rooms]", err);
+		return NextResponse.json(
+			{ error: "INVALID_REQUEST", message: "Could not update room." },
 			{ status: 400 }
 		);
 	}
