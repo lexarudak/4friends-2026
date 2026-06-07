@@ -28,6 +28,23 @@ export function isPremiumWindow(now: number = Date.now()): boolean {
 }
 
 const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+const FINAL_OR_CANCELLED = [
+	"FT",
+	"AET",
+	"PEN",
+	"CANC",
+	"PST",
+	"ABD",
+	"AWD",
+	"WO",
+];
+
+// A match is surely over this long after kickoff (90' + halftime + stoppage,
+// with headroom for knockout extra time + penalties), so if our DB still shows
+// it un-finished we can fetch its final result by id.
+const PAST_DUE_GRACE_MS = 3 * 60 * 60 * 1000;
+// Cap per-sync id lookups so a backlog of stale matches can't blow the quota.
+const MAX_PAST_DUE_FETCHES = 12;
 
 function isLateRound(round: string): boolean {
 	return /quarter|semi|final/i.test(round) && !/group/i.test(round);
@@ -52,7 +69,7 @@ async function getActiveMatchContext(): Promise<{
 	const active = await prisma.match.findMany({
 		where: {
 			date: { lte: windowEnd },
-			statusShort: { notIn: ["FT", "AET", "PEN", "CANC", "PST", "ABD", "AWD", "WO"] },
+			statusShort: { notIn: FINAL_OR_CANCELLED },
 		},
 		select: { round: true, statusShort: true, date: true },
 	});
@@ -214,6 +231,41 @@ async function finalizeDroppedLiveMatches(
 	return persistFixtures(fetched);
 }
 
+/**
+ * Safety net for matches that finished without us ever observing them live
+ * (e.g. nobody had the app open during the match, so `live=all` never returned
+ * them and they never entered a LIVE status in our DB). They sit at their
+ * scheduled status (NS/TBD) forever. Once their kickoff is well in the past we
+ * fetch each by id (`?id=` is not season-gated) to capture the final result and
+ * recalc points. Bounded per sync to protect the quota.
+ */
+async function finalizePastDueMatches(): Promise<{
+	updated: number;
+	finalized: number;
+}> {
+	const cutoff = new Date(Date.now() - PAST_DUE_GRACE_MS);
+	const overdue = await prisma.match.findMany({
+		where: {
+			date: { lt: cutoff },
+			statusShort: { notIn: [...FINAL_OR_CANCELLED, ...LIVE_STATUSES] },
+		},
+		orderBy: { date: "asc" },
+		take: MAX_PAST_DUE_FETCHES,
+		select: { id: true },
+	});
+	if (overdue.length === 0) return { updated: 0, finalized: 0 };
+
+	const fetched: ApiFixture[] = [];
+	for (const m of overdue) {
+		const quota = await FootballApi.getQuotaStatus();
+		if (!quota.canSync) break;
+		const fx = await FootballApi.fetchFixtureById(m.id);
+		if (fx) fetched.push(fx);
+	}
+
+	return persistFixtures(fetched);
+}
+
 export const FixtureSyncService = {
 	getTtlMs(hasLate: boolean): number {
 		if (isPremiumWindow()) return PREMIUM_TTL_MS;
@@ -251,11 +303,12 @@ export const FixtureSyncService = {
 			const liveIds = new Set(fixtures.map((f) => f.fixture.id));
 			const live = await persistFixtures(fixtures);
 			const dropped = await finalizeDroppedLiveMatches(liveIds);
+			const pastDue = await finalizePastDueMatches();
 			const after = await FootballApi.getQuotaStatus();
 			return {
 				kind: "synced",
-				updated: live.updated + dropped.updated,
-				finalized: live.finalized + dropped.finalized,
+				updated: live.updated + dropped.updated + pastDue.updated,
+				finalized: live.finalized + dropped.finalized + pastDue.finalized,
 				lastSyncAt: after.lastSyncAt ?? new Date(),
 			};
 		} catch (err) {

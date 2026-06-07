@@ -218,12 +218,17 @@ export const PersonalStatisticService = {
 			const maxPoints = Math.max(
 				...scoreEntries.map(([, value]) => value.points)
 			);
-			const bestPointsScoreEntries = scoreEntries
-				.filter(([, value]) => value.points === maxPoints)
-				.sort((a, b) => {
-					if (b[1].count !== a[1].count) return b[1].count - a[1].count;
-					return a[0].localeCompare(b[0]);
-				});
+			// Don't surface a "favorite by points" score when the best a score has
+			// ever earned is 0 — it's not a meaningful favorite.
+			const bestPointsScoreEntries =
+				maxPoints > 0
+					? scoreEntries
+							.filter(([, value]) => value.points === maxPoints)
+							.sort((a, b) => {
+								if (b[1].count !== a[1].count) return b[1].count - a[1].count;
+								return a[0].localeCompare(b[0]);
+							})
+					: [];
 
 			const dayPoints = new Map<string, { points: number; date: Date }>();
 			for (const bet of finished) {
