@@ -341,14 +341,18 @@ export default function AboutPage() {
 						{en ? (
 							<>
 								Good luck! To launch a room for your friends, contact{" "}
-								<Link href="https://t.me/main_infomat">@main_infomat</Link> on
-								Telegram.
+								<Link className={styles.link} href="https://t.me/main_infomat">
+									@main_infomat
+								</Link>{" "}
+								on Telegram.
 							</>
 						) : (
 							<>
 								Удачи! Чтобы запустить комнату для друзей, напишите{" "}
-								<Link href="https://t.me/main_infomat">@main_infomat</Link> в
-								Telegram.
+								<Link className={styles.link} href="https://t.me/main_infomat">
+									@main_infomat
+								</Link>{" "}
+								в Telegram.
 							</>
 						)}
 					</p>
