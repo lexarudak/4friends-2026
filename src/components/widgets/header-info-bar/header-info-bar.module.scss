@@ -32,7 +32,7 @@
 	align-items: center;
 	justify-content: flex-end;
 	gap: var(--space-8);
-	max-width: 200px;
+	max-width: 280px;
 	min-width: 0;
 	flex-shrink: 1;
 	padding-inline-start: var(--space-16);
@@ -77,6 +77,11 @@
 	flex-shrink: 0;
 	object-fit: cover;
 	opacity: 0.8;
+
+	@media (max-width: 768px) {
+		width: 28px;
+		height: 28px;
+	}
 }
 
 .userName {
@@ -85,4 +90,8 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
 }
