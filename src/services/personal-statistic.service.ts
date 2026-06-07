@@ -86,10 +86,6 @@ function joinTopScoreKeys(
 	return entries.map(([key]) => key).join(" • ");
 }
 
-function joinTopNames(entries: Array<[string, number]>) {
-	return entries.map(([name]) => name).join(" • ");
-}
-
 function buildDefaultStats(labels: StatsLabels): PersonalStat[] {
 	return [
 		{ label: labels.totalScore, value: 0, size: "lg", variant: "highlight" },

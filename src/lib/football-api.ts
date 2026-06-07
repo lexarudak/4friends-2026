@@ -1,17 +1,16 @@
 import { prisma } from "@/lib/prisma";
+import { getHardCap, getSoftCap } from "@/lib/api-plan";
 
 const API_BASE_URL = "https://v3.football.api-sports.io";
 const DEFAULT_LEAGUE_ID = 1;
 const DEFAULT_SEASON = 2026;
-const SOFT_CAP = 95;
-const HARD_CAP = 99;
 
 const WC_LEAGUE_ID = Number(process.env.LEAGUE_ID ?? DEFAULT_LEAGUE_ID);
 const WC_SEASON = Number(process.env.SEASON ?? DEFAULT_SEASON);
 
 export class QuotaExceededError extends Error {
 	constructor(public readonly count: number) {
-		super(`Daily API quota exceeded (${count}/${HARD_CAP})`);
+		super(`Daily API quota exceeded (${count}/${getHardCap()})`);
 		this.name = "QuotaExceededError";
 	}
 }
@@ -124,7 +123,7 @@ async function request<T>(
 	// One DB op: increment counter + stamp lastSyncAt. If it pushes us over the
 	// hard cap, bail (we over-counted by one — negligible).
 	const newCount = await consumeQuota();
-	if (newCount > HARD_CAP) {
+	if (newCount > getHardCap()) {
 		throw new QuotaExceededError(newCount);
 	}
 	console.info("[football-api] request", {
@@ -155,8 +154,12 @@ async function request<T>(
 export const FootballApi = {
 	WC_LEAGUE_ID,
 	WC_SEASON,
-	SOFT_CAP,
-	HARD_CAP,
+	get SOFT_CAP() {
+		return getSoftCap();
+	},
+	get HARD_CAP() {
+		return getHardCap();
+	},
 
 	async fetchLiveFixtures(): Promise<ApiFixture[]> {
 		// No league filter — returns all live matches globally.
@@ -207,13 +210,14 @@ export const FootballApi = {
 		const date = todayUtcDate();
 		const row = await prisma.apiQuota.findUnique({ where: { date } });
 		const count = row?.requestsCount ?? 0;
+		const softCap = getSoftCap();
 		return {
 			requestsCount: count,
 			lastSyncAt: row?.lastSyncAt ?? null,
 			lastError: row?.lastError ?? null,
-			softCap: SOFT_CAP,
-			hardCap: HARD_CAP,
-			canSync: count < SOFT_CAP,
+			softCap,
+			hardCap: getHardCap(),
+			canSync: count < softCap,
 		};
 	},
 };
