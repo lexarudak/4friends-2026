@@ -20,8 +20,14 @@ import { config } from "dotenv";
 import { isKnockoutRound } from "../src/utils/knockout.js";
 import type { ApiFixture } from "../src/lib/football-api.js";
 
-config({ path: ".env.local" });
-config({ path: ".env" });
+// Default targets the local DB (.env.local). Pass --prod to target the
+// production DB defined in .env instead.
+if (process.argv.includes("--prod")) {
+	config({ path: ".env", override: true });
+} else {
+	config({ path: ".env.local" });
+	config({ path: ".env" });
+}
 
 function normalizeSSLMode(url: string | undefined): string | undefined {
 	if (!url) return url;

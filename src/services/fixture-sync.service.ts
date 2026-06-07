@@ -265,6 +265,36 @@ async function finalizePastDueMatches(): Promise<{
 	return persistFixtures(fetched);
 }
 
+/**
+ * Shared sync body (caller must already hold the advisory lock): pull live
+ * fixtures, finalize matches that dropped out of `live=all`, and finalize any
+ * overdue matches by id. Returns a `synced` decision with aggregate counts.
+ */
+async function runFullSync(): Promise<SyncDecision> {
+	const fixtures = await FootballApi.fetchLiveFixtures();
+	const liveIds = new Set(fixtures.map((f) => f.fixture.id));
+	const live = await persistFixtures(fixtures);
+	const dropped = await finalizeDroppedLiveMatches(liveIds);
+	const pastDue = await finalizePastDueMatches();
+	const after = await FootballApi.getQuotaStatus();
+	return {
+		kind: "synced",
+		updated: live.updated + dropped.updated + pastDue.updated,
+		finalized: live.finalized + dropped.finalized + pastDue.finalized,
+		lastSyncAt: after.lastSyncAt ?? new Date(),
+	};
+}
+
+function syncErrorDecision(scope: string, err: unknown): SyncDecision {
+	if (err instanceof ApiKeyMissingError) return { kind: "api-key-missing" };
+	if (err instanceof QuotaExceededError) {
+		return { kind: "quota-exhausted", requestsCount: err.count };
+	}
+	const message = err instanceof Error ? err.message : String(err);
+	console.error(`[FixtureSyncService.${scope}]`, message);
+	return { kind: "error", message };
+}
+
 export const FixtureSyncService = {
 	getTtlMs(hasLate: boolean): number {
 		if (isPremiumWindow()) return PREMIUM_TTL_MS;
@@ -298,32 +328,22 @@ export const FixtureSyncService = {
 		if (!locked) return { kind: "lock-busy" };
 
 		try {
-			const fixtures = await FootballApi.fetchLiveFixtures();
-			const liveIds = new Set(fixtures.map((f) => f.fixture.id));
-			const live = await persistFixtures(fixtures);
-			const dropped = await finalizeDroppedLiveMatches(liveIds);
-			const pastDue = await finalizePastDueMatches();
-			const after = await FootballApi.getQuotaStatus();
-			return {
-				kind: "synced",
-				updated: live.updated + dropped.updated + pastDue.updated,
-				finalized: live.finalized + dropped.finalized + pastDue.finalized,
-				lastSyncAt: after.lastSyncAt ?? new Date(),
-			};
+			return await runFullSync();
 		} catch (err) {
-			if (err instanceof ApiKeyMissingError) return { kind: "api-key-missing" };
-			if (err instanceof QuotaExceededError) {
-				return { kind: "quota-exhausted", requestsCount: err.count };
-			}
-			const message = err instanceof Error ? err.message : String(err);
-			console.error("[FixtureSyncService.ensureFresh]", message);
-			return { kind: "error", message };
+			return syncErrorDecision("ensureFresh", err);
 		} finally {
 			await releaseAdvisoryLock();
 		}
 	},
 
-	async syncAllFixtures(): Promise<SyncDecision> {
+	/**
+	 * Reliable, traffic-independent sync for the daily cron. Unlike ensureFresh
+	 * it has no TTL/active-match gate (the cron is the safety net that must run
+	 * regardless of client polling or CDN caching) and it finalizes overdue
+	 * matches across ALL tournaments by id — so leagues that aren't covered by
+	 * any live viewer (e.g. Belarus) still get their results and points.
+	 */
+	async syncNow(): Promise<SyncDecision> {
 		const status = await FootballApi.getQuotaStatus();
 		if (!status.canSync) {
 			return { kind: "quota-exhausted", requestsCount: status.requestsCount };
@@ -333,26 +353,9 @@ export const FixtureSyncService = {
 		if (!locked) return { kind: "lock-busy" };
 
 		try {
-			const fixtures = await FootballApi.fetchFixturesForDateRange(
-				"2026-06-01",
-				"2026-07-31"
-			);
-			const { updated, finalized } = await persistFixtures(fixtures);
-			const after = await FootballApi.getQuotaStatus();
-			return {
-				kind: "synced",
-				updated,
-				finalized,
-				lastSyncAt: after.lastSyncAt ?? new Date(),
-			};
+			return await runFullSync();
 		} catch (err) {
-			if (err instanceof ApiKeyMissingError) return { kind: "api-key-missing" };
-			if (err instanceof QuotaExceededError) {
-				return { kind: "quota-exhausted", requestsCount: err.count };
-			}
-			const message = err instanceof Error ? err.message : String(err);
-			console.error("[FixtureSyncService.syncAllFixtures]", message);
-			return { kind: "error", message };
+			return syncErrorDecision("syncNow", err);
 		} finally {
 			await releaseAdvisoryLock();
 		}

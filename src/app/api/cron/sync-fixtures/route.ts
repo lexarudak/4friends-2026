@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 		return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
 	}
 
-	const decision = await FixtureSyncService.syncAllFixtures();
+	const decision = await FixtureSyncService.syncNow();
 	console.info("[cron:sync-fixtures]", decision);
 	return NextResponse.json(decision);
 }
