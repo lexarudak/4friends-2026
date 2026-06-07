@@ -33,7 +33,7 @@ export function HeaderInfoBar({
 								color="primary"
 								className={styles.roomName}
 							>
-								01234567890123456789
+								{roomName}
 							</Button>
 						</>
 					) : (

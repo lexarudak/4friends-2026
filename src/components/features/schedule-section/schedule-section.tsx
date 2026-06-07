@@ -144,9 +144,10 @@ export const ScheduleSection = ({ matches }: Props) => {
 	const minDate = useMemo(() => new Date(2026, 4, 1), []);
 	const maxDate = useMemo(() => new Date(2026, 6, 19), []);
 	const defaultRange = useMemo<DateRange>(() => {
-		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
 		const defaultTo = maxDate;
-		const defaultFrom = today < minDate ? minDate : today;
+		const defaultFrom = yesterday < minDate ? minDate : yesterday;
 		return { from: defaultFrom, to: defaultTo };
 	}, [minDate, maxDate]);
 
