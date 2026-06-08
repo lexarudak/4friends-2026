@@ -10,7 +10,9 @@ import type {
 const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
 
 const FALLBACK_FLAG = "🏳️";
-export const NEXT_MATCH_WINDOW_HOURS = 48;
+// Upcoming-matches window on the home page: from the next match's kickoff
+// through 7 days after it.
+export const NEXT_MATCH_WINDOW_DAYS = 7;
 
 const TEAM_FLAG_MAP = new Map(
 	WC_GROUPS.flatMap((group) =>
@@ -213,7 +215,7 @@ export const MatchService = {
 			if (!nextMatch) return [];
 
 			const endTime = new Date(nextMatch.date);
-			endTime.setHours(endTime.getHours() + NEXT_MATCH_WINDOW_HOURS);
+			endTime.setDate(endTime.getDate() + NEXT_MATCH_WINDOW_DAYS);
 
 			const rows = await prisma.match.findMany({
 				where: {
