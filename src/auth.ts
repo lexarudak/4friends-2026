@@ -37,11 +37,26 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 					console.error("[auth:jwt] DB error on login:", err);
 					// Don't throw — session must be created even if DB is down
 				}
-			} else if (token.email && token.name) {
+			} else if (token.email) {
+				// On every authenticated request, refresh the active room from the DB
+				// (the source of truth) so the session reflects room switches that
+				// didn't go through this session's `unstable_update` — e.g. a switch
+				// made on another device, or the room being deleted. Without this the
+				// token's `current_room` goes stale and room-scoped views (top-3,
+				// bets, stats) show another room's data.
 				try {
-					await UserService.ensureNameSaved(token.email, token.name as string);
+					const userInfo = await UserService.getUserById(token.email as string);
+					if (userInfo) {
+						token.current_room = userInfo.current_room ?? null;
+						if (!userInfo.name && token.name) {
+							await UserService.ensureNameSaved(
+								token.email as string,
+								token.name as string
+							);
+						}
+					}
 				} catch (err) {
-					console.error("[auth:jwt] DB error on ensureNameSaved:", err);
+					console.error("[auth:jwt] DB error on refresh:", err);
 				}
 			}
 
