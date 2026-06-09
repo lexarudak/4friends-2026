@@ -254,6 +254,59 @@ export const RoomService = {
 	},
 
 	/**
+	 * Remove a single user from a room: drop their membership (UserRoom, keyed by
+	 * Room.id) and their bets in that room (Bet.roomId is the room name). If the
+	 * room was their active one, switch them to another room they still belong to,
+	 * or null if none. Returns the user's new active room name.
+	 */
+	async leaveRoom(
+		userId: string,
+		roomName: string
+	): Promise<{ left: boolean; newCurrentRoom: string | null }> {
+		try {
+			const room = await prisma.room.findUnique({
+				where: { name: roomName },
+				select: { id: true },
+			});
+			if (!room) return { left: false, newCurrentRoom: null };
+
+			const user = await prisma.user.findUnique({
+				where: { id: userId },
+				select: { currentRoom: true },
+			});
+			const wasCurrent = user?.currentRoom === roomName;
+
+			let newCurrentRoom: string | null = user?.currentRoom ?? null;
+			if (wasCurrent) {
+				const remaining = await prisma.userRoom.findFirst({
+					where: { userId, roomId: { not: room.id } },
+					orderBy: { joinedAt: "asc" },
+					select: { room: { select: { name: true } } },
+				});
+				newCurrentRoom = remaining?.room.name ?? null;
+			}
+
+			await prisma.$transaction([
+				prisma.bet.deleteMany({ where: { userId, roomId: roomName } }),
+				prisma.userRoom.deleteMany({ where: { userId, roomId: room.id } }),
+				...(wasCurrent
+					? [
+							prisma.user.update({
+								where: { id: userId },
+								data: { currentRoom: newCurrentRoom },
+							}),
+						]
+					: []),
+			]);
+
+			return { left: true, newCurrentRoom };
+		} catch (err) {
+			console.error("[RoomService.leaveRoom]", err);
+			return { left: false, newCurrentRoom: null };
+		}
+	},
+
+	/**
 	 * Delete a room and everything tied to it: bets (keyed by room name),
 	 * memberships (UserRoom cascades on room delete), and clear it from any
 	 * user's active room. Returns false if the room doesn't exist.

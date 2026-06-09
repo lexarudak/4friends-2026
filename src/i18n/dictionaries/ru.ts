@@ -78,6 +78,11 @@ const ru: typeof en = {
 		notExist: "Такой комнаты не существует",
 		incorrectPassword: "Неверный пароль",
 		couldNotJoin: "Не удалось войти в комнату",
+		leave: "Выйти из комнаты",
+		leaveTitle: "Выйти из комнаты",
+		leaveWarning: "Ваши ставки в этой комнате будут удалены.",
+		leaveConfirm: "Да, выйти",
+		leaveCancel: "Отмена",
 	},
 	stats: {
 		totalScore: "Всего очков",

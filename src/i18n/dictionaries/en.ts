@@ -76,6 +76,11 @@ const en = {
 		notExist: "This room does not exist",
 		incorrectPassword: "Incorrect password",
 		couldNotJoin: "Could not join room",
+		leave: "Leave room",
+		leaveTitle: "Leave room",
+		leaveWarning: "Your bets in this room will be removed.",
+		leaveConfirm: "Yes, leave",
+		leaveCancel: "Cancel",
 	},
 	stats: {
 		totalScore: "Total Score",

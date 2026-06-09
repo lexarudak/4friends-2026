@@ -88,6 +88,46 @@ export async function joinNewRoom(
 	}
 }
 
+export const leaveRoom = async (
+	roomId: string,
+	_prevState: { error: string } | null
+): Promise<{ error: string } | never> => {
+	void _prevState;
+
+	try {
+		const session = await auth();
+		if (!session?.user?.email) {
+			const response = { error: "You are not authorized" };
+			logActionResponse("leave-room", response);
+			return response;
+		}
+
+		const result = await RoomService.leaveRoom(session.user.email, roomId);
+		if (!result.left) {
+			const response = { error: "Could not leave room" };
+			logActionResponse("leave-room", response);
+			return response;
+		}
+
+		// Push the (possibly changed) active room into the session immediately;
+		// the jwt callback also re-reads it from the DB on the next request.
+		await unstable_update({
+			user: { current_room: result.newCurrentRoom },
+		});
+		logActionRedirect("leave-room", PAGES.ROOMS);
+		redirect(PAGES.ROOMS);
+	} catch (err) {
+		if (isNextRedirectError(err)) {
+			throw err;
+		}
+
+		logActionError("leave-room", err);
+		const response = { error: "Could not leave room" };
+		logActionResponse("leave-room", response);
+		return response;
+	}
+};
+
 export async function signOutUser() {
 	logActionRedirect("sign-out", PAGES.LOGIN);
 	await signOut({ redirectTo: PAGES.LOGIN });
