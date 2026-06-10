@@ -50,8 +50,8 @@ export default function AboutPage() {
 
 						<p className={styles.sectionText}>
 							{en
-								? 'The home page is where you place your bets. The "Next matches" section shows every upcoming match within a 48-hour window starting from the kick-off of the next unstarted match — so matches are visible even if the closest one is days away.'
-								: 'Главная страница — здесь вы делаете ставки. Секция "Next matches" показывает все ближайшие матчи в окне 48 часов начиная от старта ближайшего ещё не начавшегося матча — то есть матчи видны, даже если до них ещё несколько дней.'}
+								? 'The home page is where you place your bets. The "Next matches" section shows every upcoming match within a 1-week window starting from the kick-off of the next unstarted match — so matches are visible even if the closest one is days away.'
+								: 'Главная страница — здесь вы делаете ставки. Секция "Next matches" показывает все ближайшие матчи в интервале 1 недели начиная от старта ближайшего ещё не начавшегося матча — то есть матчи видны, даже если до них ещё несколько дней.'}
 						</p>
 						<p className={styles.sectionText}>
 							{en
