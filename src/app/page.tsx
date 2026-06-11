@@ -11,10 +11,10 @@ export default async function Home() {
 			<HeroSection />
 			<div className={styles.mobileWidgetsTop}>
 				<NextMatchTimer />
+				<LiveSection />
 			</div>
 			<BetsSection />
 			<div className={styles.mobileWidgetsBottom}>
-				<LiveSection />
 				<TopTable />
 			</div>
 		</>
