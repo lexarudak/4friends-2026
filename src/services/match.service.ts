@@ -8,6 +8,9 @@ import type {
 } from "@/types/api";
 
 const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+// A kicked-off match is "starting" (should be live) for this long after its
+// scheduled time — long enough to cover 90' + stoppage + extra time/penalties.
+const LIVE_WINDOW_MS = 3 * 60 * 60 * 1000;
 
 const FALLBACK_FLAG = "🏳️";
 // Upcoming-matches window on the home page: from the next match's kickoff
@@ -93,7 +96,7 @@ export const MatchService = {
 		const now = new Date();
 
 		try {
-			const [nextMatch, liveRows, quotaStatus] = await Promise.all([
+			const [nextMatch, liveRows, startingCount, quotaStatus] = await Promise.all([
 				prisma.match.findFirst({
 					where: { tournament, date: { gt: now }, statusShort: "NS" },
 					orderBy: { date: "asc" },
@@ -126,6 +129,16 @@ export const MatchService = {
 						goalsAway: true,
 					},
 				}),
+				// Matches that have kicked off but our DB still shows as not-started
+				// (the kick-off sync missed the live flip). These drive the client
+				// to keep polling until a sync confirms them live.
+				prisma.match.count({
+					where: {
+						tournament,
+						statusShort: { in: ["NS", "TBD"] },
+						date: { lte: now, gte: new Date(now.getTime() - LIVE_WINDOW_MS) },
+					},
+				}),
 				FootballApi.getQuotaStatus(),
 			]);
 
@@ -148,15 +161,17 @@ export const MatchService = {
 			}));
 
 			const hasLive = liveRows.length > 0;
+			const hasStartingMatch = startingCount > 0;
 			const lastSyncAt = quotaStatus.lastSyncAt?.toISOString() ?? null;
 
-			if (!nextMatch && !hasLive) {
+			if (!nextMatch && !hasLive && !hasStartingMatch) {
 				return {
 					tournament,
 					serverNow: now.toISOString(),
 					isTournamentFinished: true,
 					nextMatch: null,
 					hasLive: false,
+					hasStartingMatch: false,
 					lastSyncAt,
 					liveMatches: [],
 				};
@@ -182,6 +197,7 @@ export const MatchService = {
 						}
 					: null,
 				hasLive,
+				hasStartingMatch,
 				lastSyncAt,
 				liveMatches,
 			};
@@ -193,6 +209,7 @@ export const MatchService = {
 				isTournamentFinished: true,
 				nextMatch: null,
 				hasLive: false,
+				hasStartingMatch: false,
 				lastSyncAt: null,
 				liveMatches: [],
 			};

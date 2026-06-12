@@ -119,15 +119,20 @@ export const NextMatchTimerClient: FC<Props> = ({
 	}, [isFinished, payload.nextMatch, payload.serverNow, refreshOnKickoff]);
 
 	useEffect(() => {
-		if (!payload.hasLive) return;
+		if (!payload.hasLive && !payload.hasStartingMatch) return;
+		// A match has kicked off but our DB hasn't flipped it to a live status yet
+		// (the kick-off sync missed it). Force a sync so it catches up; once it's
+		// confirmed live, just keep scores fresh on the cacheable poll.
+		const forceSync = payload.hasStartingMatch && !payload.hasLive;
+		void refreshNextMatch({ waitForSync: forceSync });
 		const intervalId = window.setInterval(() => {
-			void refreshNextMatch();
+			void refreshNextMatch({ waitForSync: forceSync });
 		}, 30_000);
 		return () => window.clearInterval(intervalId);
-	}, [payload.hasLive, refreshNextMatch]);
+	}, [payload.hasLive, payload.hasStartingMatch, refreshNextMatch]);
 
 	if (!payload.nextMatch) {
-		if (payload.hasLive) {
+		if (payload.hasLive || payload.hasStartingMatch) {
 			return (
 				<Timer
 					{...props}

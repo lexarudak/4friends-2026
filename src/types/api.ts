@@ -72,6 +72,9 @@ export type NextMatchTimerPayload = {
 	isTournamentFinished: boolean;
 	nextMatch: NextMatch | null;
 	hasLive: boolean;
+	/** A match has kicked off but our DB hasn't confirmed it live/final yet —
+	 * the client keeps polling to drive a sync that flips it. */
+	hasStartingMatch: boolean;
 	lastSyncAt: string | null;
 	liveMatches: LiveMatchInfo[];
 };
