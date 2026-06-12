@@ -15,18 +15,18 @@ export const NextBetsList: FC<Props> = ({ matches, bets }) => {
 		<ul className={styles.list}>
 			{matches.map((match) => {
 				const bet = betsMap[match.id];
-				const group = match.group.replace(/^Group\s*/i, "");
 
 				return (
 					<BetItem
 						key={match.id}
-						group={group}
+						group={match.group}
 						homeTeam={match.home.name}
 						homeFlag={match.home.flag}
 						awayTeam={match.away.name}
 						awayFlag={match.away.flag}
 						betHome={bet?.home ?? 0}
 						betAway={bet?.away ?? 0}
+						dateIso={match.dateIso}
 						time={match.time}
 						date={match.date}
 						status="pending"

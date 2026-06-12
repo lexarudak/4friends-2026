@@ -34,6 +34,7 @@ export const BetHistoryList: FC<Props> = ({ items, className }) => {
 							awayFlag={item.awayFlag}
 							betHome={item.betHome}
 							betAway={item.betAway}
+							dateIso={item.dateIso}
 							time={item.time}
 							date={item.date}
 							result={{

@@ -60,7 +60,8 @@ function toTime(date: Date): string {
 }
 
 function toGroupLabel(round: string): string {
-	const groupMatch = round.match(/group\s+([a-z])/i);
+	// `\b` so "Group Stage - 1" doesn't capture the "S" of "Stage".
+	const groupMatch = round.match(/group\s+([a-z])\b/i);
 	if (groupMatch) {
 		return `Group ${groupMatch[1].toUpperCase()}`;
 	}

@@ -62,12 +62,23 @@ function toDayLabel(date: Date): string {
 	}).format(date);
 }
 
-function extractGroup(round: string): string {
-	const staged = round.match(/group\s+stage\s*-\s*group\s+([a-z])/i);
-	if (staged) return staged[1].toUpperCase();
+// Human-readable round label. Prefer the imported `groupName` ("Group A"); only
+// fall back to parsing the raw round when it's missing. `\b` keeps "Group
+// Stage - 1" from being read as group "S".
+function groupLabel(groupName: string | null, round: string): string {
+	if (groupName) return groupName;
 
-	const plain = round.match(/group\s+([a-z])/i);
-	return plain?.[1]?.toUpperCase() ?? "-";
+	const plain = round.match(/group\s+([a-z])\b/i);
+	if (plain) return `Group ${plain[1].toUpperCase()}`;
+
+	const lower = round.toLowerCase();
+	if (lower.includes("round of 32") || lower.includes("1/16")) return "1/16 Final";
+	if (lower.includes("round of 16") || lower.includes("1/8")) return "1/8 Final";
+	if (lower.includes("quarter")) return "Quarter Final";
+	if (lower.includes("semi")) return "Semi Final";
+	if (lower.includes("final")) return "Final";
+
+	return round;
 }
 
 function isPlayoffRound(round: string): boolean {
@@ -150,7 +161,7 @@ export const PersonalStatisticService = {
 
 				return {
 					id: String(bet.id),
-					group: extractGroup(bet.match.round),
+					group: groupLabel(bet.match.groupName, bet.match.round),
 					homeTeam: bet.match.homeTeamName,
 					homeFlag: bet.match.homeTeamLogo || getTeamFlag(bet.match.homeTeamName),
 					awayTeam: bet.match.awayTeamName,
@@ -159,6 +170,7 @@ export const PersonalStatisticService = {
 					betAway: bet.betAway,
 					resultHome: bet.match.fulltimeHome ?? bet.match.goalsHome,
 					resultAway: bet.match.fulltimeAway ?? bet.match.goalsAway,
+					dateIso: bet.match.date.toISOString(),
 					time: toTime(bet.match.date),
 					date: toShortDate(bet.match.date),
 					points,

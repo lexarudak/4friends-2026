@@ -3,6 +3,7 @@ import type { BetItemResultData } from "./bet-item-result";
 import { cn } from "@/utils/lib";
 import styles from "./bet-item.module.scss";
 import { TeamBadge } from "@/components/shared/team-badge/team-badge";
+import { LocalDateTime } from "@/components/shared/local-datetime/local-datetime";
 
 export type BetItemStatus = "pending" | "exact" | "win" | "miss";
 
@@ -16,6 +17,9 @@ type Props = {
 	betAway?: number;
 	scoreSlot?: ReactNode;
 	detailsSlot?: ReactNode;
+	/** ISO timestamp; when set, time/date render in the user's tz (falling back
+	 * to the `time`/`date` strings before mount). */
+	dateIso?: string;
 	time: string;
 	date: string;
 	status: BetItemStatus | string;
@@ -33,6 +37,7 @@ export const BetItem: FC<Props> = ({
 	betAway,
 	scoreSlot,
 	detailsSlot,
+	dateIso,
 	time,
 	date,
 	status,
@@ -47,10 +52,29 @@ export const BetItem: FC<Props> = ({
 			data-show-result={!!result || undefined}
 		>
 			<div className={styles.header}>
-				<span className={styles.group}>Group {group}</span>
+				<span className={styles.group}>{group}</span>
 				<span className={styles.meta}>
-					<span className={styles.time}>{time}</span>
-					<span className={styles.date}>{date}</span>
+					{dateIso ? (
+						<>
+							<LocalDateTime
+								iso={dateIso}
+								mode="time"
+								fallback={time}
+								className={styles.time}
+							/>
+							<LocalDateTime
+								iso={dateIso}
+								mode="date"
+								fallback={date}
+								className={styles.date}
+							/>
+						</>
+					) : (
+						<>
+							<span className={styles.time}>{time}</span>
+							<span className={styles.date}>{date}</span>
+						</>
+					)}
 				</span>
 			</div>
 

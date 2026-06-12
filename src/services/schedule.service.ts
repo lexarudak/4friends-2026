@@ -61,7 +61,8 @@ function toGroupLabel(round: string): string {
 	const staged = round.match(/group\s+stage\s*-\s*group\s+([a-z])/i);
 	if (staged) return `Group ${staged[1].toUpperCase()}`;
 
-	const plain = round.match(/group\s+([a-z])/i);
+	// `\b` so "Group Stage - 1" doesn't capture the "S" of "Stage".
+	const plain = round.match(/group\s+([a-z])\b/i);
 	if (plain) return `Group ${plain[1].toUpperCase()}`;
 
 	const lower = round.toLowerCase();

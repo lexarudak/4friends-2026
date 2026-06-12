@@ -129,8 +129,9 @@ export type BetHistoryItem = {
 	betAway: number;
 	resultHome: number | null;
 	resultAway: number | null;
-	time: string;
-	date: string;
+	dateIso: string; // ISO timestamp — format in the user's tz on the client
+	time: string; // server-tz fallback
+	date: string; // server-tz fallback
 	points: number | null;
 	winner?: "home" | "away" | null;
 };

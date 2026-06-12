@@ -102,7 +102,7 @@ export const AllStates: Story = {
 			}}
 		>
 			<BetItem
-				group="B"
+				group="Group B"
 				homeTeam="Spain"
 				homeFlag="🇪🇸"
 				awayTeam="Italy"
@@ -115,7 +115,7 @@ export const AllStates: Story = {
 				result={{ home: 2, away: 0, points: 3 }}
 			/>
 			<BetItem
-				group="A"
+				group="Group A"
 				homeTeam="Germany"
 				homeFlag="🇩🇪"
 				awayTeam="Scotland"
@@ -128,7 +128,7 @@ export const AllStates: Story = {
 				result={{ home: 1, away: 0, points: 1 }}
 			/>
 			<BetItem
-				group="C"
+				group="Group C"
 				homeTeam="France"
 				homeFlag="🇫🇷"
 				awayTeam="Brazil"
@@ -141,7 +141,7 @@ export const AllStates: Story = {
 				result={{ home: 0, away: 1, points: 0 }}
 			/>
 			<BetItem
-				group="D"
+				group="Group D"
 				homeTeam="Argentina"
 				homeFlag="🇦🇷"
 				awayTeam="England"
