@@ -5,7 +5,7 @@ export type WcTeam = {
 	goalsFor: number;
 	goalsAgainst: number;
 	points: number;
-	/** From official standings: team advances from the group. */
+	/** Computed: team advances from the group (top 2, or a best-8 third place). */
 	qualified?: boolean;
 };
 

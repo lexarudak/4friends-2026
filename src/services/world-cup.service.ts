@@ -120,6 +120,57 @@ function compareGroupName(a: string, b: string): number {
 	return a.localeCompare(b);
 }
 
+// Standings tie-break: points → goal difference → goals for.
+function compareTeams(a: WcTeam, b: WcTeam): number {
+	return (
+		b.points - a.points ||
+		b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
+		b.goalsFor - a.goalsFor
+	);
+}
+
+// WC 2026: top 2 of each of the 12 groups (24) + the best 8 of the 12
+// third-placed teams advance to the Round of 32.
+const GROUP_QUALIFY = 2;
+const BEST_THIRDS = 8;
+
+/**
+ * Mark provisional qualification on the computed group tables and build the
+ * cross-group third-place ranking — entirely from our own results, recomputed
+ * on every match. Mutates the team objects in `groups` (sets `qualified`) and
+ * returns all 12 third-placed teams ranked, with the best 8 flagged qualified.
+ */
+function applyQualification(groups: WcGroup[]): WcThirdPlaceTeam[] {
+	// Top 2 of each group qualify directly (by current standing).
+	for (const group of groups) {
+		group.teams.forEach((team, i) => {
+			team.qualified = i < GROUP_QUALIFY;
+		});
+	}
+
+	// Rank each group's current 3rd-placed team across groups; best 8 advance.
+	const thirds = groups
+		.map((group) => {
+			const team = group.teams[GROUP_QUALIFY];
+			if (!team) return null;
+			const letter = group.name.match(/group\s+([a-z])\b/i)?.[1]?.toUpperCase();
+			return { team, group: letter };
+		})
+		.filter(
+			(entry): entry is { team: WcTeam; group: string | undefined } =>
+				entry !== null
+		)
+		.sort((a, b) => compareTeams(a.team, b.team));
+
+	return thirds.map((entry, i) => {
+		const qualified = i < BEST_THIRDS;
+		// Reflect on the original group team object so its 3rd-place row turns
+		// green in the group table too.
+		entry.team.qualified = qualified;
+		return { ...entry.team, group: entry.group, qualified };
+	});
+}
+
 type StandingsRow = {
 	group?: string;
 	points?: number;
@@ -338,22 +389,33 @@ export const WorldCupService = {
 				.sort((a, b) => compareGroupName(a[0], b[0]))
 				.map(([name, teams]) => ({
 					name,
-					teams: [...teams.values()].sort(
-						(a, b) =>
-							b.points - a.points ||
-							b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
-							b.goalsFor - a.goalsFor
-					),
+					teams: [...teams.values()].sort(compareTeams),
 				}));
 
-			// Prefer the official standings (correct order + qualification) when
-			// cached; fall back to the table computed from match results.
+			// Group tables are computed from our own match results: they're the
+			// source of truth (bets settle off them) and update the instant a match
+			// finalizes. The cached official api-football standings are only a
+			// fallback — for WC 2026 they lag badly (recording some group matches
+			// hours late) and their "Advancing" flags are pre-tournament
+			// projections, so preferring them shows stale, misleading tables.
 			const parsed = standingsCache
 				? parseStandings(standingsCache.payload)
 				: { groups: [], thirdPlace: [] };
-			const groups = parsed.groups.length > 0 ? parsed.groups : computedGroups;
 
-			return { groups, thirdPlace: parsed.thirdPlace, knockout };
+			// Compute qualification + the best-thirds ranking from our own tables
+			// (provisional, by current standing); fall back to the official cache
+			// only when we have no group matches of our own.
+			let groups: WcGroup[];
+			let thirdPlace: WcThirdPlaceTeam[];
+			if (computedGroups.length > 0) {
+				thirdPlace = applyQualification(computedGroups);
+				groups = computedGroups;
+			} else {
+				groups = parsed.groups;
+				thirdPlace = parsed.thirdPlace;
+			}
+
+			return { groups, thirdPlace, knockout };
 		} catch (err) {
 			console.error("[WorldCupService.getTournamentData]", err);
 			return { groups: [], thirdPlace: [], knockout: buildEmptyKnockout() };
