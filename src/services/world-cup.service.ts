@@ -157,17 +157,24 @@ function parseStandings(payload: unknown): {
 			if (!Array.isArray(rows) || rows.length === 0) continue;
 			const label = rows[0]?.group ?? "";
 
-			// The cross-group third-place ranking is handled separately.
-			if (/third/i.test(label)) {
+			// Real group tables are labelled "Group Stage - Group A".."Group L";
+			// `\b` so the leading "Group Stage" isn't read as group "S".
+			const letter = label.match(/group\s+([a-z])\b/i)?.[1]?.toUpperCase();
+
+			// No group letter but still a group/third table (the api labels the
+			// cross-group third-place ranking just "Group Stage") → route it to
+			// thirdPlace so it renders in its own block after the groups, not as
+			// one of them. A label with neither (e.g. Belarus "Regular Season")
+			// falls through and is kept as a standalone table.
+			if (!letter && (/group/i.test(label) || /third/i.test(label))) {
 				thirdRows = rows;
 				continue;
 			}
 
-			const groupMatch = /^Group\s+([A-Z])$/i.exec(label);
-			const name = groupMatch ? `Group ${groupMatch[1].toUpperCase()}` : label;
+			const name = letter ? `Group ${letter}` : label;
 			const teams: WcTeam[] = rows.map((r) => {
-				if (groupMatch && r.team?.id != null) {
-					teamToGroup.set(r.team.id, groupMatch[1].toUpperCase());
+				if (letter && r.team?.id != null) {
+					teamToGroup.set(r.team.id, letter);
 				}
 				return {
 					name: r.team?.name ?? "",
