@@ -273,8 +273,10 @@ export const WorldCupService = {
 						groupName: true,
 						date: true,
 						statusShort: true,
+						homeTeamId: true,
 						homeTeamName: true,
 						homeTeamLogo: true,
+						awayTeamId: true,
 						awayTeamName: true,
 						awayTeamLogo: true,
 						homeTeamWinner: true,
@@ -292,14 +294,18 @@ export const WorldCupService = {
 				return { groups: [], thirdPlace: [], knockout: buildEmptyKnockout() };
 			}
 
-			const groupMap = new Map<string, Map<string, WcTeam>>();
+			// Key teams by their stable api-football id, not name: the same team can
+			// come back under different name strings across fixtures (e.g. id 770 as
+			// both "Czech Republic" and "Czechia"), which would otherwise split it
+			// into two rows. First-seen (date-asc) name/flag wins for display.
+			const groupMap = new Map<string, Map<number, WcTeam>>();
 			const knockout = buildEmptyKnockout();
 
 			for (const row of rows) {
 				const groupName = row.groupName ?? parseGroupName(row.round);
 				if (groupName) {
-					const teams = groupMap.get(groupName) ?? new Map<string, WcTeam>();
-					const home = teams.get(row.homeTeamName) ?? {
+					const teams = groupMap.get(groupName) ?? new Map<number, WcTeam>();
+					const home = teams.get(row.homeTeamId) ?? {
 						name: row.homeTeamName,
 						flag: row.homeTeamLogo || getTeamFlag(row.homeTeamName),
 						played: 0,
@@ -307,7 +313,7 @@ export const WorldCupService = {
 						goalsAgainst: 0,
 						points: 0,
 					};
-					const away = teams.get(row.awayTeamName) ?? {
+					const away = teams.get(row.awayTeamId) ?? {
 						name: row.awayTeamName,
 						flag: row.awayTeamLogo || getTeamFlag(row.awayTeamName),
 						played: 0,
@@ -339,8 +345,8 @@ export const WorldCupService = {
 						}
 					}
 
-					teams.set(home.name, home);
-					teams.set(away.name, away);
+					teams.set(row.homeTeamId, home);
+					teams.set(row.awayTeamId, away);
 					groupMap.set(groupName, teams);
 					continue;
 				}
