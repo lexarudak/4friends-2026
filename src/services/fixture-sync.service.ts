@@ -45,6 +45,11 @@ const PAST_DUE_GRACE_MS = 3 * 60 * 60 * 1000;
 // Cap per-sync id lookups so a backlog of stale matches can't blow the quota.
 const MAX_PAST_DUE_FETCHES = 12;
 
+// Statuses that should have points computed (excludes cancelled/postponed).
+const SCORABLE_FINAL = ["FT", "AET", "PEN"];
+// Cap per-sync recalcs (cheap, DB-only) so a backlog can't stall a sync.
+const MAX_RESCORE_MATCHES = 20;
+
 function isLateRound(round: string): boolean {
 	return /quarter|semi|final/i.test(round) && !/group/i.test(round);
 }
@@ -266,9 +271,32 @@ async function finalizePastDueMatches(): Promise<{
 }
 
 /**
+ * Self-heal: recompute points for finished matches that still have un-scored
+ * bets. The per-transition recalc in persistFixtures only fires when a sync
+ * observes the NS→FT flip; if that flip is missed (status set by a bulk import,
+ * or first seen already final) the bets would stay null forever. This catches
+ * them on the next sync. No API calls — pure DB, and idempotent.
+ */
+async function rescoreUnscoredFinalMatches(): Promise<number> {
+	const rows = await prisma.bet.findMany({
+		where: { points: null, match: { statusShort: { in: SCORABLE_FINAL } } },
+		select: { matchId: true },
+		distinct: ["matchId"],
+		take: MAX_RESCORE_MATCHES,
+	});
+	let rescored = 0;
+	for (const { matchId } of rows) {
+		await PointsCalculator.recalculate(matchId);
+		rescored++;
+	}
+	return rescored;
+}
+
+/**
  * Shared sync body (caller must already hold the advisory lock): pull live
- * fixtures, finalize matches that dropped out of `live=all`, and finalize any
- * overdue matches by id. Returns a `synced` decision with aggregate counts.
+ * fixtures, finalize matches that dropped out of `live=all`, finalize any
+ * overdue matches by id, and rescore any finished match whose bets were left
+ * un-scored. Returns a `synced` decision with aggregate counts.
  */
 async function runFullSync(): Promise<SyncDecision> {
 	const fixtures = await FootballApi.fetchLiveFixtures();
@@ -276,11 +304,12 @@ async function runFullSync(): Promise<SyncDecision> {
 	const live = await persistFixtures(fixtures);
 	const dropped = await finalizeDroppedLiveMatches(liveIds);
 	const pastDue = await finalizePastDueMatches();
+	const rescored = await rescoreUnscoredFinalMatches();
 	const after = await FootballApi.getQuotaStatus();
 	return {
 		kind: "synced",
 		updated: live.updated + dropped.updated + pastDue.updated,
-		finalized: live.finalized + dropped.finalized + pastDue.finalized,
+		finalized: live.finalized + dropped.finalized + pastDue.finalized + rescored,
 		lastSyncAt: after.lastSyncAt ?? new Date(),
 	};
 }
