@@ -188,6 +188,22 @@ export const FootballApi = {
 		return data.response[0] ?? null;
 	},
 
+	/**
+	 * Full fixture list for a league+season (group stage + knockout). Used to
+	 * pull newly-scheduled knockout fixtures whose teams get assigned as the
+	 * bracket fills in. Not season-gated on the Pro plan.
+	 */
+	async fetchSeasonFixtures(
+		leagueId: number = WC_LEAGUE_ID,
+		season: number = WC_SEASON
+	): Promise<ApiFixture[]> {
+		const data = await request<ApiFixtureResponse>("/fixtures", {
+			league: leagueId,
+			season,
+		});
+		return data.response;
+	},
+
 	async fetchStandings(
 		leagueId: number = WC_LEAGUE_ID,
 		season: number = WC_SEASON

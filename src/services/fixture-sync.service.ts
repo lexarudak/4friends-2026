@@ -22,8 +22,9 @@ const TTL_DEFAULT_MS = 5 * 60 * 1000;
 const TTL_LATE_PLAYOFF_MS = 3 * 60 * 1000;
 const PRE_MATCH_WINDOW_MS = 30 * 60 * 1000;
 
-// During the premium plan window (see @/lib/api-plan) poll the API every
-// 2 minutes; afterwards fall back to the 5/3-min TTL.
+// On the permanent premium plan (see @/lib/api-plan) we poll the API every
+// 2 minutes. The 5/3-min fallback TTLs below are retained only as dead defaults
+// for getTtlMs's non-premium branch, which is now unreachable.
 const PREMIUM_TTL_MS = 2 * 60 * 1000;
 
 const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
@@ -137,6 +138,42 @@ async function releaseAdvisoryLock(): Promise<void> {
 	await prisma.$queryRawUnsafe(`SELECT pg_advisory_unlock(${ADVISORY_LOCK_KEY})`);
 }
 
+/**
+ * Re-pull the full season fixture list for a tournament and upsert it. Called
+ * whenever a match finalizes so newly-scheduled knockout fixtures (whose teams
+ * get assigned as the bracket fills in) appear and stay current. Creates
+ * fixtures we don't have yet; updates existing ones via applyFixture only, so
+ * their `tournament` / `groupName` tags are never clobbered (knockout fixtures
+ * stay groupName=null even though their teams also appear in group standings).
+ */
+async function refreshTournamentFixtures(tournament: string): Promise<void> {
+	try {
+		const cfg = getTournament(tournament);
+		const fixtures = await FootballApi.fetchSeasonFixtures(
+			cfg.leagueId,
+			cfg.season
+		);
+		if (fixtures.length === 0) return;
+		const ops = fixtures.map((fixture) => {
+			const data = applyFixture(fixture);
+			return prisma.match.upsert({
+				where: { id: fixture.fixture.id },
+				create: {
+					id: fixture.fixture.id,
+					tournament,
+					groupName: null,
+					...data,
+				},
+				update: data,
+			});
+		});
+		await prisma.$transaction(ops);
+	} catch (err) {
+		// Never let a fixture refresh failure break the sync that triggered it.
+		console.error("[refreshTournamentFixtures]", tournament, err);
+	}
+}
+
 /** Fetch the official standings for one tournament and cache them. */
 async function refreshStandingsFor(tournament: string): Promise<void> {
 	try {
@@ -198,10 +235,12 @@ async function persistFixtures(
 		}
 	}
 
-	// A finished match changes the table → refresh official standings once per
-	// affected tournament.
+	// A finished match changes the table and can decide the next knockout
+	// matchup → refresh official standings and re-pull the fixture list once per
+	// affected tournament so newly-scheduled playoff fixtures stay current.
 	for (const tournament of finalizedTournaments) {
 		await refreshStandingsFor(tournament);
+		await refreshTournamentFixtures(tournament);
 	}
 
 	return { updated: relevantFixtures.length, finalized };

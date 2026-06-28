@@ -30,6 +30,7 @@
 		"seed:live-test": "tsx scripts/seed-live-test-match.ts",
 		"import:fixture": "tsx scripts/import-fixture.ts",
 		"import:tournament": "tsx scripts/import-tournament.ts",
+		"import:knockout": "tsx scripts/import-knockout.ts",
 		"import:standings": "tsx scripts/import-standings.ts"
 	},
 	"dependencies": {
