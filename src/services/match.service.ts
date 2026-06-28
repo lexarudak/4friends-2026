@@ -70,8 +70,9 @@ function toGroupLabel(round: string): string {
 	}
 
 	const lower = round.toLowerCase();
-	if (lower.includes("round of 32") || lower.includes("1/32")) {
-		return "1/32 Final";
+	// "Round of 32" = 32 teams / 16 pairs = 1/16 finals; "Round of 16" = 1/8.
+	if (lower.includes("round of 32") || lower.includes("1/16")) {
+		return "1/16 Final";
 	}
 	if (lower.includes("round of 16") || lower.includes("1/8")) {
 		return "1/8 Final";

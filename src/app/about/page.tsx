@@ -331,7 +331,7 @@ export default function AboutPage() {
 						<p className={styles.sectionText}>
 							{en
 								? "A tournament view: group standings for all 12 groups (A–L) plus the knockout bracket from the round of 32 to the final. Group standings are derived from finished matches; the bracket fills in as playoff matches are played."
-								: "Вид турнира: групповые таблицы всех 12 групп (A–L) плюс сетка плей-офф от 1/32 финала до финала. Групповые таблицы строятся по завершённым матчам; сетка заполняется по мере проведения матчей плей-офф."}
+								: "Вид турнира: групповые таблицы всех 12 групп (A–L) плюс сетка плей-офф от 1/16 финала до финала. Групповые таблицы строятся по завершённым матчам; сетка заполняется по мере проведения матчей плей-офф."}
 						</p>
 					</section>
 				</div>
