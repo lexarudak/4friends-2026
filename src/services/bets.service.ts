@@ -117,8 +117,4 @@ export const BetsService = {
 		if (ops.length === 0) return;
 		await prisma.$transaction(ops);
 	},
-
-	async clearBets(userId: string, roomId: string): Promise<void> {
-		await prisma.bet.deleteMany({ where: { userId, roomId } });
-	},
 };

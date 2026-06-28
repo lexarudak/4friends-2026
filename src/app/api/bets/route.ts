@@ -71,25 +71,9 @@ export async function POST(req: Request) {
 	}
 }
 
-export async function DELETE() {
-	const session = await auth();
-	const userId = session?.user?.email;
-
-	if (!userId) {
-		return NextResponse.json(
-			{ error: API_ERROR_CODES.UNAUTHORIZED },
-			{ status: 401 }
-		);
-	}
-
-	const roomId = await getActiveRoomId();
-	if (!roomId) {
-		return NextResponse.json(
-			{ error: API_ERROR_CODES.NO_ACTIVE_ROOM },
-			{ status: 403 }
-		);
-	}
-
-	await BetsService.clearBets(userId, roomId);
-	return NextResponse.json({ ok: true });
-}
+// NOTE: The DELETE /api/bets endpoint was removed. It called
+// BetsService.clearBets, which deleted ALL of a user's bets in a room —
+// including finished matches — and caused real data loss. The "Clear" button
+// now only resets the form client-side. Bets are removed/edited solely via the
+// upsert path in POST. Do not reintroduce a bulk-delete endpoint without
+// per-match lock protection (see saveBets / BetsLockedError).

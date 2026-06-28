@@ -175,10 +175,12 @@ export const BetsForm: FC<Props> = ({ matches, initialBets }) => {
 		formik.setFieldValue(`${basePath}.winPick`, "");
 	};
 
-	const handleClear = async () => {
+	const handleClear = () => {
+		// Form-only: clear the visible inputs without touching the backend.
+		// Saved bets stay in the DB until the user explicitly Saves. (Previously
+		// this called DELETE /api/bets, which wiped the user's entire bet history
+		// in the room — including finished matches not shown in the form.)
 		const empty = buildInitialValues(matches, []);
-		await requestApi("/api/bets", { method: "DELETE" });
-		setSavedValues(empty);
 		formik.resetForm({ values: empty });
 	};
 
