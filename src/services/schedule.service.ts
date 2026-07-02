@@ -139,13 +139,14 @@ export const ScheduleService = {
 					statusElapsed: true,
 					homeTeamName: true,
 					homeTeamLogo: true,
+					homeTeamWinner: true,
 					awayTeamName: true,
 					awayTeamLogo: true,
 					goalsHome: true,
 					goalsAway: true,
 					fulltimeHome: true,
-					fulltimeAway: true,				penaltyHome: true,
-				penaltyAway: true,				},
+					fulltimeAway: true,
+				},
 			});
 
 			if (matches.length === 0) return [];
@@ -231,8 +232,14 @@ export const ScheduleService = {
 					statusShort: status === "live" ? match.statusShort : null,
 					lastSyncAt: status === "live" ? lastSyncAtIso : null,
 					resultHome,
-					resultAway,				penaltyHome: match.penaltyHome,
-				penaltyAway: match.penaltyAway,					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],
+					resultAway,
+					winner:
+						match.homeTeamWinner === true
+							? "home"
+							: match.homeTeamWinner === false
+								? "away"
+								: null,
+					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],
 				};
 			});
 		} catch (err) {

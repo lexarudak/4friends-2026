@@ -107,14 +107,14 @@
 	background: color-mix(in srgb, var(--color-neutral-800) 50%, transparent);
 
 	&[data-playoff] .teamRow {
-		grid-template-columns: auto 1fr auto;
+		grid-template-columns: auto auto 1fr;
 	}
 }
 
 .advancingDot {
 	font-size: var(--font-size-14);
 	color: var(--color-neutral-600);
-	min-width: var(--space-16);
+	width: var(--space-16);
 	text-align: center;
 
 	[data-status="live"] & {

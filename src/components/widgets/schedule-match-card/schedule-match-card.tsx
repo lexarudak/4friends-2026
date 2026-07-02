@@ -37,9 +37,8 @@ export type ScheduleMatch = {
 	statusShort?: string | null;
 	/** ISO of the most recent successful API sync — used for client-side minute projection. */
 	lastSyncAt?: string | null;
-	/** Penalty shootout scores — used to determine advancing team when goals are level. */
-	penaltyHome?: number | null;
-	penaltyAway?: number | null;
+	/** API winner field — true/false/null mapped to home/away/null. Accounts for ET and penalties. */
+	winner?: "home" | "away" | null;
 	bets?: ScheduleBet[];
 };
 
@@ -133,20 +132,8 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 		return `${leftMarker} ${scoreTag} ${rightMarker}`;
 	};
 
-	const advancingSide =
-		isPlayoffMatch && hasResult
-			? match.resultHome! > match.resultAway!
-				? "home"
-				: match.resultHome! < match.resultAway!
-					? "away"
-					: match.penaltyHome != null && match.penaltyAway != null
-						? match.penaltyHome > match.penaltyAway
-							? "home"
-							: match.penaltyHome < match.penaltyAway
-								? "away"
-								: null
-						: null
-			: null;
+	const isDraw = hasResult && match.resultHome === match.resultAway;
+	const advancingSide = isPlayoffMatch && isDraw ? (match.winner ?? null) : null;
 
 	const sortedBets = hasBets
 		? [...match.bets!].sort((a, b) => getDisplayPoints(b) - getDisplayPoints(a))
@@ -202,34 +189,34 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 			</div>
 
 			{/* Score row */}
-			<div className={styles.score} data-playoff={isPlayoffMatch || undefined}>
+			<div className={styles.score} data-playoff={advancingSide != null || undefined}>
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultHome ?? "–"}</span>
+					{advancingSide != null && (
+						<span className={styles.advancingDot} aria-hidden>
+							{advancingSide === "home" ? "•" : " "}
+						</span>
+					)}
 					<TeamBadge
 						size="s"
 						name={match.home.name}
 						flag={match.home.flag}
 						className={styles.team}
 					/>
-					{isPlayoffMatch && (
-						<span className={styles.advancingDot} aria-hidden>
-							{advancingSide === "home" ? "•" : ""}
-						</span>
-					)}
 				</div>
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultAway ?? "–"}</span>
+					{advancingSide != null && (
+						<span className={styles.advancingDot} aria-hidden>
+							{advancingSide === "away" ? "•" : " "}
+						</span>
+					)}
 					<TeamBadge
 						size="s"
 						name={match.away.name}
 						flag={match.away.flag}
 						className={styles.team}
 					/>
-					{isPlayoffMatch && (
-						<span className={styles.advancingDot} aria-hidden>
-							{advancingSide === "away" ? "•" : ""}
-						</span>
-					)}
 				</div>
 			</div>
 
