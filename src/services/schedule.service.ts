@@ -144,8 +144,8 @@ export const ScheduleService = {
 					goalsHome: true,
 					goalsAway: true,
 					fulltimeHome: true,
-					fulltimeAway: true,
-				},
+					fulltimeAway: true,				penaltyHome: true,
+				penaltyAway: true,				},
 			});
 
 			if (matches.length === 0) return [];
@@ -231,8 +231,8 @@ export const ScheduleService = {
 					statusShort: status === "live" ? match.statusShort : null,
 					lastSyncAt: status === "live" ? lastSyncAtIso : null,
 					resultHome,
-					resultAway,
-					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],
+					resultAway,				penaltyHome: match.penaltyHome,
+				penaltyAway: match.penaltyAway,					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],
 				};
 			});
 		} catch (err) {

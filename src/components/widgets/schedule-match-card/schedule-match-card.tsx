@@ -37,6 +37,9 @@ export type ScheduleMatch = {
 	statusShort?: string | null;
 	/** ISO of the most recent successful API sync — used for client-side minute projection. */
 	lastSyncAt?: string | null;
+	/** Penalty shootout scores — used to determine advancing team when goals are level. */
+	penaltyHome?: number | null;
+	penaltyAway?: number | null;
 	bets?: ScheduleBet[];
 };
 
@@ -136,7 +139,13 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				? "home"
 				: match.resultHome! < match.resultAway!
 					? "away"
-					: null
+					: match.penaltyHome != null && match.penaltyAway != null
+						? match.penaltyHome > match.penaltyAway
+							? "home"
+							: match.penaltyHome < match.penaltyAway
+								? "away"
+								: null
+						: null
 			: null;
 
 	const sortedBets = hasBets
