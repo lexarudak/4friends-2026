@@ -146,6 +146,8 @@ export const ScheduleService = {
 					goalsAway: true,
 					fulltimeHome: true,
 					fulltimeAway: true,
+					penaltyHome: true,
+					penaltyAway: true,
 				},
 			});
 
@@ -233,12 +235,16 @@ export const ScheduleService = {
 					lastSyncAt: status === "live" ? lastSyncAtIso : null,
 					resultHome,
 					resultAway,
+					goalsHome: match.goalsHome,
+					goalsAway: match.goalsAway,
 					winner:
 						match.homeTeamWinner === true
 							? "home"
 							: match.homeTeamWinner === false
 								? "away"
 								: null,
+					penaltyHome: match.penaltyHome,
+					penaltyAway: match.penaltyAway,
 					bets: isStartedByTime ? (betsByMatchId.get(match.id) ?? []) : [],
 				};
 			});

@@ -106,16 +106,53 @@
 	padding: var(--space-8) 0;
 	background: color-mix(in srgb, var(--color-neutral-800) 50%, transparent);
 
-	&[data-playoff] .teamRow {
+	&[data-playoff="extra"] .teamRow {
+		grid-template-columns: auto auto auto 1fr;
+	}
+	&[data-playoff="dot"] .teamRow {
 		grid-template-columns: auto auto 1fr;
 	}
 }
 
-.advancingDot {
-	font-size: var(--font-size-14);
+.extraScore {
+	font-size: var(--font-size-11);
+	font-family: var(--font-geist-mono);
+	font-weight: var(--font-weight-medium);
+	color: var(--color-neutral-500);
+	white-space: nowrap;
+
+	[data-status="live"] & {
+		color: var(--color-yellow-500);
+	}
+	[data-status="finished"] & {
+		color: var(--color-green-500);
+	}
+}
+
+.extraLabel {
+	font-size: var(--font-size-11);
+	font-family: var(--font-geist-mono);
 	color: var(--color-neutral-600);
-	width: var(--space-16);
+	min-width: 2.5em;
+	white-space: nowrap;
+
+	&[data-hidden] {
+		visibility: hidden;
+	}
+
+	[data-status="finished"] & {
+		color: var(--color-green-600);
+	}
+}
+
+.advancingDot {
+	font-size: var(--font-size-11);
+	font-family: var(--font-geist-mono);
+	font-weight: var(--font-weight-medium);
+	color: var(--color-neutral-500);
+	width: max-content;
 	text-align: center;
+	white-space: nowrap;
 
 	[data-status="live"] & {
 		color: var(--color-yellow-400);

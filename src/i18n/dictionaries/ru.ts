@@ -55,6 +55,8 @@ const ru: typeof en = {
 		noMatches: "В этом диапазоне матчей нет.",
 		inPlay: "Идёт",
 		finished: "Завершён",
+		aet: "д.в.",
+		pen: "пен.",
 	},
 	betHistory: {
 		title: "История ставок",

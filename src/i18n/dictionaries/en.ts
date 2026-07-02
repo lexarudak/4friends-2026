@@ -53,6 +53,8 @@ const en = {
 		noMatches: "No matches in this range.",
 		inPlay: "In Play",
 		finished: "Finished",
+		aet: "a.e.t.",
+		pen: "pen.",
 	},
 	betHistory: {
 		title: "Bets History",

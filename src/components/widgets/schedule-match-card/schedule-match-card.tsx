@@ -39,6 +39,12 @@ export type ScheduleMatch = {
 	lastSyncAt?: string | null;
 	/** API winner field — true/false/null mapped to home/away/null. Accounts for ET and penalties. */
 	winner?: "home" | "away" | null;
+	/** Total goals including ET (differs from resultHome for AET matches). */
+	goalsHome?: number | null;
+	goalsAway?: number | null;
+	/** Penalty shootout scores — set only for PEN matches. */
+	penaltyHome?: number | null;
+	penaltyAway?: number | null;
 	bets?: ScheduleBet[];
 };
 
@@ -135,6 +141,26 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 	const isDraw = hasResult && match.resultHome === match.resultAway;
 	const advancingSide = isPlayoffMatch && isDraw ? (match.winner ?? null) : null;
 
+	const hasPen = match.penaltyHome != null && match.penaltyAway != null;
+	const hasAetGoals =
+		!hasPen &&
+		match.goalsHome != null &&
+		match.goalsAway != null &&
+		(match.goalsHome !== match.resultHome || match.goalsAway !== match.resultAway);
+	const showExtra = advancingSide != null && (hasPen || hasAetGoals);
+
+	const homeExtra = showExtra
+		? hasPen
+			? match.penaltyHome
+			: match.goalsHome
+		: null;
+	const awayExtra = showExtra
+		? hasPen
+			? match.penaltyAway
+			: match.goalsAway
+		: null;
+	const extraTypeLabel = hasPen ? t.schedule.pen : hasAetGoals ? t.schedule.aet : null;
+
 	const sortedBets = hasBets
 		? [...match.bets!].sort((a, b) => getDisplayPoints(b) - getDisplayPoints(a))
 		: [];
@@ -189,10 +215,26 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 			</div>
 
 			{/* Score row */}
-			<div className={styles.score} data-playoff={advancingSide != null || undefined}>
+			<div
+				className={styles.score}
+				data-playoff={
+					showExtra ? "extra" : advancingSide != null ? "dot" : undefined
+				}
+			>
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultHome ?? "–"}</span>
-					{advancingSide != null && (
+					{showExtra && (
+						<span className={styles.extraScore}>({homeExtra})</span>
+					)}
+					{showExtra && (
+						<span
+							className={styles.extraLabel}
+							data-hidden={advancingSide !== "home" || undefined}
+						>
+							{extraTypeLabel}
+						</span>
+					)}
+					{!showExtra && advancingSide != null && (
 						<span className={styles.advancingDot} aria-hidden>
 							{advancingSide === "home" ? "•" : " "}
 						</span>
@@ -206,7 +248,18 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 				</div>
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultAway ?? "–"}</span>
-					{advancingSide != null && (
+					{showExtra && (
+						<span className={styles.extraScore}>({awayExtra})</span>
+					)}
+					{showExtra && (
+						<span
+							className={styles.extraLabel}
+							data-hidden={advancingSide !== "away" || undefined}
+						>
+							{extraTypeLabel}
+						</span>
+					)}
+					{!showExtra && advancingSide != null && (
 						<span className={styles.advancingDot} aria-hidden>
 							{advancingSide === "away" ? "•" : " "}
 						</span>
