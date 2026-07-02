@@ -7,7 +7,9 @@ metadata:
   originSessionId: aa512491-4986-4ba6-a317-1f5fc9f47079
 ---
 
-Database: Neon (serverless Postgres). ORM: Prisma 7.8. Adapter: `@prisma/adapter-pg`. Schema at `/prisma/schema.prisma`.
+Database: **Prisma Postgres** (managed, host `db.prisma.io`; `DATABASE_URL` + `DATABASE_URL_UNPOOLED`). ORM: Prisma 7.8. Adapter: `@prisma/adapter-pg`. Schema at `/prisma/schema.prisma`. (Originally provisioned on Neon — migrated to Prisma Postgres; older notes saying "Neon" are stale.)
+
+**Backups/recovery:** Prisma Postgres takes **daily snapshots** (only on days with DB activity), retained ~7 days (Starter/Pro) or 30 days (Business). **No point-in-time restore** yet — snapshot granularity only. Restore via Prisma Console → Backups tab ("re-instantiate" a snapshot into a new instance). For surgical row recovery, re-instantiate a pre-incident snapshot to a separate instance, extract the needed rows, and upsert them into prod (don't restore in place — that rolls back all users).
 
 ## Models
 
@@ -43,8 +45,8 @@ Database: Neon (serverless Postgres). ORM: Prisma 7.8. Adapter: `@prisma/adapter
 - `points Int?`, `bonusPoints Int?` — filled after match completes
 - @@unique([userId, matchId, roomId])
 
-**TotalPoints** (aggregated, composite PK) — points per user per room
 **StandingsCache** — single-row JSON cache of group standings
+(No `TotalPoints` model exists in the live schema — points live on `Bet.points`/`bonusPoints` and are aggregated via `prisma.bet.groupBy` + cached in `StandingsCache`.)
 
 ## Migrations (6 total, `/prisma/migrations/`)
 1. `20260501062538_create_room_table`

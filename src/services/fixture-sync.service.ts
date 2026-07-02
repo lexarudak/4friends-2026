@@ -135,7 +135,9 @@ async function tryAdvisoryLock(): Promise<boolean> {
 }
 
 async function releaseAdvisoryLock(): Promise<void> {
-	await prisma.$queryRawUnsafe(`SELECT pg_advisory_unlock(${ADVISORY_LOCK_KEY})`);
+	await prisma.$queryRawUnsafe(
+		`SELECT pg_advisory_unlock(${ADVISORY_LOCK_KEY})`
+	);
 }
 
 /**
@@ -205,9 +207,7 @@ async function persistFixtures(
 
 	// Only update matches that exist in our DB (handles multi-tournament live=all)
 	const knownIds = new Set(before.map((m) => m.id));
-	const relevantFixtures = fixtures.filter((f) =>
-		knownIds.has(f.fixture.id)
-	);
+	const relevantFixtures = fixtures.filter((f) => knownIds.has(f.fixture.id));
 	if (relevantFixtures.length === 0) return { updated: 0, finalized: 0 };
 
 	const updateOps = relevantFixtures.map((fixture) =>
@@ -223,11 +223,7 @@ async function persistFixtures(
 	for (const fixture of relevantFixtures) {
 		const newStatus = fixture.fixture.status.short;
 		const prevStatus = prevStatusById.get(fixture.fixture.id);
-		if (
-			prevStatus &&
-			!isFinalStatus(prevStatus) &&
-			isFinalStatus(newStatus)
-		) {
+		if (prevStatus && !isFinalStatus(prevStatus) && isFinalStatus(newStatus)) {
 			await PointsCalculator.recalculate(fixture.fixture.id);
 			finalized++;
 			const t = tournamentForLeague(fixture.league.id);
@@ -348,7 +344,8 @@ async function runFullSync(): Promise<SyncDecision> {
 	return {
 		kind: "synced",
 		updated: live.updated + dropped.updated + pastDue.updated,
-		finalized: live.finalized + dropped.finalized + pastDue.finalized + rescored,
+		finalized:
+			live.finalized + dropped.finalized + pastDue.finalized + rescored,
 		lastSyncAt: after.lastSyncAt ?? new Date(),
 	};
 }
@@ -410,6 +407,11 @@ export const FixtureSyncService = {
 	 * regardless of client polling or CDN caching) and it finalizes overdue
 	 * matches across ALL tournaments by id — so leagues that aren't covered by
 	 * any live viewer (e.g. Belarus) still get their results and points.
+	 *
+	 * After the live/overdue sync it unconditionally re-pulls the full season
+	 * fixture list for every tournament so newly-scheduled knockout fixtures
+	 * (whose teams get assigned as the bracket fills in) appear in the DB even
+	 * when no NS→FT transition was observed during this sync run.
 	 */
 	async syncNow(): Promise<SyncDecision> {
 		const status = await FootballApi.getQuotaStatus();
@@ -421,7 +423,14 @@ export const FixtureSyncService = {
 		if (!locked) return { kind: "lock-busy" };
 
 		try {
-			return await runFullSync();
+			const result = await runFullSync();
+			// Unconditionally refresh the full fixture list so knockout fixtures
+			// that became available after a completed match are always picked up,
+			// even when no live transition was observed during this sync.
+			for (const slug of Object.keys(TOURNAMENTS)) {
+				await refreshTournamentFixtures(slug);
+			}
+			return result;
 		} catch (err) {
 			return syncErrorDecision("syncNow", err);
 		} finally {
