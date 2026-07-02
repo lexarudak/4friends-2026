@@ -105,6 +105,24 @@
 	gap: 1px;
 	padding: var(--space-8) 0;
 	background: color-mix(in srgb, var(--color-neutral-800) 50%, transparent);
+
+	&[data-playoff] .teamRow {
+		grid-template-columns: auto 1fr auto;
+	}
+}
+
+.advancingDot {
+	font-size: var(--font-size-14);
+	color: var(--color-neutral-600);
+	min-width: var(--space-16);
+	text-align: center;
+
+	[data-status="live"] & {
+		color: var(--color-yellow-400);
+	}
+	[data-status="finished"] & {
+		color: var(--color-green-400);
+	}
 }
 
 .teamRow {

@@ -130,6 +130,15 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 		return `${leftMarker} ${scoreTag} ${rightMarker}`;
 	};
 
+	const advancingSide =
+		isPlayoffMatch && hasResult
+			? match.resultHome! > match.resultAway!
+				? "home"
+				: match.resultHome! < match.resultAway!
+					? "away"
+					: null
+			: null;
+
 	const sortedBets = hasBets
 		? [...match.bets!].sort((a, b) => getDisplayPoints(b) - getDisplayPoints(a))
 		: [];
@@ -184,7 +193,7 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 			</div>
 
 			{/* Score row */}
-			<div className={styles.score}>
+			<div className={styles.score} data-playoff={isPlayoffMatch || undefined}>
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultHome ?? "–"}</span>
 					<TeamBadge
@@ -193,6 +202,11 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 						flag={match.home.flag}
 						className={styles.team}
 					/>
+					{isPlayoffMatch && (
+						<span className={styles.advancingDot} aria-hidden>
+							{advancingSide === "home" ? "•" : ""}
+						</span>
+					)}
 				</div>
 				<div className={styles.teamRow}>
 					<span className={styles.teamScore}>{match.resultAway ?? "–"}</span>
@@ -202,6 +216,11 @@ export const ScheduleMatchCard: FC<Props> = ({ match }) => {
 						flag={match.away.flag}
 						className={styles.team}
 					/>
+					{isPlayoffMatch && (
+						<span className={styles.advancingDot} aria-hidden>
+							{advancingSide === "away" ? "•" : ""}
+						</span>
+					)}
 				</div>
 			</div>
 
